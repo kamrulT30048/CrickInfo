@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Crick Info</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="fixtures">Fixtures</string>
+    <string name="team">Team</string>
+    <string name="player">Player</string>
+    <string name="matches">Matches</string>
+    <string name="match_status">Match Status</string>
+    <string name="_0_0">0/0</string>
+    <string name="match_notes">match _notes</string>
+    <string name="vs">vs</string>
+    <string name="yyyy_mm_dd">YYYY-MM-DD</string>
+    <string name="t20">T20</string>
+</resources>
