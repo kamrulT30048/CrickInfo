@@ -18,7 +18,7 @@ const val IMAGE_URL = "https://www.google.com/imgres?imgurl=https%3A%2F%2Fvector
 const val URL_KEY = "NEWS_URL_KEY"
 const val DEFAULT_NEWS_PAGE = "https://www.bbc.com/bengali"
 
-const val VIEW_PAGER_COUNTER = 7
+const val VIEW_PAGER_COUNTER = 3
 
 ////  API url  \\\\
 // Base api Link
@@ -30,7 +30,8 @@ const val API_TOKEN = "dH8NTCnnxtGtW3ev2FSfqOaq4jcTWToNZ6r7AXW7RS8TWgekkd270L2jS
 
 
 // specific api link
-const val FIXTURES_API = "fixtures"             //?api_token=$api_token"
+const val FIXTURES_END = "fixtures"             //?api_token=$api_token"
+const val TEAM_END = "teams"
 
 
 
