@@ -2,6 +2,7 @@ package com.kamrulhasan.crickinfo.network
 
 import com.kamrulhasan.crickinfo.model.fixture.Fixtures
 import com.kamrulhasan.crickinfo.model.team.Teams
+import com.kamrulhasan.crickinfo.model.team.TeamsData
 import com.kamrulhasan.topnews.utils.*
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -21,8 +22,16 @@ private val retrofit = Retrofit.Builder()
     .build()
 
 interface CricketAPIService {
+
     @GET(FIXTURES_END)
     suspend fun getFixturesData(
+        @Query("include") include: String = "runs",
+        @Query("api_token") api_token: String = API_TOKEN
+    ): Fixtures
+
+    @GET(FIXTURES_END)
+    suspend fun getFixturesByDate(
+        @Query("filter[starts_between]") dateRange: String,
         @Query("include") include: String = "runs",
         @Query("api_token") api_token: String = API_TOKEN
     ): Fixtures
@@ -31,7 +40,7 @@ interface CricketAPIService {
     suspend fun getTeamById(
         @Path("team_id") team_id: Int,
         @Query("api_token") api_token: String = API_TOKEN
-    ): Teams
+    ): TeamsData
 
     @GET(TEAM_END)
     suspend fun getTeams(

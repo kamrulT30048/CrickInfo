@@ -49,7 +49,7 @@ class RecentMatchFragment : Fragment() {
         viewModel.fixturesData.observe(viewLifecycleOwner) {
 
             matchList = it
-            val adapter = FixtureAdapter(matchList, viewModel,viewLifecycleOwner)
+            val adapter = FixtureAdapter(matchList, viewModel, viewLifecycleOwner)
             binding.matchRecyclerView.adapter = adapter
 
         }
@@ -58,8 +58,6 @@ class RecentMatchFragment : Fragment() {
         binding.matchRecyclerView.setOnScrollChangeListener { _: View?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
             if (scrollY > oldScrollY) {
                 bottomNav.visibility = View.GONE
-//                requireActivity().actionBar.visibility
-//                bottomNav.animate().translationY(bottomNav.height.toFloat())
             } else {
                 bottomNav.visibility = View.VISIBLE
             }
@@ -86,7 +84,6 @@ class RecentMatchFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-//                searchArticle(newText.toString())
                 Toast.makeText(
                     MyApplication.appContext,
                     "search completed",

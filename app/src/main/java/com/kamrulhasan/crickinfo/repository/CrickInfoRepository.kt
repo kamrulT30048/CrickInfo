@@ -8,21 +8,42 @@ import com.kamrulhasan.crickinfo.model.team.TeamsData
 
 class CrickInfoRepository(private val cricketDao: CricketDao) {
 
-    val readAllFixturesData: LiveData<List<FixturesData>> = CricketDao.readAllFixturesData()
+    val readAllFixturesData: LiveData<List<FixturesData>> = cricketDao.readAllFixturesData()
+    val readAllTeamsData: LiveData<List<TeamsData>> = cricketDao.readAllTeam()
 
-    suspend fun addFixturesData(fixturesData: FixturesData){
+    suspend fun addFixturesData(fixturesData: FixturesData) {
         cricketDao.addFixtures(fixturesData)
     }
 
-    suspend fun addRun(run: Run){
+    suspend fun addRun(run: Run) {
         cricketDao.addRun(run)
     }
 
-    fun readTeamById(id : Int): TeamsData {
-        return cricketDao.readTeamById(id)
+    // read team info
+
+    fun readTeamCodeById(id: Int): LiveData<String> {
+        return cricketDao.readTeamCodeById(id)
     }
 
-    suspend fun addTeams(teamsData: TeamsData){
+    fun readTeamIconById(id: Int): LiveData<String> {
+        return cricketDao.readTeamIconById(id)
+    }
+
+    // get run
+
+    fun readRunById(id: Int): LiveData<Run> {
+        return cricketDao.readRunById(id)
+    }
+
+    fun readTeamScoreById(team_id: Int, fixture_id: Int): LiveData<Int> {
+        return cricketDao.readTeamScoreById(team_id,fixture_id)
+    }
+
+    fun readTeamWicketById(team_id: Int, fixture_id: Int): LiveData<Int> {
+        return cricketDao.readTeamWicketById(team_id,fixture_id)
+    }
+
+    suspend fun addTeams(teamsData: TeamsData) {
         cricketDao.addTeam(teamsData)
     }
 }

@@ -10,7 +10,7 @@ import com.kamrulhasan.crickinfo.model.team.TeamsData
 
 @Database(
     entities = [TeamsData::class,FixturesData::class,Run::class],
-    version = 4,
+    version = 6,
     exportSchema = false
 )
 

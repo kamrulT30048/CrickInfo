@@ -1,17 +1,30 @@
 package com.kamrulhasan.crickinfo.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.kamrulhasan.crickinfo.R
 import com.kamrulhasan.crickinfo.model.fixture.FixturesData
+import com.kamrulhasan.crickinfo.model.fixture.Run
+import com.kamrulhasan.crickinfo.model.team.TeamsData
+import com.kamrulhasan.crickinfo.ui.fragment.FixturesFragment
+import com.kamrulhasan.crickinfo.ui.fragment.FixturesFragmentDirections
+import com.kamrulhasan.crickinfo.ui.fragment.MatchDetailsFragment
+import com.kamrulhasan.crickinfo.ui.fragment.RecentMatchFragmentDirections
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
 import com.kamrulhasan.topnews.utils.DateConverter
 import com.kamrulhasan.topnews.utils.MyApplication
+import kotlinx.coroutines.launch
+import kotlin.math.acos
 
 private const val TAG = "FixtureAdapter"
 
@@ -29,6 +42,8 @@ class FixtureAdapter(
         val notes: TextView = binding.findViewById(R.id.tv_match_notes)
         val scoreTeam1: TextView = binding.findViewById(R.id.tv_score_team1)
         val scoreTeam2: TextView = binding.findViewById(R.id.tv_score_team2)
+        val wicketTeam1: TextView = binding.findViewById(R.id.tv_wicket_team1)
+        val wicketTeam2: TextView = binding.findViewById(R.id.tv_wicket_team2)
         val teamIcon1: ImageView = binding.findViewById(R.id.iv_team1)
         val teamIcon2: ImageView = binding.findViewById(R.id.iv_team2)
     }
@@ -41,6 +56,7 @@ class FixtureAdapter(
 
     override fun onBindViewHolder(holder: FixturesHolder, position: Int) {
         val fixturesItem = fixtureList[position]
+//        val team = viewModel.teamsData.value
 
         holder.date.text = fixturesItem.starting_at?.let { DateConverter.zoneToDate(it) }
         holder.matchType.text = fixturesItem.round
@@ -48,126 +64,79 @@ class FixtureAdapter(
         if (fixturesItem.status == "Finished") {
             holder.notes.text = fixturesItem.note
         }
-/*
 
-        var runTeam1: Run?
-        var runTeam2: Run?
-        val runs = fixturesItem.runs
-
-        if (runs != null && runs.isNotEmpty()) {
-
-            if ((fixturesItem.toss_won_team_id == fixturesItem.localteam_id && fixturesItem.elected == "batting")
-                || (fixturesItem.toss_won_team_id == fixturesItem.visitorteam_id && fixturesItem.elected == "bowling")
-            ) {
-
-                runTeam1 = runs[0]
-                holder.scoreTeam1.text = runTeam1.score.toString()
-
-                if (runs.size == 2) {
-                    runTeam2 = runs[1]
-                    holder.scoreTeam2.text = runTeam2.score.toString()
-                } else {
-                    holder.scoreTeam2.text = "-/-"
-                }
-            } else {
-                runTeam2 = runs[0]
-                holder.scoreTeam2.text = runTeam2.score.toString()
-
-                if (runs.size == 2) {
-                    runTeam1 = runs[1]
-                    holder.scoreTeam1.text = runTeam1.score.toString()
-                } else {
-                    holder.scoreTeam1.text = "-/-"
-                }
+        viewModel.readTeamCode(fixturesItem.localteam_id)
+            .observe(viewLifecycleOwner) {
+                holder.team1.text = it
             }
-        }
-*/
 
-/*
-        fixturesItem.localteam_id?.let {
-            val teamLocal = viewModel.localTeam
-
-            Log.d(TAG, "onBindViewHolder: $teamLocal")
-
-            if (teamLocal != null) {
-                holder.team1.text = teamLocal.code.toString()
-                //loading image with glide
+        viewModel.readTeamUrl(fixturesItem.localteam_id)
+            .observe(viewLifecycleOwner) {
                 Glide
                     .with(holder.itemView.context)
-                    .load(teamLocal.image_path)
+                    .load(it)
                     .centerCrop()
                     .placeholder(R.drawable.icon_match)
                     .into(holder.teamIcon1)
-
-            } else {
-                holder.team1.text = "LT${it}"
             }
+
+        viewModel.readTeamCode(fixturesItem.visitorteam_id)
+            .observe(viewLifecycleOwner) {
+                holder.team2.text = it
+            }
+
+        viewModel.readTeamUrl(fixturesItem.visitorteam_id)
+            .observe(viewLifecycleOwner) {
+                Glide
+                    .with(holder.itemView.context)
+                    .load(it)
+                    .centerCrop()
+                    .placeholder(R.drawable.icon_match)
+                    .into(holder.teamIcon2)
+            }
+
+        // run
+        viewModel.readScoreById(fixturesItem.localteam_id, fixturesItem.id)
+            .observe(viewLifecycleOwner) {
+                holder.scoreTeam1.text = if (it != null) {
+                    it.toString() + "/"
+                } else {
+                    "-/"
+                }
+            }
+
+        viewModel.readScoreById(fixturesItem.visitorteam_id, fixturesItem.id)
+            .observe(viewLifecycleOwner) {
+                holder.scoreTeam2.text = if (it != null) {
+                    it.toString() + "/"
+                } else {
+                    "-/"
+                }
+            }
+        // wicket
+        viewModel.readWicketById(fixturesItem.localteam_id, fixturesItem.id)
+            .observe(viewLifecycleOwner) {
+                holder.wicketTeam1.text = if (it != null) {
+                    it.toString()
+                } else {
+                    "-"
+                }
+            }
+
+        viewModel.readWicketById(fixturesItem.visitorteam_id, fixturesItem.id)
+            .observe(viewLifecycleOwner) {
+                holder.wicketTeam2.text = if (it != null) {
+                    it.toString()
+                } else {
+                    "-"
+                }
+            }
+        holder.itemView.setOnClickListener {
+
+//            Toast.makeText(MyApplication.appContext, "Item Clicked..!!!", Toast.LENGTH_SHORT).show()
+            val direction= FixturesFragmentDirections.actionFixturesFragmentToMatchDetailsFragment()
+            holder.itemView.findNavController().navigate(R.id.matchDetailsFragment)
         }
-
-        if (viewModel.visitorTeam != null) {
-            holder.team2.text = viewModel.visitorTeam!!.code.toString()
-            //loading news image with glide
-            Glide
-                .with(holder.itemView.context)
-                .load(viewModel.visitorTeam!!.image_path)
-                .centerCrop()
-                .placeholder(R.drawable.icon_match)
-                .into(holder.teamIcon2)
-
-        } else {
-            holder.team2.text = "VT"
-        }
-*/
-
-//        fixturesItem.localteam_id?.let {
-//            val team =  viewModel.getTeamById(it)
-//            Log.d(TAG, "onBindViewHolder: ${team?.code}")
-//        }
-
-//        viewModel.teamsDataById.observe(viewLifecycleOwner) {
-//            if (it != null) {
-//                val it1 = it
-//                Log.d(TAG, "onBindViewHolder: ${it1.code}")
-//                holder.team1.text = it1.code //code.toString()
-//                //loading image with glide
-//                Glide
-//                    .with(holder.itemView.context)
-//                    .load(it1.image_path)
-//                    .centerCrop()
-//                    .placeholder(R.drawable.icon_match)
-//                    .into(holder.teamIcon1)
-//            } else {
-//                holder.team1.text = "LT"
-//            }
-//        }
-
-
-//        Log.d(TAG, "onBindViewHolder: api1: $teamInfo1")
-//        Log.d(TAG, "onBindViewHolder: api2: $teamInfo2")
-//        if(teamInfo1 != null){
-//            holder.team1.text = teamInfo1.code.toString()
-//            //loading news image with glide
-//            Glide
-//                .with(holder.itemView.context)
-//                .load(teamInfo1.image_path)
-//                .centerCrop()
-//                .placeholder(R.drawable.icon_match)
-//                .into(holder.teamIcon1)
-//        }else{
-//            holder.team1.text = "LT"
-//        }
-
-//        if(teamInfo2 != null){
-//            holder.team2.text = teamInfo2.code.toString()
-//            Glide
-//                .with(holder.itemView.context)
-//                .load(teamInfo2.image_path)
-//                .centerCrop()
-//                .placeholder(R.drawable.icon_match)
-//                .into(holder.teamIcon2)
-//        }else{
-//            holder.team2.text = "VT"
-//        }
     }
 
     override fun getItemCount(): Int {

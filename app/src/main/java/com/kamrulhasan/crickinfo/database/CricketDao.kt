@@ -24,7 +24,26 @@ interface CricketDao {
     @Query("SELECT * FROM fixtures_data ORDER BY starting_at DESC")
     fun readAllFixturesData(): LiveData<List<FixturesData>>
 
-    @Query("SELECT * FROM team_data WHERE id = :team_id")
-    fun readTeamById(team_id: Int) : TeamsData
+    @Query("SELECT * FROM team_data ")
+    fun readAllTeam(): LiveData<List<TeamsData>>
+
+    ///  read team information
+
+    @Query("SELECT code FROM team_data WHERE id = :team_id")
+    fun readTeamCodeById(team_id: Int) : LiveData<String>
+
+    @Query("SELECT image_path FROM team_data WHERE id = :team_id")
+    fun readTeamIconById(team_id: Int) : LiveData<String>
+
+    /// run information
+
+    @Query("SELECT * FROM run WHERE id = :run_id")
+    fun readRunById(run_id: Int) : LiveData<Run>
+
+    @Query("SELECT score FROM run WHERE team_id = :team_id AND fixture_id = :fixture_id")
+    fun readTeamScoreById(team_id: Int, fixture_id: Int) : LiveData<Int>
+    // wicket
+    @Query("SELECT wickets FROM run WHERE team_id = :team_id AND fixture_id = :fixture_id")
+    fun readTeamWicketById(team_id: Int, fixture_id: Int) : LiveData<Int>
 
 }

@@ -31,6 +31,9 @@
         <action
             android:id="@+id/action_fixturesFragment_to_liveMatchFragment"
             app:destination="@id/liveMatchFragment" />
+        <action
+            android:id="@+id/action_fixturesFragment_to_matchDetailsFragment"
+            app:destination="@id/matchDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/newsFragment"
@@ -74,4 +77,9 @@
             android:id="@+id/action_recentMatchFragment_to_upcomingMatchFragment"
             app:destination="@id/upcomingMatchFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/matchDetailsFragment"
+        android:name="com.kamrulhasan.crickinfo.ui.fragment.MatchDetailsFragment"
+        android:label="Match"
+        tools:layout="@layout/fragment_match_details" />
 </navigation>

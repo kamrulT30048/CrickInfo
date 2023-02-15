@@ -18,7 +18,7 @@ data class FixturesData(
     var live: Boolean?,
     @Ignore
     var localteam_dl_data: LocalteamDlData?,
-    var localteam_id: Int?,
+    var localteam_id: Int,
     var man_of_match_id: Int?,
     var man_of_series_id: Int?,
     var note: String?,
@@ -42,7 +42,7 @@ data class FixturesData(
     var venue_id: Int?,
     @Ignore
     var visitorteam_dl_data: VisitorteamDlData?,
-    var visitorteam_id: Int?,
+    var visitorteam_id: Int,
     @Ignore
     var weather_report: List<Any>?,
     var winner_team_id: Int?
@@ -57,7 +57,7 @@ data class FixturesData(
         league_id = null,
         live = null,
         localteam_dl_data = null,
-        localteam_id = null,
+        localteam_id = 0,
         man_of_match_id = null,
         man_of_series_id = null,
         note = null,
@@ -79,7 +79,7 @@ data class FixturesData(
         type = null,
         venue_id = null,
         visitorteam_dl_data = null,
-        visitorteam_id = null,
+        visitorteam_id = 0,
         weather_report = null,
         winner_team_id = null
     )

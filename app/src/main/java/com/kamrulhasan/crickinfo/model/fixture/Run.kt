@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
-@Entity
+@Entity(tableName = "run")
 data class Run(
     var fixture_id: Int?,
     @PrimaryKey

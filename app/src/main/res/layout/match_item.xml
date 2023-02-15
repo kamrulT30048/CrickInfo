@@ -7,7 +7,7 @@
     android:layout_margin="5dp"
     android:elevation="5dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/item_shape">
@@ -26,8 +26,8 @@
 
         <ImageView
             android:id="@+id/iv_team1"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_marginStart="5dp"
             android:src="@drawable/icon_image_24"
             app:layout_constraintBottom_toTopOf="@id/tv_team1"
@@ -61,21 +61,30 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20sp"
-            android:text="@string/_0_0"
+            android:text="@string/_0"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="@id/iv_team1"
             app:layout_constraintStart_toEndOf="@id/iv_team1"
             app:layout_constraintTop_toTopOf="@id/iv_team1" />
 
         <TextView
+            android:id="@+id/tv_wicket_team1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            app:layout_constraintStart_toEndOf="@id/tv_score_team1"
+            app:layout_constraintTop_toTopOf="@id/tv_score_team1"
+            tools:text="@string/_0" />
+
+        <TextView
             android:id="@+id/tv_vs"
-            android:textStyle="italic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20sp"
             android:text="@string/vs"
             android:textColor="@color/black"
             android:textSize="20sp"
+            android:textStyle="italic"
             app:layout_constraintEnd_toStartOf="@id/tv_score_team2"
             app:layout_constraintStart_toEndOf="@id/tv_score_team1"
             app:layout_constraintTop_toTopOf="@id/tv_score_team1" />
@@ -84,11 +93,20 @@
             android:id="@+id/tv_score_team2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="20sp"
-            android:text="@string/_0_0"
+            android:text="@string/_0"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toStartOf="@id/tv_wicket_team2"
+            app:layout_constraintTop_toTopOf="@id/tv_score_team1" />
+
+        <TextView
+            android:id="@+id/tv_wicket_team2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
             android:textSize="20sp"
             app:layout_constraintEnd_toStartOf="@id/iv_team2"
-            app:layout_constraintTop_toTopOf="@id/tv_score_team1" />
+            app:layout_constraintTop_toTopOf="@id/tv_score_team2"
+            tools:text="@string/_0" />
 
         <TextView
             android:id="@+id/tv_match_notes"
@@ -116,9 +134,9 @@
 
         <ImageView
             android:id="@+id/iv_team2"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginEnd="5dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="4dp"
             android:src="@drawable/icon_image_24"
             app:layout_constraintBottom_toTopOf="@id/tv_team2"
             app:layout_constraintEnd_toEndOf="parent"
