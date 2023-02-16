@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="120dp"
+    android:layout_height="55dp"
     android:layout_margin="5dp"
     android:elevation="5dp">
 
@@ -14,8 +14,8 @@
 
         <ImageView
             android:id="@+id/iv_player"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_marginStart="15dp"
             android:src="@drawable/icon_image_24"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -31,43 +31,19 @@
             android:text="@string/player_name"
             android:textColor="@color/black"
             android:textSize="20sp"
-            android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@id/iv_player"
             app:layout_constraintTop_toTopOf="@id/iv_player" />
 
         <TextView
-            android:id="@+id/tv_player_type"
+            android:id="@+id/tv_player_position"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20sp"
-            android:text="@string/bat_s_man"
+            android:layout_marginStart="16sp"
+            android:text="@string/player"
             android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="italic"
+            android:textSize="20sp"
             app:layout_constraintStart_toStartOf="@id/tv_player_name"
             app:layout_constraintTop_toBottomOf="@id/tv_player_name" />
-
-        <TextView
-            android:id="@+id/tv_player_county"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="18sp"
-            android:text="@string/country_name"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="@id/tv_player_name"
-            app:layout_constraintTop_toBottomOf="@id/tv_player_type" />
-
-        <TextView
-            android:id="@+id/tv_player_team"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="18sp"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="@id/tv_player_name"
-            app:layout_constraintTop_toBottomOf="@id/tv_player_county"
-            tools:text="@string/team" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

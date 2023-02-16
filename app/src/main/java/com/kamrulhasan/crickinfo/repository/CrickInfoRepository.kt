@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import com.kamrulhasan.crickinfo.database.CricketDao
 import com.kamrulhasan.crickinfo.model.fixture.FixturesData
 import com.kamrulhasan.crickinfo.model.fixture.Run
+import com.kamrulhasan.crickinfo.model.leagues.LeaguesData
+import com.kamrulhasan.crickinfo.model.officials.OfficialsData
 import com.kamrulhasan.crickinfo.model.team.TeamsData
 
 class CrickInfoRepository(private val cricketDao: CricketDao) {
@@ -36,14 +38,34 @@ class CrickInfoRepository(private val cricketDao: CricketDao) {
     }
 
     fun readTeamScoreById(team_id: Int, fixture_id: Int): LiveData<Int> {
-        return cricketDao.readTeamScoreById(team_id,fixture_id)
+        return cricketDao.readTeamScoreById(team_id, fixture_id)
     }
 
     fun readTeamWicketById(team_id: Int, fixture_id: Int): LiveData<Int> {
-        return cricketDao.readTeamWicketById(team_id,fixture_id)
+        return cricketDao.readTeamWicketById(team_id, fixture_id)
+    }
+
+    fun readTeamOverById(team_id: Int, fixture_id: Int): LiveData<Double> {
+        return cricketDao.readTeamOverById(team_id, fixture_id)
+    }
+
+    fun readOfficialsById(id: Int): LiveData<String> {
+        return cricketDao.readUmpireNameById(id)
+    }
+
+    fun readLeaguesById(id: Int): LiveData<String> {
+        return cricketDao.readLeaguesById(id)
     }
 
     suspend fun addTeams(teamsData: TeamsData) {
         cricketDao.addTeam(teamsData)
+    }
+
+    suspend fun addOfficials(officialsData: OfficialsData) {
+        cricketDao.addOfficials(officialsData)
+    }
+
+    suspend fun addLeagues(leaguesData: LeaguesData) {
+        cricketDao.addLeagues(leaguesData)
     }
 }

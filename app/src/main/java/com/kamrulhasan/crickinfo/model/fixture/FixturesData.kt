@@ -1,10 +1,13 @@
 package com.kamrulhasan.crickinfo.model.fixture
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
 
+@Parcelize
 @Entity(tableName = "fixtures_data")
 data class FixturesData(
     var draw_noresult: String?,
@@ -14,11 +17,11 @@ data class FixturesData(
     @PrimaryKey
     var id: Int,
     @Ignore
-    var last_period: Any?,
+    var last_period: @RawValue Any?,
     var league_id: Int?,
     var live: Boolean?,
     @Ignore
-    var localteam_dl_data: LocalteamDlData?,
+    var localteam_dl_data: @RawValue LocalteamDlData?,
     var localteam_id: Int,
     var man_of_match_id: Int?,
     var man_of_series_id: Int?,
@@ -29,7 +32,7 @@ data class FixturesData(
     var rpc_overs: String?,
     var rpc_target: String?,
     @Ignore
-    var runs: List<Run>?,
+    var runs: @RawValue List<Run>?,
     var season_id: Int?,
     var second_umpire_id: Int?,
     var stage_id: Int?,
@@ -42,12 +45,12 @@ data class FixturesData(
     var type: String?,
     var venue_id: Int?,
     @Ignore
-    var visitorteam_dl_data: VisitorteamDlData?,
+    var visitorteam_dl_data: @RawValue VisitorteamDlData?,
     var visitorteam_id: Int,
     @Ignore
-    var weather_report: List<Any>?,
+    var weather_report: @RawValue List<Any>?,
     var winner_team_id: Int?
-){
+):Parcelable{
     constructor(): this(
         draw_noresult= null,
         elected = null,

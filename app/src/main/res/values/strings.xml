@@ -21,4 +21,13 @@
     <string name="_0">0</string>
     <string name="t20i_2023_02_16">T20I - 2023-02-16</string>
     <string name="score">score</string>
+    <string name="team_squad">Team Squad</string>
+    <string name="status">Status</string>
+    <string name="winning">Winning Team</string>
+    <string name="toss_won">toss_won</string>
+    <string name="umpire">Umpire</string>
+    <string name="title">Title</string>
+    <string name="match_umpire">Match Umpire</string>
+    <string name="match_info">Match Info</string>
+    <string name="t20i">T20I</string>
 </resources>

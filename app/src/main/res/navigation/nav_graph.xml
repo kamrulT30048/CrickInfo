@@ -46,6 +46,9 @@
         <action
             android:id="@+id/action_newsFragment_to_fixturesFragment"
             app:destination="@id/fixturesFragment" />
+        <action
+            android:id="@+id/action_newsFragment_to_webViewFragment"
+            app:destination="@id/webViewFragment" />
     </fragment>
     <fragment
         android:id="@+id/upcomingMatchFragment"
@@ -81,5 +84,19 @@
         android:id="@+id/matchDetailsFragment"
         android:name="com.kamrulhasan.crickinfo.ui.fragment.MatchDetailsFragment"
         android:label="Match"
-        tools:layout="@layout/fragment_match_details" />
+        tools:layout="@layout/fragment_match_details" >
+        <argument
+            android:name="match"
+            app:argType="com.kamrulhasan.crickinfo.model.fixture.FixturesData" />
+    </fragment>
+    <fragment
+        android:id="@+id/webViewFragment"
+        android:name="com.kamrulhasan.crickinfo.ui.fragment.WebViewFragment"
+        android:label="Cricket News"
+        tools:layout="@layout/fragment_web_view" >
+        <argument
+            android:name="newsUrl"
+            app:argType="string"
+            android:defaultValue='""' />
+    </fragment>
 </navigation>

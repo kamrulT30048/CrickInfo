@@ -19,6 +19,7 @@ import com.kamrulhasan.topnews.utils.MyApplication
 private const val TAG = "RecentMatchFragment"
 
 class RecentMatchFragment : Fragment() {
+
     private var _binding: FragmentRecentMatchBinding? = null
     private val binding get() = _binding!!
 
@@ -53,8 +54,8 @@ class RecentMatchFragment : Fragment() {
             binding.matchRecyclerView.adapter = adapter
 
         }
-        val bottomNav: BottomNavigationView = requireActivity().findViewById(R.id.bottom_nav_bar)
 
+        val bottomNav: BottomNavigationView = requireActivity().findViewById(R.id.bottom_nav_bar)
         binding.matchRecyclerView.setOnScrollChangeListener { _: View?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
             if (scrollY > oldScrollY) {
                 bottomNav.visibility = View.GONE

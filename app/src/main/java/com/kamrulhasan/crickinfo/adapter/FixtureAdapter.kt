@@ -1,30 +1,23 @@
 package com.kamrulhasan.crickinfo.adapter
 
-import android.util.Log
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kamrulhasan.crickinfo.R
 import com.kamrulhasan.crickinfo.model.fixture.FixturesData
-import com.kamrulhasan.crickinfo.model.fixture.Run
-import com.kamrulhasan.crickinfo.model.team.TeamsData
-import com.kamrulhasan.crickinfo.ui.fragment.FixturesFragment
 import com.kamrulhasan.crickinfo.ui.fragment.FixturesFragmentDirections
-import com.kamrulhasan.crickinfo.ui.fragment.MatchDetailsFragment
-import com.kamrulhasan.crickinfo.ui.fragment.RecentMatchFragmentDirections
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
 import com.kamrulhasan.topnews.utils.DateConverter
+import com.kamrulhasan.topnews.utils.MATCH_ID
 import com.kamrulhasan.topnews.utils.MyApplication
-import kotlinx.coroutines.launch
-import kotlin.math.acos
+import com.kamrulhasan.topnews.utils.URL_KEY
 
 private const val TAG = "FixtureAdapter"
 
@@ -131,11 +124,12 @@ class FixtureAdapter(
                     "-"
                 }
             }
-        holder.itemView.setOnClickListener {
 
-//            Toast.makeText(MyApplication.appContext, "Item Clicked..!!!", Toast.LENGTH_SHORT).show()
-            val direction= FixturesFragmentDirections.actionFixturesFragmentToMatchDetailsFragment()
-            holder.itemView.findNavController().navigate(R.id.matchDetailsFragment)
+        // navigate to details
+        holder.itemView.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putParcelable(MATCH_ID, fixturesItem)
+            holder.itemView.findNavController().navigate(R.id.matchDetailsFragment,bundle)
         }
     }
 

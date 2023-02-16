@@ -7,71 +7,81 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.kamrulhasan.crickinfo.database.CrickInfoDatabase
+import com.kamrulhasan.crickinfo.model.News.Article
 import com.kamrulhasan.crickinfo.model.fixture.FixturesData
 import com.kamrulhasan.crickinfo.model.fixture.Run
+import com.kamrulhasan.crickinfo.model.leagues.LeaguesData
+import com.kamrulhasan.crickinfo.model.officials.OfficialsData
 import com.kamrulhasan.crickinfo.model.team.TeamsData
 import com.kamrulhasan.crickinfo.network.CricketApi
 import com.kamrulhasan.crickinfo.repository.CrickInfoRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.await
 
 private const val TAG = "CrickInfoViewModel"
 
 class CrickInfoViewModel(application: Application) : AndroidViewModel(application) {
 
-    private var _fixturesData: MutableLiveData<List<FixturesData>> =
-        MutableLiveData<List<FixturesData>>()
-    var fixturesData: LiveData<List<FixturesData>>// = _fixturesData!!
+    var fixturesData: LiveData<List<FixturesData>>
     var teamsData: LiveData<List<TeamsData>>
-    var teamCode: LiveData<String>? = null
 
-//    var team: TeamsData
-
-    var localTeam: TeamsData? = null
-    var visitorTeam: TeamsData? = null
+    private var _news: MutableLiveData<List<Article>?> = MutableLiveData<List<Article>?>()
+    val news: MutableLiveData<List<Article>?> = _news
 
     private val repository: CrickInfoRepository
 
     init {
+
         repository = CrickInfoRepository(
             CrickInfoDatabase.getDatabase(application)
                 .cricketDao()
         )
+
         fixturesData = repository.readAllFixturesData
 
         teamsData = repository.readAllTeamsData
-//        teamCode = repository.readTeamCodeById()
 
+        getLeaguesData()
+        getOfficialsData()
         getTeamsData()
         getFixturesData()
     }
 
     ///  read team code
-    fun readTeamCode(id: Int): LiveData<String>{
+    fun readTeamCode(id: Int): LiveData<String> {
         return repository.readTeamCodeById(id)
     }
 
-    fun readTeamUrl(id: Int): LiveData<String>{
+    fun readTeamUrl(id: Int): LiveData<String> {
         return repository.readTeamIconById(id)
     }
 
-    // read run
-
-    fun readScoreById(team_id: Int, fixture_id: Int): LiveData<Int>{
+    /// read run
+    fun readScoreById(team_id: Int, fixture_id: Int): LiveData<Int> {
         return repository.readTeamScoreById(team_id, fixture_id)
     }
-    fun readWicketById(team_id: Int, fixture_id: Int): LiveData<Int>{
+
+    fun readWicketById(team_id: Int, fixture_id: Int): LiveData<Int> {
         return repository.readTeamWicketById(team_id, fixture_id)
     }
 
-    private fun readAllFixtures() {
-        try {
-            fixturesData = repository.readAllFixturesData
-        }catch (e: Exception){
-            Log.d(TAG, "readAllFixtures: $e")
-        }
+    fun readOverById(team_id: Int, fixture_id: Int): LiveData<Double> {
+        return repository.readTeamOverById(team_id, fixture_id)
     }
 
+    // officials
+    fun readOfficialsById(id: Int): LiveData<String> {
+        return repository.readOfficialsById(id)
+    }
+
+    // officials
+    fun readLeaguesById(id: Int): LiveData<String> {
+        return repository.readLeaguesById(id)
+    }
+
+    // add Matches info into database
     private fun getFixturesData() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -98,15 +108,15 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
         readAllFixtures()
     }
 
-    /*fun getTeamById(team_id: Int): TeamsData?{
-//        return repository.readTeamById(team_id)
-        var team: TeamsData? = null
-        viewModelScope.launch(Dispatchers.IO) {
-            team = repository.readTeamById(team_id)
+    private fun readAllFixtures() {
+        try {
+            fixturesData = repository.readAllFixturesData
+        } catch (e: Exception) {
+            Log.d(TAG, "readAllFixtures: $e")
         }
-        return team
     }
-*/
+
+    // add team data into database
     private fun getTeamsData() {
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -119,29 +129,55 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
             teamsList.forEach {
                 repository.addTeams(it)
             }
-            teamsData = repository.readAllTeamsData
         }
     }
 
-    /*fun getLocalTeamById(id: Int) {
-        viewModelScope.launch(Dispatchers.Main) {
+    // add officials data into database
+    private fun getOfficialsData() {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            var officialsList: List<OfficialsData>? = listOf()
             try {
-                localTeam = CricketApi.retrofitService.getTeamById(id).data
+                officialsList = CricketApi.retrofitService.getOfficials().data
             } catch (e: Exception) {
-                localTeam = null
-                Log.d(TAG, "getTeamById: $e")
+                Log.d(TAG, "getTeamsData: $e")
+            }
+            officialsList?.forEach {
+                repository.addOfficials(it)
             }
         }
     }
 
-    fun getVisitorTeamById(id: Int) {
-        viewModelScope.launch(Dispatchers.Main) {
+    // add officials data into database
+    private fun getLeaguesData() {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            var leaguesList: List<LeaguesData>? = listOf()
             try {
-                visitorTeam = CricketApi.retrofitService.getTeamById(id).data
+                leaguesList = CricketApi.retrofitService.getLeagues().data
             } catch (e: Exception) {
-                visitorTeam = null
-                Log.d(TAG, "getTeamById: $e")
+                Log.d(TAG, "getTeamsData: $e")
+            }
+            leaguesList?.forEach {
+                repository.addLeagues(it)
             }
         }
-    }*/
+    }
+
+    // get cricket news
+    fun getNewsArticle() {
+
+        viewModelScope.launch(Dispatchers.IO) {
+
+            try {
+
+                val articles = CricketApi.news_retrofitService.getCricketNews().await().articles
+                _news.postValue(articles)
+
+            } catch (e: Exception) {
+                Log.d("TAG", "getNewsArticle: $e")
+            }
+        }
+    }
+
 }
