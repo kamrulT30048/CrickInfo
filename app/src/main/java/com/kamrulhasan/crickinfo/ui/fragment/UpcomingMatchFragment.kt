@@ -5,6 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.kamrulhasan.crickinfo.R
+import com.kamrulhasan.crickinfo.adapter.FixtureAdapter
 import com.kamrulhasan.crickinfo.databinding.FragmentUpcomingMatchBinding
 import com.kamrulhasan.crickinfo.model.fixture.FixturesData
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
@@ -32,7 +36,26 @@ class UpcomingMatchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val today = Calendar.getInstance().time
+        viewModel = ViewModelProvider(this)[CrickInfoViewModel::class.java]
+
+        viewModel.fixturesData.observe(viewLifecycleOwner) {
+
+            matchList = it
+            val adapter = FixtureAdapter(matchList, viewModel, viewLifecycleOwner)
+            binding.matchRecyclerView.adapter = adapter
+
+        }
+        val bottomNav: BottomNavigationView = requireActivity().findViewById(R.id.bottom_nav_bar)
+
+        binding.matchRecyclerView.setOnScrollChangeListener { _: View?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
+            if (scrollY > oldScrollY) {
+                bottomNav.visibility = View.GONE
+            } else {
+                bottomNav.visibility = View.VISIBLE
+            }
+        }
+
+        /*val today = Calendar.getInstance().time
         val formatter = SimpleDateFormat("yyyy-MM-dd")
 
         binding.tvDate.text = formatter.format(today)
@@ -40,7 +63,7 @@ class UpcomingMatchFragment : Fragment() {
         binding.tvDateLong.text = long.toString()
 
         val date = DateConverter.longToDate(long)
-        binding.tvLongToDate.text = today.month.toString()
+        binding.tvLongToDate.text = today.month.toString()*/
 
     }
 }

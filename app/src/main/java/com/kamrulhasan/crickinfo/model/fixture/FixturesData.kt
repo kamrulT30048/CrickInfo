@@ -3,6 +3,7 @@ package com.kamrulhasan.crickinfo.model.fixture
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 
 @Entity(tableName = "fixtures_data")
 data class FixturesData(

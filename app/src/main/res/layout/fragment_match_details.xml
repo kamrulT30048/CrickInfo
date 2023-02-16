@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:context=".ui.fragment.MatchDetailsFragment">
@@ -28,9 +28,8 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_marginStart="15dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="16dp"
             android:src="@drawable/icon_image_24"
-            app:layout_constraintEnd_toStartOf="@id/tv_vs"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_format_date"
             tools:ignore="ContentDescription" />
@@ -52,24 +51,24 @@
             android:id="@+id/tv_score_team1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="-20dp"
             android:text="@string/_0"
             android:textColor="@color/black"
             android:textSize="20sp"
-            app:layout_constraintStart_toStartOf="@id/tv_team1"
-            app:layout_constraintTop_toBottomOf="@id/tv_team1" />
+            app:layout_constraintBottom_toBottomOf="@id/tv_team1"
+            app:layout_constraintStart_toEndOf="@id/iv_team1"
+            app:layout_constraintTop_toTopOf="@id/iv_team1" />
 
         <TextView
             android:id="@+id/tv_wicket_team1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:text="@string/_0"
             android:textColor="@color/black"
             android:textSize="20sp"
-            app:layout_constraintEnd_toStartOf="@id/tv_over_team1"
             app:layout_constraintStart_toEndOf="@id/tv_score_team1"
-            app:layout_constraintTop_toBottomOf="@id/tv_team1" />
+            app:layout_constraintTop_toTopOf="@id/tv_score_team1" />
 
         <TextView
             android:id="@+id/tv_over_team1"
@@ -77,22 +76,22 @@
             android:layout_height="wrap_content"
             android:text="@string/_0"
             android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="@id/tv_team1"
-            app:layout_constraintStart_toEndOf="@id/tv_wicket_team1"
-            app:layout_constraintTop_toTopOf="@id/tv_score_team1" />
+            app:layout_constraintEnd_toEndOf="@id/tv_wicket_team1"
+            app:layout_constraintStart_toStartOf="@id/tv_score_team1"
+            app:layout_constraintTop_toBottomOf="@id/tv_score_team1" />
 
-        <TextView
-            android:id="@+id/tv_vs"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/vs"
-            android:textColor="@color/black"
-            android:textSize="25sp"
-            android:textStyle="italic"
-            app:layout_constraintBottom_toBottomOf="@id/iv_team1"
-            app:layout_constraintEnd_toEndOf="@id/iv_team2"
-            app:layout_constraintStart_toStartOf="@id/iv_team1"
-            app:layout_constraintTop_toTopOf="@id/iv_team1" />
+        <!--        <TextView-->
+        <!--            android:id="@+id/tv_vs"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:text="@string/vs"-->
+        <!--            android:textColor="@color/black"-->
+        <!--            android:textSize="25sp"-->
+        <!--            android:textStyle="italic"-->
+        <!--            app:layout_constraintBottom_toBottomOf="@id/iv_team1"-->
+        <!--            app:layout_constraintEnd_toEndOf="@id/iv_team2"-->
+        <!--            app:layout_constraintStart_toStartOf="@id/iv_team1"-->
+        <!--            app:layout_constraintTop_toTopOf="@id/iv_team1" />-->
 
         <ImageView
             android:id="@+id/iv_team2"
@@ -101,7 +100,6 @@
             android:layout_marginEnd="15dp"
             android:src="@drawable/icon_image_24"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/tv_vs"
             app:layout_constraintTop_toTopOf="@id/iv_team1"
             tools:ignore="ContentDescription" />
 
@@ -121,24 +119,24 @@
             android:id="@+id/tv_score_team2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:text="@string/_0"
             android:textColor="@color/black"
             android:textSize="20sp"
-            app:layout_constraintStart_toStartOf="@id/tv_team2"
-            app:layout_constraintTop_toBottomOf="@id/tv_team2" />
+            app:layout_constraintEnd_toStartOf="@id/tv_wicket_team2"
+            app:layout_constraintTop_toTopOf="@id/tv_wicket_team2" />
 
         <TextView
             android:id="@+id/tv_wicket_team2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="-20dp"
+            android:layout_marginEnd="10dp"
             android:text="@string/_0"
             android:textColor="@color/black"
             android:textSize="20sp"
-            app:layout_constraintEnd_toStartOf="@id/tv_over_team2"
-            app:layout_constraintStart_toEndOf="@id/tv_score_team2"
-            app:layout_constraintTop_toBottomOf="@id/tv_team2" />
+            app:layout_constraintBottom_toBottomOf="@id/tv_team2"
+            app:layout_constraintEnd_toStartOf="@id/iv_team2"
+            app:layout_constraintTop_toTopOf="@id/iv_team2" />
 
         <TextView
             android:id="@+id/tv_over_team2"
@@ -146,20 +144,56 @@
             android:layout_height="wrap_content"
             android:text="@string/_0"
             android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="@id/tv_team2"
-            app:layout_constraintStart_toEndOf="@id/tv_wicket_team2"
-            app:layout_constraintTop_toTopOf="@id/tv_score_team2" />
+            app:layout_constraintEnd_toEndOf="@id/tv_wicket_team2"
+            app:layout_constraintStart_toStartOf="@id/tv_score_team2"
+            app:layout_constraintTop_toBottomOf="@id/tv_score_team2" />
 
         <TextView
             android:id="@+id/tv_match_notes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:text="@string/match_notes"
+            android:textColor="@color/black"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_score_team1" />
+            app:layout_constraintTop_toBottomOf="@id/tv_team1" />
 
+        <TextView
+            android:id="@+id/tv_series"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_match_notes"
+            tools:text="@string/matches" />
+
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:id="@+id/tv_team_squad"-->
+<!--            -->
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_series" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/view_pager"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tab_layout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

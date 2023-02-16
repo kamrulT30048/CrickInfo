@@ -5,7 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.android.material.tabs.TabLayoutMediator
 import com.kamrulhasan.crickinfo.R
+import com.kamrulhasan.crickinfo.adapter.ViewPagerAdapter
 import com.kamrulhasan.crickinfo.databinding.FragmentFixturesBinding
 import com.kamrulhasan.crickinfo.databinding.FragmentMatchDetailsBinding
 
@@ -25,6 +27,17 @@ class MatchDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val adapter = ViewPagerAdapter(childFragmentManager, lifecycle)
+        binding.viewPager.adapter = adapter
+
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            when (position) {
+                0 -> tab.text = "Live"
+                1 -> tab.text = "Upcoming"
+                2 -> tab.text = "Recent"
+            }
+        }.attach()
 
     }
 }
