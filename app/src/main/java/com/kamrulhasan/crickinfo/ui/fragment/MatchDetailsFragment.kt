@@ -2,24 +2,23 @@ package com.kamrulhasan.crickinfo.ui.fragment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
-import com.google.android.material.tabs.TabLayoutMediator
 import com.kamrulhasan.crickinfo.R
-import com.kamrulhasan.crickinfo.adapter.FixtureAdapter
-import com.kamrulhasan.crickinfo.adapter.MatchSquadViewPagerAdapter
-import com.kamrulhasan.crickinfo.adapter.ViewPagerAdapter
-import com.kamrulhasan.crickinfo.databinding.FragmentFixturesBinding
+import com.kamrulhasan.crickinfo.adapter.LineupAdapter
 import com.kamrulhasan.crickinfo.databinding.FragmentMatchDetailsBinding
 import com.kamrulhasan.crickinfo.model.fixture.FixturesData
+import com.kamrulhasan.crickinfo.model.lineup.Lineup
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
 import com.kamrulhasan.topnews.utils.DateConverter
 import com.kamrulhasan.topnews.utils.MATCH_ID
-import com.kamrulhasan.topnews.utils.URL_KEY
+
+private const val TAG = "MatchDetailsFragment"
 
 class MatchDetailsFragment : Fragment() {
 
@@ -56,6 +55,7 @@ class MatchDetailsFragment : Fragment() {
 
         match?.let { it ->
 
+
             binding.tvDate.text = it.starting_at?.let { DateConverter.zoneToDate(it) }
             binding.tvMatchNotes.text = it.note
             binding.tvStatus.text = "Status: ${it.status}"
@@ -67,6 +67,15 @@ class MatchDetailsFragment : Fragment() {
                     .observe(viewLifecycleOwner) {
                         binding.tvMatchWonTeam.text = "Winner: $it"
                     }
+            }
+
+            // MOM
+            it.man_of_match_id?.let{ it1 ->
+                viewModel.getPlayerNameById(it1)
+                viewModel.playerName.observe(viewLifecycleOwner){
+                    Log.d(TAG, "onViewCreated: $it")
+                    binding.tvManOfTheMatch.text = "MOM: $it"
+                }
             }
 
             //toss won team
@@ -85,8 +94,10 @@ class MatchDetailsFragment : Fragment() {
                     }
             }
 
-            // match Umpire Info
-            binding.tvTvUmpire.text = "3rd Umpire"
+            /// match Umpire Info
+            binding.tvFirstUmpire.text = "1st Umpire: __"
+            binding.tvSecondUmpire.text = "2nd Umpire: __"
+            binding.tvTvUmpire.text = "3rd Umpire: __"
 
             it.first_umpire_id?.let { it1 ->
                 viewModel.readOfficialsById(it1)
@@ -191,7 +202,68 @@ class MatchDetailsFragment : Fragment() {
                         "(-)"
                     }
                 }
+
+            //// Lineup calling
+            viewModel.getLineup(it.id)
+
+            val localTeam = it.localteam_id
+            val visitorTeam = it.visitorteam_id
+
+            val lineupLocal = mutableListOf<Lineup>()
+            val lineupVisitor = mutableListOf<Lineup>()
+
+            viewModel.lineup.observe(viewLifecycleOwner){ it1 ->
+
+                lineupLocal.clear()
+                lineupVisitor.clear()
+
+                Log.d(TAG, "onViewCreated: lineup: ${it1?.size}")
+
+                it1?.forEach {
+                    if(it.lineup?.team_id == localTeam){
+                        lineupLocal.add(it)
+                    }else{
+                        lineupVisitor.add(it)
+                    }
+                }
+                binding.recyclerViewTeamSquad.adapter = LineupAdapter(lineupLocal)
+            }
+//            viewModel.getSquadByTeamId(it.localteam_id)
+            binding.tvNameTeam1.setBackgroundColor(resources.getColor( R.color.olive_light_00))
+
+            /*var list = listOf<Squad>()
+
+            viewModel.playerList.observe(viewLifecycleOwner){
+
+                it?.let{
+
+                    list = it
+                    binding.recyclerViewTeamSquad.adapter = TeamSquadAdapter(list)
+
+                }
+            }*/
+
+            val localId = it.localteam_id
+            binding.tvNameTeam1.setOnClickListener {
+//                viewModel.getSquadByTeamId(localId)
+
+                binding.recyclerViewTeamSquad.adapter = LineupAdapter(lineupLocal)
+
+                binding.tvNameTeam1.setBackgroundColor(resources.getColor( R.color.olive_light_00))
+                binding.tvNameTeam2.setBackgroundColor(resources.getColor( R.color.gray_light_0))
+            }
+
+            val visitorId = it.visitorteam_id
+            binding.tvNameTeam2.setOnClickListener {
+//                viewModel.getSquadByTeamId(visitorId)
+
+                binding.recyclerViewTeamSquad.adapter = LineupAdapter(lineupVisitor)
+
+                binding.tvNameTeam1.setBackgroundColor(resources.getColor( R.color.gray_light_0))
+                binding.tvNameTeam2.setBackgroundColor(resources.getColor( R.color.olive_light_00))
+            }
         }
+
 
 
     }

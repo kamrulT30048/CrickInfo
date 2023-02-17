@@ -10,7 +10,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kamrulhasan.crickinfo.R
-import com.kamrulhasan.crickinfo.model.News.Article
+import com.kamrulhasan.crickinfo.model.news.Article
 import com.kamrulhasan.topnews.utils.MyApplication
 import com.kamrulhasan.topnews.utils.URL_KEY
 

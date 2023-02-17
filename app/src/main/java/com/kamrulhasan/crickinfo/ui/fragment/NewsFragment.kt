@@ -10,12 +10,9 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.kamrulhasan.crickinfo.R
-import com.kamrulhasan.crickinfo.adapter.FixtureAdapter
 import com.kamrulhasan.crickinfo.adapter.NewsAdapter
 import com.kamrulhasan.crickinfo.databinding.FragmentNewsBinding
-import com.kamrulhasan.crickinfo.databinding.FragmentRecentMatchBinding
-import com.kamrulhasan.crickinfo.model.News.Article
-import com.kamrulhasan.crickinfo.model.fixture.FixturesData
+import com.kamrulhasan.crickinfo.model.news.Article
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
 
 class NewsFragment : Fragment() {

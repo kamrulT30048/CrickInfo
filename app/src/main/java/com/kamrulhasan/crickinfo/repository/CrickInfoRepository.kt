@@ -2,10 +2,14 @@ package com.kamrulhasan.crickinfo.repository
 
 import androidx.lifecycle.LiveData
 import com.kamrulhasan.crickinfo.database.CricketDao
+import com.kamrulhasan.crickinfo.model.country.Country
+import com.kamrulhasan.crickinfo.model.country.CountryData
 import com.kamrulhasan.crickinfo.model.fixture.FixturesData
 import com.kamrulhasan.crickinfo.model.fixture.Run
 import com.kamrulhasan.crickinfo.model.leagues.LeaguesData
 import com.kamrulhasan.crickinfo.model.officials.OfficialsData
+import com.kamrulhasan.crickinfo.model.season.Seasons
+import com.kamrulhasan.crickinfo.model.season.SeasonsData
 import com.kamrulhasan.crickinfo.model.team.TeamsData
 
 class CrickInfoRepository(private val cricketDao: CricketDao) {
@@ -67,5 +71,13 @@ class CrickInfoRepository(private val cricketDao: CricketDao) {
 
     suspend fun addLeagues(leaguesData: LeaguesData) {
         cricketDao.addLeagues(leaguesData)
+    }
+
+    suspend fun addSeasons(seasonsData: SeasonsData) {
+        cricketDao.addSeasons(seasonsData)
+    }
+
+    suspend fun addCountries(countryData: CountryData) {
+        cricketDao.addCountries(countryData)
     }
 }

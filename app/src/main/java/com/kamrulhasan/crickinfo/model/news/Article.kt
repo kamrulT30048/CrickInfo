@@ -1,4 +1,4 @@
-package com.kamrulhasan.crickinfo.model.News
+package com.kamrulhasan.crickinfo.model.news
 
 data class Article(
     val author: String?,

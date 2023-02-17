@@ -1,7 +1,7 @@
 package com.kamrulhasan.crickinfo.model.player
 
 data class Batting(
-    val average: Int?,
+    val average: Double?,
     val balls_faced: Int?,
     val fifties: Int?,
     val four_x: Int?,
@@ -14,5 +14,5 @@ data class Batting(
     val not_outs: Int?,
     val runs_scored: Int?,
     val six_x: Int?,
-    val strike_rate: Int?
+    val strike_rate: Double?
 )

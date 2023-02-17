@@ -1,10 +1,15 @@
 package com.kamrulhasan.crickinfo.network
 
-import com.kamrulhasan.crickinfo.model.News.News
+import com.kamrulhasan.crickinfo.model.country.Country
+import com.kamrulhasan.crickinfo.model.news.News
 import com.kamrulhasan.crickinfo.model.fixture.Fixtures
 import com.kamrulhasan.crickinfo.model.leagues.Leagues
+import com.kamrulhasan.crickinfo.model.lineup.FixturesLineup
 import com.kamrulhasan.crickinfo.model.officials.Officials
-import com.kamrulhasan.crickinfo.model.officials.OfficialsData
+import com.kamrulhasan.crickinfo.model.player.Players
+import com.kamrulhasan.crickinfo.model.player.PlayersData
+import com.kamrulhasan.crickinfo.model.season.Seasons
+import com.kamrulhasan.crickinfo.model.squad.SquadTeams
 import com.kamrulhasan.crickinfo.model.team.Teams
 import com.kamrulhasan.crickinfo.model.team.TeamsData
 import com.kamrulhasan.topnews.utils.*
@@ -46,12 +51,42 @@ interface CricketAPIService {
         @Query("api_token") api_token: String = API_TOKEN
     ): Fixtures
 
+    @GET("$FIXTURES_END/{fixtures_id}")
+    fun getLineup(
+        @Path("fixtures_id") fixtures_id: Int,
+        @Query("include") include: String = "lineup",
+        @Query("api_token") api_token: String = API_TOKEN
+    ): Call<FixturesLineup>
+
     @GET("teams/{team_id}")
     suspend fun getTeamById(
         @Path("team_id") team_id: Int,
         @Query("api_token") api_token: String = API_TOKEN
     ): TeamsData
 
+    //get players
+    @GET("$PLAYER_END/{player_id}")
+    fun getPlayerById(
+        @Path("player_id") player_id: Int,
+        @Query("include") include: String = "career,teams",
+        @Query("api_token") api_token: String = API_TOKEN
+    ): Call<Players>
+
+    //get players
+    @GET("$PLAYER_END/{player_id}")
+    fun getPlayerNameById(
+        @Path("player_id") player_id: Int,
+        @Query("api_token") api_token: String = API_TOKEN
+    ): Call<Players>
+
+    //// get squad
+    @GET("$TEAM_END/{team_id}/squad/23")
+    fun getPlayersByTeam(
+        @Path("team_id") team_id: Int,
+        @Query("api_token") api_token: String = API_TOKEN
+    ): Call<SquadTeams>
+
+    /// get teams
     @GET(TEAM_END)
     suspend fun getTeams(
         @Query("api_token") api_token: String = API_TOKEN
@@ -66,6 +101,17 @@ interface CricketAPIService {
     suspend fun getOfficials(
         @Query("api_token") api_token: String = API_TOKEN
     ): Officials
+
+    @GET(COUNTRIES_END)
+    suspend fun getCountries(
+        @Query("api_token") api_token: String = API_TOKEN
+    ): Country
+
+    @GET(SEASONS_END)
+    suspend fun getSeasons(
+        @Query("api_token") api_token: String = API_TOKEN
+    ): Seasons
+
 
     @GET(GET_CRICKET_NEWS)
     fun getCricketNews(): Call<News>

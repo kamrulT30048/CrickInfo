@@ -88,6 +88,9 @@
         <argument
             android:name="match"
             app:argType="com.kamrulhasan.crickinfo.model.fixture.FixturesData" />
+        <action
+            android:id="@+id/action_matchDetailsFragment_to_playerDetailsFragment"
+            app:destination="@id/playerDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/webViewFragment"
@@ -98,5 +101,15 @@
             android:name="newsUrl"
             app:argType="string"
             android:defaultValue='""' />
+    </fragment>
+    <fragment
+        android:id="@+id/playerDetailsFragment"
+        android:name="com.kamrulhasan.crickinfo.ui.fragment.PlayerDetailsFragment"
+        android:label="Player Details"
+        tools:layout="@layout/fragment_player_details" >
+        <argument
+            android:name="player_id"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
 </navigation>

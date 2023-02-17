@@ -16,6 +16,7 @@ import com.kamrulhasan.crickinfo.model.officials.Officials
 const val IMAGE_URL = "https://www.google.com/imgres?imgurl=https%3A%2F%2Fvectorportal.com%2Fstorage%2Ftennis-ball-on-fire-vector_8379.jpg&imgrefurl=https%3A%2F%2Fvectorportal.com%2Fvector%2Ftennis-ball-on-fire-vector.ai%2F6883&tbnid=HBE9AZ-skCEvnM&vet=12ahUKEwiD2LGGvYX9AhXkitgFHfG6AdcQMygHegQIARBN..i&docid=so-ii3tHemQQJM&w=660&h=660&q=cricket%20icon&hl=en&ved=2ahUKEwiD2LGGvYX9AhXkitgFHfG6AdcQMygHegQIARBN"
 
 const val MATCH_ID = "match_id"
+const val PLAYER_ID = "player_id"
 const val URL_KEY = "NEWS_URL_KEY"
 const val DEFAULT_NEWS_PAGE = "https://www.bbc.com/bengali"
 
@@ -36,8 +37,11 @@ const val GET_CRICKET_NEWS = "everything?q=cricket&sortBy=publishedAt&pageSize=2
 // specific api link
 const val FIXTURES_END = "fixtures"             //?api_token=$api_token"
 const val OFFICIALS_END = "officials"
+const val COUNTRIES_END = "countries"
+const val SEASONS_END = "seasons"
 const val LEAGUES_END = "leagues"
 const val TEAM_END = "teams"
+const val PLAYER_END = "players"
 
 
 

@@ -30,4 +30,5 @@
     <string name="match_umpire">Match Umpire</string>
     <string name="match_info">Match Info</string>
     <string name="t20i">T20I</string>
+    <string name="position">Position</string>
 </resources>

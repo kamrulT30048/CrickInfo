@@ -4,15 +4,17 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.kamrulhasan.crickinfo.model.country.CountryData
 import com.kamrulhasan.crickinfo.model.fixture.FixturesData
 import com.kamrulhasan.crickinfo.model.fixture.Run
 import com.kamrulhasan.crickinfo.model.leagues.LeaguesData
 import com.kamrulhasan.crickinfo.model.officials.OfficialsData
+import com.kamrulhasan.crickinfo.model.season.SeasonsData
 import com.kamrulhasan.crickinfo.model.team.TeamsData
 
 @Database(
-    entities = [TeamsData::class,FixturesData::class,Run::class,LeaguesData::class,OfficialsData::class],
-    version = 7,
+    entities = [TeamsData::class,FixturesData::class,Run::class,LeaguesData::class,OfficialsData::class,CountryData::class,SeasonsData::class],
+    version = 8,
     exportSchema = false
 )
 

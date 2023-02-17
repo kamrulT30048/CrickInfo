@@ -1,9 +1,8 @@
-package com.kamrulhasan.crickinfo.model.player
+package com.kamrulhasan.crickinfo.model.lineup
 
-data class PlayersData(
+data class Lineup(
     val battingstyle: String?,
     val bowlingstyle: String?,
-    val career: List<Career>?,
     val country_id: Int?,
     val dateofbirth: String?,
     val firstname: String?,
@@ -12,8 +11,8 @@ data class PlayersData(
     val id: Int,
     val image_path: String?,
     val lastname: String?,
+    val lineup: LineupX?,
     val position: Position?,
     val resource: String?,
-    val teams: List<Team>?,
     val updated_at: String?
 )

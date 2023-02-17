@@ -1,4 +1,4 @@
-package com.kamrulhasan.crickinfo.model.News
+package com.kamrulhasan.crickinfo.model.news
 
 data class News(
     val articles: List<Article>?,

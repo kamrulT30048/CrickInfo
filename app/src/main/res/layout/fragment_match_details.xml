@@ -179,6 +179,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:gravity="center"
             android:text="@string/match_notes"
             android:textColor="@color/black"
             android:textSize="20sp"
@@ -285,26 +286,27 @@
 
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_team1"
+            android:id="@+id/recycler_view_team_squad"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="3dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
             android:layout_marginBottom="3dp"
+            android:background="@color/olive_light_00"
             app:layoutManager="LinearLayoutManager"
-            app:layout_constraintEnd_toStartOf="@id/recycler_view_team2"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_name_team1" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_team2"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="3dp"
-            android:layout_marginBottom="3dp"
-            app:layoutManager="LinearLayoutManager"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/recycler_view_team1"
-            app:layout_constraintTop_toBottomOf="@id/tv_name_team1" />
+        <!--       <androidx.recyclerview.widget.RecyclerView
+                   android:id="@+id/recycler_view_team2"
+                   android:layout_width="0dp"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="3dp"
+                   android:layout_marginBottom="3dp"
+                   app:layoutManager="LinearLayoutManager"
+                   app:layout_constraintEnd_toEndOf="parent"
+                   app:layout_constraintStart_toEndOf="@id/recycler_view_team1"
+                   app:layout_constraintTop_toBottomOf="@id/tv_name_team1" />-->
 
         <!--        <TextView-->
         <!--            android:layout_width="wrap_content"-->
@@ -325,7 +327,7 @@
             android:textColor="@color/olive_dark"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/recycler_view_team1"
+            app:layout_constraintTop_toBottomOf="@id/recycler_view_team_squad"
             tools:layout_editor_absoluteX="0dp" />
 
         <TextView
@@ -357,6 +359,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
+            android:clipToPadding="false"
+            android:paddingBottom="80dp"
             android:textColor="@color/black"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"

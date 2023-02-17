@@ -5,10 +5,14 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.IGNORE
 import androidx.room.Query
+import com.kamrulhasan.crickinfo.model.country.Country
+import com.kamrulhasan.crickinfo.model.country.CountryData
 import com.kamrulhasan.crickinfo.model.fixture.FixturesData
 import com.kamrulhasan.crickinfo.model.fixture.Run
 import com.kamrulhasan.crickinfo.model.leagues.LeaguesData
 import com.kamrulhasan.crickinfo.model.officials.OfficialsData
+import com.kamrulhasan.crickinfo.model.season.Seasons
+import com.kamrulhasan.crickinfo.model.season.SeasonsData
 import com.kamrulhasan.crickinfo.model.team.TeamsData
 
 @Dao
@@ -29,6 +33,11 @@ interface CricketDao {
     @Insert(onConflict = IGNORE)
     suspend fun addLeagues(leaguesData: LeaguesData)
 
+    @Insert(onConflict = IGNORE)
+    suspend fun addSeasons(seasonsData: SeasonsData)
+
+    @Insert(onConflict = IGNORE)
+    suspend fun addCountries(countryData: CountryData)
 
     @Query("SELECT * FROM fixtures_data ORDER BY starting_at DESC")
     fun readAllFixturesData(): LiveData<List<FixturesData>>
