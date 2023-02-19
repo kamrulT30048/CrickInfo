@@ -232,16 +232,10 @@ class MatchDetailsFragment : Fragment() {
             binding.tvNameTeam1.setBackgroundColor(resources.getColor( R.color.olive_light_00))
 
             /*var list = listOf<Squad>()
-
             viewModel.playerList.observe(viewLifecycleOwner){
-
-                it?.let{
-
-                    list = it
+                it?.let{  list = it
                     binding.recyclerViewTeamSquad.adapter = TeamSquadAdapter(list)
-
-                }
-            }*/
+                } }*/
 
             val localId = it.localteam_id
             binding.tvNameTeam1.setOnClickListener {

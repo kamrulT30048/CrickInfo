@@ -1,17 +1,21 @@
 package com.kamrulhasan.crickinfo.adapter
 
+import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kamrulhasan.crickinfo.R
 import com.kamrulhasan.crickinfo.model.lineup.Lineup
 import com.kamrulhasan.crickinfo.model.squad.Squad
+import com.kamrulhasan.topnews.utils.MATCH_ID
 import com.kamrulhasan.topnews.utils.MyApplication
+import com.kamrulhasan.topnews.utils.PLAYER_ID
 
 private const val TAG = "LineupAdapter"
 
@@ -50,6 +54,12 @@ class LineupAdapter(
             .centerCrop()
             .placeholder(R.drawable.icon_match)
             .into(holder.playerImage)
+
+        holder.itemView.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putInt(PLAYER_ID, playerItem.id)
+            holder.itemView.findNavController().navigate(R.id.playerDetailsFragment, bundle)
+        }
     }
 
     override fun getItemCount(): Int {

@@ -10,7 +10,7 @@ data class Batting(
     val highest_inning_score: Int?,
     val hundreds: Int?,
     val innings: Int?,
-    val matches: Int?,
+    var matches: Int?,
     val not_outs: Int?,
     val runs_scored: Int?,
     val six_x: Int?,

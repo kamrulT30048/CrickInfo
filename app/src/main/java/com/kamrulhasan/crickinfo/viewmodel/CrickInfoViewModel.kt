@@ -11,19 +11,21 @@ import com.kamrulhasan.crickinfo.model.country.CountryData
 import com.kamrulhasan.crickinfo.model.news.Article
 import com.kamrulhasan.crickinfo.model.fixture.FixturesData
 import com.kamrulhasan.crickinfo.model.leagues.LeaguesData
-import com.kamrulhasan.crickinfo.model.lineup.FixturesLineup
-import com.kamrulhasan.crickinfo.model.lineup.FixturesLineupData
 import com.kamrulhasan.crickinfo.model.lineup.Lineup
 import com.kamrulhasan.crickinfo.model.officials.OfficialsData
 import com.kamrulhasan.crickinfo.model.player.PlayersData
 import com.kamrulhasan.crickinfo.model.season.SeasonsData
 import com.kamrulhasan.crickinfo.model.squad.Squad
 import com.kamrulhasan.crickinfo.model.team.TeamsData
+import com.kamrulhasan.crickinfo.model.upcomingmatch.UpcomingMatchData
 import com.kamrulhasan.crickinfo.network.CricketApi
 import com.kamrulhasan.crickinfo.repository.CrickInfoRepository
+import com.kamrulhasan.topnews.utils.DateConverter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.await
+import java.text.SimpleDateFormat
+import java.util.*
 
 private const val TAG = "CrickInfoViewModel"
 
@@ -38,6 +40,9 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
     private var _lineup: MutableLiveData<List<Lineup>?> = MutableLiveData<List<Lineup>?>()
     val lineup: LiveData<List<Lineup>?> = _lineup
 
+    private var _upcomingMatch = MutableLiveData<List<FixturesData>?>()
+    var upcomingMatch: LiveData<List<FixturesData>?>
+
     private var _player = MutableLiveData<PlayersData?>()
     val player: LiveData<PlayersData?> = _player
 
@@ -47,7 +52,12 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
     private var _playerList = MutableLiveData<List<Squad>?>()
     val playerList: LiveData<List<Squad>?> = _playerList
 
+
     private val repository: CrickInfoRepository
+
+    //    private val today: Calendar = Calendar.getInstance()
+    private val formatter = SimpleDateFormat("yyyy-MM-dd")
+    private val today = formatter.format(Calendar.getInstance().time)
 
     init {
 
@@ -57,7 +67,7 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
         )
 
         fixturesData = repository.readAllFixturesData
-
+        upcomingMatch = repository.readUpcomingFixtures(today, today)
         teamsData = repository.readAllTeamsData
 
         getLeaguesData()
@@ -100,6 +110,11 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
         return repository.readLeaguesById(id)
     }
 
+    // officials
+    fun readCountryById(id: Int): LiveData<String> {
+        return repository.readCountryById(id)
+    }
+
     // add Matches info into database
     private fun getFixturesData() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -120,11 +135,93 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
                     }
                 }
             } catch (e: Exception) {
-                Log.d(TAG, "getFixturesData: Fixtures Api call failed")
-                Log.d(TAG, "getFixturesData: $e")
+                Log.e(TAG, "getFixturesData: Fixtures Api call failed")
+                Log.e(TAG, "getFixturesData: $e")
             }
         }
         readAllFixtures()
+    }
+
+    // get upcoming match
+    fun getUpcomingMatches() {
+
+        var today = Calendar.getInstance()
+        var formatter = SimpleDateFormat("yyyy-MM-dd")
+        //2019-04-01T18:20:38.000000Z"
+        var todayDate = formatter.format(today.time)
+        today.add(Calendar.MONTH, 5)
+        var last = formatter.format(today.time)
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val dateRange = "$todayDate,$last"
+                val upcomingTemp = CricketApi.retrofitService.getFixturesByDate(dateRange).data
+                Log.d(TAG, "getUpcomingMatches: ${upcomingTemp?.size}")
+                upcomingTemp?.forEach {
+
+                    repository.addFixturesData(date(it))
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "getUpcomingMatches: $e")
+            }
+            try {
+
+                today = Calendar.getInstance()
+                formatter = SimpleDateFormat("yyyy-MM-dd")
+                //2019-04-01T18:20:38.000000Z"
+                todayDate = formatter.format(today.time)
+                today.add(Calendar.MONTH, 3)
+                last = formatter.format(today.time)
+
+                upcomingMatch = repository.readUpcomingFixtures(todayDate, last)
+            } catch (e: Exception) {
+                Log.e(TAG, "getUpcomingMatches: $e")
+            }
+        }
+    }
+
+    fun date(match: FixturesData): FixturesData {
+        val date = if (match.starting_at != null) {
+            DateConverter.zoneToDate(match.starting_at!!)
+        } else {
+            null
+        }
+        return FixturesData(
+            draw_noresult = match.draw_noresult,
+            elected = match.elected,
+            first_umpire_id = match.first_umpire_id,
+            follow_on = match.follow_on,
+            id = match.id,
+            last_period = match.last_period,
+            league_id = match.league_id,
+            live = match.live,
+            localteam_dl_data = match.localteam_dl_data,
+            localteam_id = match.localteam_id,
+            man_of_match_id = match.man_of_match_id,
+            man_of_series_id = match.man_of_series_id,
+            note = match.note,
+            referee_id = match.referee_id,
+            resource = match.resource,
+            round = match.round,
+            rpc_overs = match.rpc_overs,
+            rpc_target = match.rpc_target,
+            runs = match.runs,
+            season_id = match.season_id,
+            second_umpire_id = match.second_umpire_id,
+            stage_id = match.stage_id,
+            starting_at = date,
+            status = match.status,
+            super_over = match.super_over,
+            toss_won_team_id = match.toss_won_team_id,
+            total_overs_played = match.total_overs_played,
+            tv_umpire_id = match.tv_umpire_id,
+            type = match.type,
+            venue_id = match.venue_id,
+            visitorteam_dl_data = match.visitorteam_dl_data,
+            visitorteam_id = match.visitorteam_id,
+            weather_report = match.weather_report,
+            winner_team_id = match.winner_team_id
+        )
     }
 
     // get match lineup
@@ -134,7 +231,7 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
                 val lineupTemp = CricketApi.retrofitService.getLineup(id).await()
                 _lineup.postValue(lineupTemp.data?.lineup)
             } catch (e: Exception) {
-                Log.d(TAG, "getLineup: $e")
+                Log.e(TAG, "getLineup: $e")
             }
         }
     }
@@ -143,11 +240,11 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
     fun getPlayerById(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val playerTemp = CricketApi.retrofitService.getPlayerNameById(id).await()
+                val playerTemp = CricketApi.retrofitService.getPlayerById(id).await()
                 Log.d(TAG, "getPlayerById: MOM: $playerTemp")
-                if(playerTemp.data != null){
-                    _player.postValue( playerTemp.data )
-                }else{
+                if (playerTemp.data != null) {
+                    _player.postValue(playerTemp.data)
+                } else {
                     _player.value = null
                 }
             } catch (e: Exception) {
@@ -163,9 +260,9 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
             try {
                 val playerTemp = CricketApi.retrofitService.getPlayerNameById(id).await()
                 Log.d(TAG, "getPlayerById: MOM: $playerTemp")
-                if(playerTemp.data != null){
-                    _playerName.postValue( playerTemp.data.fullname )
-                }else{
+                if (playerTemp.data != null) {
+                    _playerName.postValue(playerTemp.data.fullname)
+                } else {
                     _playerName.value = "NA"
                 }
             } catch (e: Exception) {
@@ -178,7 +275,7 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
         try {
             fixturesData = repository.readAllFixturesData
         } catch (e: Exception) {
-            Log.d(TAG, "readAllFixtures: $e")
+            Log.e(TAG, "readAllFixtures: $e")
         }
     }
 
@@ -190,7 +287,7 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
             try {
                 teamsList = CricketApi.retrofitService.getTeams().data
             } catch (e: Exception) {
-                Log.d(TAG, "getTeamsData: $e")
+                Log.e(TAG, "getTeamsData: $e")
             }
             teamsList.forEach {
                 repository.addTeams(it)
@@ -206,7 +303,7 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
             try {
                 officialsList = CricketApi.retrofitService.getOfficials().data
             } catch (e: Exception) {
-                Log.d(TAG, "getTeamsData: $e")
+                Log.e(TAG, "getTeamsData: $e")
             }
             officialsList?.forEach {
                 repository.addOfficials(it)
@@ -222,7 +319,7 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
             try {
                 leaguesList = CricketApi.retrofitService.getLeagues().data
             } catch (e: Exception) {
-                Log.d(TAG, "getTeamsData: $e")
+                Log.e(TAG, "getTeamsData: $e")
             }
             leaguesList?.forEach {
                 repository.addLeagues(it)
@@ -238,7 +335,7 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
             try {
                 countriesList = CricketApi.retrofitService.getCountries().data
             } catch (e: Exception) {
-                Log.d(TAG, "getTeamsData: $e")
+                Log.e(TAG, "getTeamsData: $e")
             }
             countriesList?.forEach {
                 repository.addCountries(it)
@@ -254,7 +351,7 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
             try {
                 seasonsList = CricketApi.retrofitService.getSeasons().data
             } catch (e: Exception) {
-                Log.d(TAG, "getTeamsData: $e")
+                Log.e(TAG, "getTeamsData: $e")
             }
             seasonsList?.forEach {
                 repository.addSeasons(it)
@@ -273,7 +370,7 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
                 _news.postValue(articles)
 
             } catch (e: Exception) {
-                Log.d("TAG", "getNewsArticle: $e")
+                Log.e("TAG", "getNewsArticle: $e")
             }
         }
     }
@@ -290,7 +387,7 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
                 _playerList.postValue(players.data?.squad)
 
             } catch (e: Exception) {
-                Log.d(TAG, "getTeamSquad: $e")
+                Log.e(TAG, "getTeamSquad: $e")
             }
         }
     }

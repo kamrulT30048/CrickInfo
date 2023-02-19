@@ -19,7 +19,7 @@
     <string name="country_name">Country Name</string>
     <string name="bat_s_man">Bat\'s Man</string>
     <string name="_0">0</string>
-    <string name="t20i_2023_02_16">T20I - 2023-02-16</string>
+    <string name="t20i_2023_02_16">T20I</string>
     <string name="score">score</string>
     <string name="team_squad">Team Squad</string>
     <string name="status">Status</string>
@@ -31,4 +31,26 @@
     <string name="match_info">Match Info</string>
     <string name="t20i">T20I</string>
     <string name="position">Position</string>
+    <string name="personal_information">Personal Information</string>
+    <string name="career">Career</string>
+    <string name="date_of_birth">date_of_birth</string>
+    <string name="gender">Gender</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="batting">Batting</string>
+    <string name="bowling">Bowling</string>
+    <string name="style">Style</string>
+    <string name="bowling_style">Bowling Style</string>
+    <string name="batting_style">Batting Style</string>
+    <string name="odi">ODI</string>
+    <string name="test">Test</string>
+    <string name="format">Format</string>
+    <string name="run">Run</string>
+    <string name="m">M</string>
+    <string name="r">R</string>
+    <string name="br">BR</string>
+    <string name="sr">SR</string>
+    <string name="best">Best</string>
+    <string name="_100">100s</string>
+    <string name="_50">50s</string>
 </resources>

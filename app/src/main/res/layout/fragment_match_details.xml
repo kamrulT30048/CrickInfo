@@ -289,7 +289,7 @@
             android:id="@+id/recycler_view_team_squad"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
+            android:padding="5dp"
             android:layout_marginBottom="3dp"
             android:background="@color/olive_light_00"
             app:layoutManager="LinearLayoutManager"

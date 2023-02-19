@@ -17,6 +17,10 @@ class CrickInfoRepository(private val cricketDao: CricketDao) {
     val readAllFixturesData: LiveData<List<FixturesData>> = cricketDao.readAllFixturesData()
     val readAllTeamsData: LiveData<List<TeamsData>> = cricketDao.readAllTeam()
 
+    fun readUpcomingFixtures(todayDate: String, lastDate: String): LiveData<List<FixturesData>?>{
+        return  cricketDao.readUpcomingFixtures(todayDate,lastDate)
+    }
+
     suspend fun addFixturesData(fixturesData: FixturesData) {
         cricketDao.addFixtures(fixturesData)
     }
@@ -61,6 +65,11 @@ class CrickInfoRepository(private val cricketDao: CricketDao) {
         return cricketDao.readLeaguesById(id)
     }
 
+    //country name by id
+    fun readCountryById(id: Int): LiveData<String> {
+        return cricketDao.readCountryById(id)
+    }
+
     suspend fun addTeams(teamsData: TeamsData) {
         cricketDao.addTeam(teamsData)
     }
@@ -80,4 +89,6 @@ class CrickInfoRepository(private val cricketDao: CricketDao) {
     suspend fun addCountries(countryData: CountryData) {
         cricketDao.addCountries(countryData)
     }
+
+
 }

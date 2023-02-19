@@ -7,11 +7,11 @@ import com.kamrulhasan.crickinfo.model.leagues.Leagues
 import com.kamrulhasan.crickinfo.model.lineup.FixturesLineup
 import com.kamrulhasan.crickinfo.model.officials.Officials
 import com.kamrulhasan.crickinfo.model.player.Players
-import com.kamrulhasan.crickinfo.model.player.PlayersData
 import com.kamrulhasan.crickinfo.model.season.Seasons
 import com.kamrulhasan.crickinfo.model.squad.SquadTeams
 import com.kamrulhasan.crickinfo.model.team.Teams
 import com.kamrulhasan.crickinfo.model.team.TeamsData
+import com.kamrulhasan.crickinfo.model.upcomingmatch.UpcomingMatch
 import com.kamrulhasan.topnews.utils.*
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory

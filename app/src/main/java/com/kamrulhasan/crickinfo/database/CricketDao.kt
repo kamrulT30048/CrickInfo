@@ -42,6 +42,11 @@ interface CricketDao {
     @Query("SELECT * FROM fixtures_data ORDER BY starting_at DESC")
     fun readAllFixturesData(): LiveData<List<FixturesData>>
 
+    @Query("SELECT * FROM fixtures_data " +
+            "WHERE starting_at BETWEEN :todayDate AND :lastDate " +
+            "ORDER BY starting_at DESC")
+    fun readUpcomingFixtures(todayDate: String, lastDate: String):LiveData<List<FixturesData>?>
+
     @Query("SELECT * FROM team_data ")
     fun readAllTeam(): LiveData<List<TeamsData>>
 
@@ -77,5 +82,11 @@ interface CricketDao {
     // Leagues
     @Query("SELECT name FROM leagues_table WHERE id = :leagueId ")
     fun readLeaguesById(leagueId: Int): LiveData<String>
+
+    // read country
+    @Query("SELECT name FROM country_table WHERE id = :countryId ")
+    fun readCountryById(countryId: Int): LiveData<String>
+
+
 
 }

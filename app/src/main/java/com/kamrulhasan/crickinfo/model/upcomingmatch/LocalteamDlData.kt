@@ -1,4 +1,4 @@
-package com.kamrulhasan.crickinfo.model.lineup
+package com.kamrulhasan.crickinfo.model.upcomingmatch
 
 data class LocalteamDlData(
     val overs: Any?,

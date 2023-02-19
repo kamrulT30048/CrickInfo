@@ -1,6 +1,7 @@
 package com.kamrulhasan.crickinfo.ui.fragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -16,13 +17,15 @@ import com.kamrulhasan.topnews.utils.DateConverter
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
+private const val TAG = "UpcomingMatchFragment"
+
 class UpcomingMatchFragment : Fragment() {
     private var _binding: FragmentUpcomingMatchBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var viewModel: CrickInfoViewModel
 
-    private var matchList: List<FixturesData> = listOf()
+    private var matchList: List<FixturesData>? = listOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,11 +41,32 @@ class UpcomingMatchFragment : Fragment() {
 
         viewModel = ViewModelProvider(this)[CrickInfoViewModel::class.java]
 
-        viewModel.fixturesData.observe(viewLifecycleOwner) {
+        val today = Calendar.getInstance()
+        val formatter = SimpleDateFormat("yyyy-MM-dd")
+        val todayDate = formatter.format(today.time)
 
-            matchList = it
-            val adapter = FixtureAdapter(matchList, viewModel, viewLifecycleOwner)
-            binding.matchRecyclerView.adapter = adapter
+        today.add(Calendar.MONTH,3)
+        val lastDate = formatter.format(today.time)
+
+        val upcomingDate = "$todayDate,$lastDate"
+        Log.d(TAG, "onViewCreated: dateLimit: $upcomingDate")
+
+        viewModel.getUpcomingMatches()
+
+        viewModel.upcomingMatch.observe(viewLifecycleOwner) {
+            Log.d(TAG, "onViewCreated: before $it")
+
+            if(it != null){
+                Log.d(TAG, "onViewCreated: $it")
+            }
+            else{
+                Log.d(TAG, "onViewCreated: null")
+            }
+            /*matchList = it
+            val adapter = matchList?.let { it1 ->
+                FixtureAdapter(it1, viewModel, viewLifecycleOwner)
+            }
+            binding.matchRecyclerView.adapter = adapter*/
 
         }
         val bottomNav: BottomNavigationView = requireActivity().findViewById(R.id.bottom_nav_bar)
@@ -55,15 +79,7 @@ class UpcomingMatchFragment : Fragment() {
             }
         }
 
-        /*val today = Calendar.getInstance().time
-        val formatter = SimpleDateFormat("yyyy-MM-dd")
 
-        binding.tvDate.text = formatter.format(today)
-        val long = DateConverter.dateToLong(today)
-        binding.tvDateLong.text = long.toString()
-
-        val date = DateConverter.longToDate(long)
-        binding.tvLongToDate.text = today.month.toString()*/
 
     }
 }

@@ -15,4 +15,22 @@
 <!--        <item name="android:windowBackground">@color/olive_light_0</item>-->
 
     </style>
+
+    // style for selected button text
+    <style name="textview_selected" parent="MaterialAlertDialog.Material3.Body.Text.CenterStacked">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:background">@color/olive_light_00</item>
+        <item name="android:textColor">@color/olive_dark</item>
+    </style>
+
+    // style for non_selected button text
+    <style name="textview_non_selected" parent="MaterialAlertDialog.Material3.Body.Text.CenterStacked">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:background">@color/gray_light_0</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+
 </resources>
