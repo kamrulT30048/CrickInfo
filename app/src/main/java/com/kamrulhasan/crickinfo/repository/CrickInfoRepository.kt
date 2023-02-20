@@ -14,11 +14,16 @@ import com.kamrulhasan.crickinfo.model.team.TeamsData
 
 class CrickInfoRepository(private val cricketDao: CricketDao) {
 
-    val readAllFixturesData: LiveData<List<FixturesData>> = cricketDao.readAllFixturesData()
+    val readAllFixturesData: LiveData<List<FixturesData>?> = cricketDao.readAllFixturesData()
     val readAllTeamsData: LiveData<List<TeamsData>> = cricketDao.readAllTeam()
 
     fun readUpcomingFixtures(todayDate: String, lastDate: String): LiveData<List<FixturesData>?>{
         return  cricketDao.readUpcomingFixtures(todayDate,lastDate)
+    }
+
+    // read recent matches
+    fun readRecentFixtures(todayDate: String, passedDate: String): LiveData<List<FixturesData>?>{
+        return  cricketDao.readRecentFixtures(todayDate,passedDate)
     }
 
     suspend fun addFixturesData(fixturesData: FixturesData) {

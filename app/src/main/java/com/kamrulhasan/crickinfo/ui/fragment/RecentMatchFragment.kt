@@ -2,6 +2,7 @@ package com.kamrulhasan.crickinfo.ui.fragment
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -47,12 +48,16 @@ class RecentMatchFragment : Fragment() {
 
         viewModel = ViewModelProvider(this)[CrickInfoViewModel::class.java]
 
-        viewModel.fixturesData.observe(viewLifecycleOwner) {
+        viewModel.getRecentMatches()
 
-            matchList = it
-            val adapter = FixtureAdapter(matchList, viewModel, viewLifecycleOwner)
-            binding.matchRecyclerView.adapter = adapter
+        viewModel.recentMatch.observe(viewLifecycleOwner) {
 
+            if(it != null){
+                val adapter = FixtureAdapter(it, viewModel, viewLifecycleOwner)
+                binding.matchRecyclerView.adapter = adapter
+            }else{
+                Log.d(TAG, "onViewCreated: null value")
+            }
         }
 
         val bottomNav: BottomNavigationView = requireActivity().findViewById(R.id.bottom_nav_bar)

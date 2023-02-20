@@ -68,7 +68,7 @@ class FixtureAdapter(
                 Glide
                     .with(holder.itemView.context)
                     .load(it)
-                    .centerCrop()
+                    .fitCenter()
                     .placeholder(R.drawable.icon_match)
                     .into(holder.teamIcon1)
             }

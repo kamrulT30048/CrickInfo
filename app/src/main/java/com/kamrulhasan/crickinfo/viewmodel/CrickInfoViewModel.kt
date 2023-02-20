@@ -31,7 +31,9 @@ private const val TAG = "CrickInfoViewModel"
 
 class CrickInfoViewModel(application: Application) : AndroidViewModel(application) {
 
-    var fixturesData: LiveData<List<FixturesData>>
+    var fixturesData: LiveData<List<FixturesData>?>
+    var upcomingMatch: LiveData<List<FixturesData>?>
+    var recentMatch: LiveData<List<FixturesData>?>
     var teamsData: LiveData<List<TeamsData>>
 
     private var _news: MutableLiveData<List<Article>?> = MutableLiveData<List<Article>?>()
@@ -39,9 +41,6 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
 
     private var _lineup: MutableLiveData<List<Lineup>?> = MutableLiveData<List<Lineup>?>()
     val lineup: LiveData<List<Lineup>?> = _lineup
-
-    private var _upcomingMatch = MutableLiveData<List<FixturesData>?>()
-    var upcomingMatch: LiveData<List<FixturesData>?>
 
     private var _player = MutableLiveData<PlayersData?>()
     val player: LiveData<PlayersData?> = _player
@@ -52,12 +51,7 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
     private var _playerList = MutableLiveData<List<Squad>?>()
     val playerList: LiveData<List<Squad>?> = _playerList
 
-
     private val repository: CrickInfoRepository
-
-    //    private val today: Calendar = Calendar.getInstance()
-    private val formatter = SimpleDateFormat("yyyy-MM-dd")
-    private val today = formatter.format(Calendar.getInstance().time)
 
     init {
 
@@ -67,7 +61,16 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
         )
 
         fixturesData = repository.readAllFixturesData
-        upcomingMatch = repository.readUpcomingFixtures(today, today)
+
+        recentMatch = repository.readRecentFixtures(
+            DateConverter.todayDate(),
+            DateConverter.passedThreeMonth()
+        )
+        upcomingMatch = repository.readUpcomingFixtures(
+            DateConverter.todayDate(),
+            DateConverter.upcomingThreeMonth()
+        )
+
         teamsData = repository.readAllTeamsData
 
         getLeaguesData()
@@ -144,84 +147,62 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
 
     // get upcoming match
     fun getUpcomingMatches() {
-
-        var today = Calendar.getInstance()
-        var formatter = SimpleDateFormat("yyyy-MM-dd")
-        //2019-04-01T18:20:38.000000Z"
-        var todayDate = formatter.format(today.time)
-        today.add(Calendar.MONTH, 5)
-        var last = formatter.format(today.time)
+        val firstDate = DateConverter.todayDate()
+        val lastDate = DateConverter.upcomingThreeMonth()
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val dateRange = "$todayDate,$last"
+                val dateRange = "$firstDate,$lastDate"
                 val upcomingTemp = CricketApi.retrofitService.getFixturesByDate(dateRange).data
                 Log.d(TAG, "getUpcomingMatches: ${upcomingTemp?.size}")
-                upcomingTemp?.forEach {
 
-                    repository.addFixturesData(date(it))
+                upcomingTemp?.forEach {
+                    repository.addFixturesData(it)
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "getUpcomingMatches: $e")
             }
             try {
-
-                today = Calendar.getInstance()
-                formatter = SimpleDateFormat("yyyy-MM-dd")
-                //2019-04-01T18:20:38.000000Z"
-                todayDate = formatter.format(today.time)
-                today.add(Calendar.MONTH, 3)
-                last = formatter.format(today.time)
-
-                upcomingMatch = repository.readUpcomingFixtures(todayDate, last)
+                upcomingMatch = repository.readUpcomingFixtures(firstDate, lastDate)
             } catch (e: Exception) {
                 Log.e(TAG, "getUpcomingMatches: $e")
             }
         }
     }
 
-    fun date(match: FixturesData): FixturesData {
-        val date = if (match.starting_at != null) {
-            DateConverter.zoneToDate(match.starting_at!!)
-        } else {
-            null
+    // recent matches
+    fun getRecentMatches() {
+        val todayDate = DateConverter.todayDate()
+        val passedDate = DateConverter.passedThreeMonth()
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val dateRange = "$passedDate,$todayDate"
+                val recentTemp = CricketApi.retrofitService.getFixturesByDate(dateRange).data
+                Log.d(TAG, "getRecentMatches: ${recentTemp?.size}")
+
+                recentTemp?.forEach {
+                    repository.addFixturesData(it)
+
+                    val runs = it.runs
+                    if (runs != null && runs.isNotEmpty()) {
+                        if (runs.size == 2) {
+                            repository.addRun(runs[0])
+                            repository.addRun(runs[1])
+                        } else if (runs.size == 1) {
+                            repository.addRun(runs[0])
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.d(TAG, "getRecentMatches: $e")
+            }
+            try {
+                upcomingMatch = repository.readRecentFixtures(todayDate, passedDate)
+            } catch (e: Exception) {
+                Log.e(TAG, "getRecentMatches: $e")
+            }
         }
-        return FixturesData(
-            draw_noresult = match.draw_noresult,
-            elected = match.elected,
-            first_umpire_id = match.first_umpire_id,
-            follow_on = match.follow_on,
-            id = match.id,
-            last_period = match.last_period,
-            league_id = match.league_id,
-            live = match.live,
-            localteam_dl_data = match.localteam_dl_data,
-            localteam_id = match.localteam_id,
-            man_of_match_id = match.man_of_match_id,
-            man_of_series_id = match.man_of_series_id,
-            note = match.note,
-            referee_id = match.referee_id,
-            resource = match.resource,
-            round = match.round,
-            rpc_overs = match.rpc_overs,
-            rpc_target = match.rpc_target,
-            runs = match.runs,
-            season_id = match.season_id,
-            second_umpire_id = match.second_umpire_id,
-            stage_id = match.stage_id,
-            starting_at = date,
-            status = match.status,
-            super_over = match.super_over,
-            toss_won_team_id = match.toss_won_team_id,
-            total_overs_played = match.total_overs_played,
-            tv_umpire_id = match.tv_umpire_id,
-            type = match.type,
-            venue_id = match.venue_id,
-            visitorteam_dl_data = match.visitorteam_dl_data,
-            visitorteam_id = match.visitorteam_id,
-            weather_report = match.weather_report,
-            winner_team_id = match.winner_team_id
-        )
     }
 
     // get match lineup
@@ -391,5 +372,53 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
             }
         }
     }
+
+
+/*
+    fun date(match: FixturesData): FixturesData {
+        val date = if (match.starting_at != null) {
+            DateConverter.zoneToDate(match.starting_at!!)
+        } else {
+            null
+        }
+        return FixturesData(
+            draw_noresult = match.draw_noresult,
+            elected = match.elected,
+            first_umpire_id = match.first_umpire_id,
+            follow_on = match.follow_on,
+            id = match.id,
+            last_period = match.last_period,
+            league_id = match.league_id,
+            live = match.live,
+            localteam_dl_data = match.localteam_dl_data,
+            localteam_id = match.localteam_id,
+            man_of_match_id = match.man_of_match_id,
+            man_of_series_id = match.man_of_series_id,
+            note = match.note,
+            referee_id = match.referee_id,
+            resource = match.resource,
+            round = match.round,
+            rpc_overs = match.rpc_overs,
+            rpc_target = match.rpc_target,
+            runs = match.runs,
+            season_id = match.season_id,
+            second_umpire_id = match.second_umpire_id,
+            stage_id = match.stage_id,
+            starting_at = date,
+            status = match.status,
+            super_over = match.super_over,
+            toss_won_team_id = match.toss_won_team_id,
+            total_overs_played = match.total_overs_played,
+            tv_umpire_id = match.tv_umpire_id,
+            type = match.type,
+            venue_id = match.venue_id,
+            visitorteam_dl_data = match.visitorteam_dl_data,
+            visitorteam_id = match.visitorteam_id,
+            weather_report = match.weather_report,
+            winner_team_id = match.winner_team_id
+        )
+    }
+*/
+
 
 }

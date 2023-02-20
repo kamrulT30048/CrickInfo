@@ -51,7 +51,7 @@ class LineupAdapter(
         Glide
             .with(holder.itemView.context)
             .load(playerItem.image_path)
-            .centerCrop()
+            .fitCenter()
             .placeholder(R.drawable.icon_match)
             .into(holder.playerImage)
 

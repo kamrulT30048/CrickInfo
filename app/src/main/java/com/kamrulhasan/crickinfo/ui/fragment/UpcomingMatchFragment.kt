@@ -58,17 +58,14 @@ class UpcomingMatchFragment : Fragment() {
 
             if(it != null){
                 Log.d(TAG, "onViewCreated: $it")
+                binding.matchRecyclerView.adapter = FixtureAdapter(it, viewModel, viewLifecycleOwner)
             }
             else{
                 Log.d(TAG, "onViewCreated: null")
             }
-            /*matchList = it
-            val adapter = matchList?.let { it1 ->
-                FixtureAdapter(it1, viewModel, viewLifecycleOwner)
-            }
-            binding.matchRecyclerView.adapter = adapter*/
 
         }
+
         val bottomNav: BottomNavigationView = requireActivity().findViewById(R.id.bottom_nav_bar)
 
         binding.matchRecyclerView.setOnScrollChangeListener { _: View?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
