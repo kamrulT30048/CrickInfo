@@ -11,6 +11,7 @@ import com.kamrulhasan.crickinfo.model.officials.OfficialsData
 import com.kamrulhasan.crickinfo.model.season.Seasons
 import com.kamrulhasan.crickinfo.model.season.SeasonsData
 import com.kamrulhasan.crickinfo.model.team.TeamsData
+import com.kamrulhasan.crickinfo.model.venues.VenuesData
 
 class CrickInfoRepository(private val cricketDao: CricketDao) {
 
@@ -75,6 +76,16 @@ class CrickInfoRepository(private val cricketDao: CricketDao) {
         return cricketDao.readCountryById(id)
     }
 
+    //venues name by id
+    fun readVenuesNameById(id: Int): LiveData<String> {
+        return cricketDao.readVenuesNameById(id)
+    }
+
+    //venues city by id
+    fun readVenuesCityById(id: Int): LiveData<String> {
+        return cricketDao.readVenuesCityById(id)
+    }
+
     suspend fun addTeams(teamsData: TeamsData) {
         cricketDao.addTeam(teamsData)
     }
@@ -89,6 +100,10 @@ class CrickInfoRepository(private val cricketDao: CricketDao) {
 
     suspend fun addSeasons(seasonsData: SeasonsData) {
         cricketDao.addSeasons(seasonsData)
+    }
+
+    suspend fun addVenues(venuesData: VenuesData) {
+        cricketDao.addVenues(venuesData)
     }
 
     suspend fun addCountries(countryData: CountryData) {

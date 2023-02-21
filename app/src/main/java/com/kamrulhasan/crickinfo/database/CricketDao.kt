@@ -14,6 +14,7 @@ import com.kamrulhasan.crickinfo.model.officials.OfficialsData
 import com.kamrulhasan.crickinfo.model.season.Seasons
 import com.kamrulhasan.crickinfo.model.season.SeasonsData
 import com.kamrulhasan.crickinfo.model.team.TeamsData
+import com.kamrulhasan.crickinfo.model.venues.VenuesData
 
 @Dao
 interface CricketDao {
@@ -35,6 +36,9 @@ interface CricketDao {
 
     @Insert(onConflict = IGNORE)
     suspend fun addSeasons(seasonsData: SeasonsData)
+
+    @Insert(onConflict = IGNORE)
+    suspend fun addVenues(venuesData: VenuesData)
 
     @Insert(onConflict = IGNORE)
     suspend fun addCountries(countryData: CountryData)
@@ -98,5 +102,12 @@ interface CricketDao {
     @Query("SELECT name FROM country_table WHERE id = :countryId ")
     fun readCountryById(countryId: Int): LiveData<String>
 
+    // read venues
+    @Query("SELECT name FROM venues_table WHERE id = :id ")
+    fun readVenuesNameById(id: Int): LiveData<String>
+
+    // read venues
+    @Query("SELECT city FROM venues_table WHERE id = :id ")
+    fun readVenuesCityById(id: Int): LiveData<String>
 
 }

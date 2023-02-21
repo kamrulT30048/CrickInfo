@@ -11,10 +11,13 @@ import com.kamrulhasan.crickinfo.model.leagues.LeaguesData
 import com.kamrulhasan.crickinfo.model.officials.OfficialsData
 import com.kamrulhasan.crickinfo.model.season.SeasonsData
 import com.kamrulhasan.crickinfo.model.team.TeamsData
+import com.kamrulhasan.crickinfo.model.venues.VenuesData
 
 @Database(
-    entities = [TeamsData::class,FixturesData::class,Run::class,LeaguesData::class,OfficialsData::class,CountryData::class,SeasonsData::class],
-    version = 8,
+    entities = [TeamsData::class,FixturesData::class,
+        Run::class,LeaguesData::class,OfficialsData::class,
+        CountryData::class,SeasonsData::class, VenuesData::class],
+    version = 9,
     exportSchema = false
 )
 

@@ -3,14 +3,18 @@ package com.kamrulhasan.crickinfo.ui.fragment
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import com.google.android.material.tabs.TabLayoutMediator
 import com.kamrulhasan.crickinfo.R
 import com.kamrulhasan.crickinfo.adapter.LineupAdapter
+import com.kamrulhasan.crickinfo.adapter.MatchDetailsViewPagerAdapter
+import com.kamrulhasan.crickinfo.adapter.ViewPagerAdapter
 import com.kamrulhasan.crickinfo.databinding.FragmentMatchDetailsBinding
 import com.kamrulhasan.crickinfo.model.fixture.FixturesData
 import com.kamrulhasan.crickinfo.model.lineup.Lineup
@@ -53,28 +57,77 @@ class MatchDetailsFragment : Fragment() {
 
         viewModel = ViewModelProvider(this)[CrickInfoViewModel::class.java]
 
+        /*      val adapter = MatchDetailsViewPagerAdapter(childFragmentManager, lifecycle)
+              binding.matchDetailsViewPager.adapter = adapter
+
+              TabLayoutMediator(
+                  binding.matchDetailsTabLayout,
+                  binding.matchDetailsViewPager) { tab, position ->
+                  when (position) {
+                      0 -> tab.text = "Info"
+                      1 -> tab.text = "ScoreCard"
+                      2 -> tab.text = "Squad"
+                  }
+              }.attach()*/
+
         match?.let { it ->
 
 
-            binding.tvDate.text = it.starting_at?.let { DateConverter.zoneToDate(it) }
-            binding.tvMatchNotes.text = it.note
-            binding.tvStatus.text = "Status: ${it.status}"
-            binding.tvSeries.text = "Round: ${it.round}"
+            //binding.tvDate.text = it.starting_at?.let { DateConverter.zoneToDate(it) }
+            binding.tvMatchDate.text = it.starting_at?.let { DateConverter.zoneToDate(it) }
+            binding.tvMatchTime.text = it.starting_at?.let { DateConverter.zoneToTime(it) }
+            // match notes
+            binding.tvMatchNotes.text = if (it.note == "") {
+                "NA"
+            } else {
+                it.note
+            }
+
+            //Match Status
+            binding.tvStatus.text = it.status
+            if (it.status == "Finished") {
+                binding.tvStatus.setTextColor(resources.getColor(R.color.red))
+            } else if (it.status == "NS") {
+                binding.tvStatus.text = "Upcoming"
+                binding.tvStatus.setTextColor(resources.getColor(R.color.green_dark))
+            }
+            //series
+            binding.tvSeries.text = it.round
+            // match notes
+            binding.tvElected.text = if (it.elected == "" || it.elected.isNullOrEmpty()) {
+                "NA"
+            } else {
+                it.elected
+            }
+
+            it.venue_id?.let { it1 ->
+                //venue
+                viewModel.readVenuesNameById(it1)
+                    .observe(viewLifecycleOwner) {
+                        binding.tvVenues.text = it
+                    }
+                //venues city
+                viewModel.readVenuesCityById(it1)
+                    .observe(viewLifecycleOwner) {
+                        binding.tvVenuesCity.text = it
+                    }
+
+            }
 
             //won team
             it.winner_team_id?.let { it1 ->
                 viewModel.readTeamCode(it1)
                     .observe(viewLifecycleOwner) {
-                        binding.tvMatchWonTeam.text = "Winner: $it"
+                        binding.tvMatchWonTeam.text = it
                     }
             }
 
             // MOM
-            it.man_of_match_id?.let{ it1 ->
+            it.man_of_match_id?.let { it1 ->
                 viewModel.getPlayerNameById(it1)
-                viewModel.playerName.observe(viewLifecycleOwner){
+                viewModel.playerName.observe(viewLifecycleOwner) {
                     Log.d(TAG, "onViewCreated: $it")
-                    binding.tvManOfTheMatch.text = "MOM: $it"
+                    binding.tvManOfTheMatch.text = it
                 }
             }
 
@@ -82,7 +135,7 @@ class MatchDetailsFragment : Fragment() {
             it.toss_won_team_id?.let { it1 ->
                 viewModel.readTeamCode(it1)
                     .observe(viewLifecycleOwner) {
-                        binding.tvTossWonTeam.text = "Toss: $it"
+                        binding.tvTossWonTeam.text = it
                     }
             }
 
@@ -120,6 +173,13 @@ class MatchDetailsFragment : Fragment() {
                     }
             }
 
+            it.referee_id?.let { it1 ->
+                viewModel.readOfficialsById(it1)
+                    .observe(viewLifecycleOwner) {
+                        binding.tvReferee.text = "Referee: $it"
+                    }
+            }
+
             // read team code
             viewModel.readTeamCode(it.localteam_id)
                 .observe(viewLifecycleOwner) {
@@ -139,7 +199,7 @@ class MatchDetailsFragment : Fragment() {
                     Glide
                         .with(requireContext())
                         .load(it)
-                        .centerCrop()
+                        .fitCenter()
                         .placeholder(R.drawable.icon_match)
                         .into(binding.ivTeam1)
                 }
@@ -149,7 +209,7 @@ class MatchDetailsFragment : Fragment() {
                     Glide
                         .with(requireContext())
                         .load(it)
-                        .centerCrop()
+                        .fitCenter()
                         .placeholder(R.drawable.icon_match)
                         .into(binding.ivTeam2)
                 }
@@ -212,7 +272,7 @@ class MatchDetailsFragment : Fragment() {
             val lineupLocal = mutableListOf<Lineup>()
             val lineupVisitor = mutableListOf<Lineup>()
 
-            viewModel.lineup.observe(viewLifecycleOwner){ it1 ->
+            viewModel.lineup.observe(viewLifecycleOwner) { it1 ->
 
                 lineupLocal.clear()
                 lineupVisitor.clear()
@@ -220,17 +280,18 @@ class MatchDetailsFragment : Fragment() {
                 Log.d(TAG, "onViewCreated: lineup: ${it1?.size}")
 
                 it1?.forEach {
-                    if(it.lineup?.team_id == localTeam){
+                    if (it.lineup?.team_id == localTeam) {
                         lineupLocal.add(it)
-                    }else{
+                    } else {
                         lineupVisitor.add(it)
                     }
                 }
                 binding.recyclerViewTeamSquad.adapter = LineupAdapter(lineupLocal)
             }
-//            viewModel.getSquadByTeamId(it.localteam_id)
-            binding.tvNameTeam1.setBackgroundColor(resources.getColor( R.color.olive_light_00))
 
+            binding.tvNameTeam1.setBackgroundColor(resources.getColor(R.color.gray_light_0))
+
+//            viewModel.getSquadByTeamId(it.localteam_id)
             /*var list = listOf<Squad>()
             viewModel.playerList.observe(viewLifecycleOwner){
                 it?.let{  list = it
@@ -243,8 +304,11 @@ class MatchDetailsFragment : Fragment() {
 
                 binding.recyclerViewTeamSquad.adapter = LineupAdapter(lineupLocal)
 
-                binding.tvNameTeam1.setBackgroundColor(resources.getColor( R.color.olive_light_00))
-                binding.tvNameTeam2.setBackgroundColor(resources.getColor( R.color.gray_light_0))
+                binding.tvNameTeam1.setBackgroundColor(resources.getColor(R.color.gray_light_0))
+                binding.tvNameTeam2.setBackgroundColor(resources.getColor(R.color.olive_light_00))
+
+                binding.tvNameTeam1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
+                binding.tvNameTeam2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
             }
 
             val visitorId = it.visitorteam_id
@@ -253,11 +317,13 @@ class MatchDetailsFragment : Fragment() {
 
                 binding.recyclerViewTeamSquad.adapter = LineupAdapter(lineupVisitor)
 
-                binding.tvNameTeam1.setBackgroundColor(resources.getColor( R.color.gray_light_0))
-                binding.tvNameTeam2.setBackgroundColor(resources.getColor( R.color.olive_light_00))
+                binding.tvNameTeam1.setBackgroundColor(resources.getColor(R.color.olive_light_00))
+                binding.tvNameTeam2.setBackgroundColor(resources.getColor(R.color.gray_light_0))
+
+                binding.tvNameTeam1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
+                binding.tvNameTeam2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
             }
         }
-
 
 
     }

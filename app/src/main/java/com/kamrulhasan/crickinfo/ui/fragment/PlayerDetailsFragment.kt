@@ -3,6 +3,7 @@ package com.kamrulhasan.crickinfo.ui.fragment
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -115,8 +116,11 @@ class PlayerDetailsFragment : Fragment() {
                     setBatingStatistics(career)
 
                     binding.tvBatting.setOnClickListener {
-                        binding.tvBatting.setBackgroundColor(resources.getColor(R.color.olive_light_00))
-                        binding.tvBowling.setBackgroundColor(resources.getColor(R.color.gray_light_0))
+                        binding.tvBatting.setBackgroundColor(resources.getColor(R.color.gray_light_0))
+                        binding.tvBowling.setBackgroundColor(resources.getColor(R.color.olive_light_00))
+
+                        binding.tvBatting.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
+                        binding.tvBowling.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
 
                         binding.layoutBowling.visibility = View.GONE
                         binding.layoutBatting.visibility = View.VISIBLE
@@ -127,18 +131,18 @@ class PlayerDetailsFragment : Fragment() {
                     /////////// Bowling Career \\\\\\\\\\\\\
 
                     binding.tvBowling.setOnClickListener {
-                        binding.tvBowling.setBackgroundColor(resources.getColor(R.color.olive_light_00))
-                        binding.tvBatting.setBackgroundColor(resources.getColor(R.color.gray_light_0))
+                        binding.tvBowling.setBackgroundColor(resources.getColor(R.color.gray_light_0))
+                        binding.tvBatting.setBackgroundColor(resources.getColor(R.color.olive_light_00))
+
+                        binding.tvBatting.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+                        binding.tvBowling.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
 
                         binding.layoutBowling.visibility = View.VISIBLE
                         binding.layoutBatting.visibility = View.GONE
 
                         setBowlingStatistics(career)
                     }
-
-
                 }
-
             }
         }
     }

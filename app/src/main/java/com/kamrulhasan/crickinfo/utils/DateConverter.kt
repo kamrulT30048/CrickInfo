@@ -14,6 +14,17 @@ class DateConverter {
             val splitDate = date.split("T", "Z")
             return splitDate[0] //+ " " + splitDate[1]
         }
+
+        fun zoneToTime(date: String): String {
+            val splitDate = date.split("T", "Z", ":")
+            return splitDate[1] + ":" + splitDate[2]
+        }
+
+        fun zoneToDateTime(date: String): String {
+            val splitDate = date.split("T", "Z", ".")
+            return splitDate[0] + " " + splitDate[1]
+        }
+
         fun dateToYear(date: String): Int {
             val splitDate = date.split("-")
             return splitDate[0].toInt()
@@ -24,7 +35,7 @@ class DateConverter {
         }
 
         @SuppressLint("SimpleDateFormat")
-        fun stringToDate(date: String): Date{
+        fun stringToDate(date: String): Date {
             val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'")
             format.timeZone = TimeZone.getTimeZone("UTC")
             return format.parse(date)!!

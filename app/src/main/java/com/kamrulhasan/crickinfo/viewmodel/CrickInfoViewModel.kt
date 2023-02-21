@@ -17,15 +17,13 @@ import com.kamrulhasan.crickinfo.model.player.PlayersData
 import com.kamrulhasan.crickinfo.model.season.SeasonsData
 import com.kamrulhasan.crickinfo.model.squad.Squad
 import com.kamrulhasan.crickinfo.model.team.TeamsData
-import com.kamrulhasan.crickinfo.model.upcomingmatch.UpcomingMatchData
+import com.kamrulhasan.crickinfo.model.venues.VenuesData
 import com.kamrulhasan.crickinfo.network.CricketApi
 import com.kamrulhasan.crickinfo.repository.CrickInfoRepository
 import com.kamrulhasan.topnews.utils.DateConverter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.await
-import java.text.SimpleDateFormat
-import java.util.*
 
 private const val TAG = "CrickInfoViewModel"
 
@@ -79,6 +77,7 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
         getFixturesData()
         getCountries()
         getSeasons()
+        getVenues()
     }
 
     ///  read team code
@@ -116,6 +115,16 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
     // officials
     fun readCountryById(id: Int): LiveData<String> {
         return repository.readCountryById(id)
+    }
+
+    // Venues Name
+    fun readVenuesNameById(id: Int): LiveData<String> {
+        return repository.readVenuesNameById(id)
+    }
+
+    // Venues City
+    fun readVenuesCityById(id: Int): LiveData<String> {
+        return repository.readVenuesCityById(id)
     }
 
     // add Matches info into database
@@ -336,6 +345,22 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
             }
             seasonsList?.forEach {
                 repository.addSeasons(it)
+            }
+        }
+    }
+
+// add Venues data into database
+    private fun getVenues() {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            var seasonsList: List<VenuesData>? = listOf()
+            try {
+                seasonsList = CricketApi.retrofitService.getVenues().data
+            } catch (e: Exception) {
+                Log.e(TAG, "getTeamsData: $e")
+            }
+            seasonsList?.forEach {
+                repository.addVenues(it)
             }
         }
     }

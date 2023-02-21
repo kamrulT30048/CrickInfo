@@ -21,6 +21,7 @@ const val URL_KEY = "NEWS_URL_KEY"
 const val DEFAULT_NEWS_PAGE = "https://www.bbc.com/bengali"
 
 const val VIEW_PAGER_COUNTER = 3
+const val MATCH_DETAILS_PAGE_COUNTER = 3
 
 ////  API url  \\\\
 // Base api Link
@@ -39,6 +40,7 @@ const val FIXTURES_END = "fixtures"             //?api_token=$api_token"
 const val OFFICIALS_END = "officials"
 const val COUNTRIES_END = "countries"
 const val SEASONS_END = "seasons"
+const val VENUES_END = "venues"
 const val LEAGUES_END = "leagues"
 const val TEAM_END = "teams"
 const val PLAYER_END = "players"

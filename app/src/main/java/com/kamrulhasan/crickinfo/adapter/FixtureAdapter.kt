@@ -33,6 +33,7 @@ class FixtureAdapter(
         val date: TextView = binding.findViewById(R.id.tv_date)
         val matchType: TextView = binding.findViewById(R.id.tv_format)
         val notes: TextView = binding.findViewById(R.id.tv_match_notes)
+        val status: TextView = binding.findViewById(R.id.tv_match_status)
         val scoreTeam1: TextView = binding.findViewById(R.id.tv_score_team1)
         val scoreTeam2: TextView = binding.findViewById(R.id.tv_score_team2)
         val wicketTeam1: TextView = binding.findViewById(R.id.tv_wicket_team1)
@@ -54,8 +55,49 @@ class FixtureAdapter(
         holder.date.text = fixturesItem.starting_at?.let { DateConverter.zoneToDate(it) }
         holder.matchType.text = fixturesItem.round
 
-        if (fixturesItem.status == "Finished") {
+        if (fixturesItem.status == "NS") {
+            holder.notes.text = "Upcoming"
+            holder.status.text = "cown"
+        } else {
             holder.notes.text = fixturesItem.note
+
+            // run
+            viewModel.readScoreById(fixturesItem.localteam_id, fixturesItem.id)
+                .observe(viewLifecycleOwner) {
+                    holder.scoreTeam1.text = if (it != null) {
+                        it.toString() + "/"
+                    } else {
+                        "-/"
+                    }
+                }
+
+            viewModel.readScoreById(fixturesItem.visitorteam_id, fixturesItem.id)
+                .observe(viewLifecycleOwner) {
+                    holder.scoreTeam2.text = if (it != null) {
+                        it.toString() + "/"
+                    } else {
+                        "-/"
+                    }
+                }
+            // wicket
+            viewModel.readWicketById(fixturesItem.localteam_id, fixturesItem.id)
+                .observe(viewLifecycleOwner) {
+                    holder.wicketTeam1.text = if (it != null) {
+                        it.toString()
+                    } else {
+                        "-"
+                    }
+                }
+
+            viewModel.readWicketById(fixturesItem.visitorteam_id, fixturesItem.id)
+                .observe(viewLifecycleOwner) {
+                    holder.wicketTeam2.text = if (it != null) {
+                        it.toString()
+                    } else {
+                        "-"
+                    }
+                }
+
         }
 
         viewModel.readTeamCode(fixturesItem.localteam_id)
@@ -88,48 +130,11 @@ class FixtureAdapter(
                     .into(holder.teamIcon2)
             }
 
-        // run
-        viewModel.readScoreById(fixturesItem.localteam_id, fixturesItem.id)
-            .observe(viewLifecycleOwner) {
-                holder.scoreTeam1.text = if (it != null) {
-                    it.toString() + "/"
-                } else {
-                    "-/"
-                }
-            }
-
-        viewModel.readScoreById(fixturesItem.visitorteam_id, fixturesItem.id)
-            .observe(viewLifecycleOwner) {
-                holder.scoreTeam2.text = if (it != null) {
-                    it.toString() + "/"
-                } else {
-                    "-/"
-                }
-            }
-        // wicket
-        viewModel.readWicketById(fixturesItem.localteam_id, fixturesItem.id)
-            .observe(viewLifecycleOwner) {
-                holder.wicketTeam1.text = if (it != null) {
-                    it.toString()
-                } else {
-                    "-"
-                }
-            }
-
-        viewModel.readWicketById(fixturesItem.visitorteam_id, fixturesItem.id)
-            .observe(viewLifecycleOwner) {
-                holder.wicketTeam2.text = if (it != null) {
-                    it.toString()
-                } else {
-                    "-"
-                }
-            }
-
         // navigate to details
         holder.itemView.setOnClickListener {
             val bundle = Bundle()
             bundle.putParcelable(MATCH_ID, fixturesItem)
-            holder.itemView.findNavController().navigate(R.id.matchDetailsFragment,bundle)
+            holder.itemView.findNavController().navigate(R.id.matchDetailsFragment, bundle)
         }
     }
 

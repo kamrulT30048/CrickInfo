@@ -49,12 +49,15 @@ class RecentMatchFragment : Fragment() {
         viewModel = ViewModelProvider(this)[CrickInfoViewModel::class.java]
 
         viewModel.getRecentMatches()
+        binding.matchRecyclerView.setHasFixedSize(true)
 
         viewModel.recentMatch.observe(viewLifecycleOwner) {
 
             if(it != null){
-                val adapter = FixtureAdapter(it, viewModel, viewLifecycleOwner)
-                binding.matchRecyclerView.adapter = adapter
+                val adapterViewState = binding.matchRecyclerView.layoutManager?.onSaveInstanceState()
+                binding.matchRecyclerView.layoutManager?.onRestoreInstanceState(adapterViewState)
+
+                binding.matchRecyclerView.adapter = FixtureAdapter(it, viewModel, viewLifecycleOwner)
             }else{
                 Log.d(TAG, "onViewCreated: null value")
             }

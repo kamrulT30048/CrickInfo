@@ -52,11 +52,15 @@ class UpcomingMatchFragment : Fragment() {
         Log.d(TAG, "onViewCreated: dateLimit: $upcomingDate")
 
         viewModel.getUpcomingMatches()
+        binding.matchRecyclerView.setHasFixedSize(true)
 
         viewModel.upcomingMatch.observe(viewLifecycleOwner) {
             Log.d(TAG, "onViewCreated: before $it")
 
             if(it != null){
+                val adapterViewState = binding.matchRecyclerView.layoutManager?.onSaveInstanceState()
+                binding.matchRecyclerView.layoutManager?.onRestoreInstanceState(adapterViewState)
+
                 Log.d(TAG, "onViewCreated: $it")
                 binding.matchRecyclerView.adapter = FixtureAdapter(it, viewModel, viewLifecycleOwner)
             }

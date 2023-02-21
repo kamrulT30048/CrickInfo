@@ -48,9 +48,10 @@
             app:layout_constraintTop_toBottomOf="@id/iv_team1" />
 
         <TextView
-            android:id="@+id/match_status"
+            android:id="@+id/tv_match_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/green_dark"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -61,7 +62,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20sp"
-            android:text="@string/_0"
+            tools:text="@string/_0"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="@id/iv_team1"
             app:layout_constraintStart_toEndOf="@id/iv_team1"
@@ -80,20 +81,20 @@
             android:id="@+id/tv_vs"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20sp"
+            android:layout_marginStart="0sp"
             android:text="@string/vs"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="italic"
-            app:layout_constraintEnd_toStartOf="@id/tv_score_team2"
-            app:layout_constraintStart_toEndOf="@id/tv_score_team1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/tv_score_team1" />
 
         <TextView
             android:id="@+id/tv_score_team2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/_0"
+            tools:text="@string/_0"
             android:textSize="20sp"
             app:layout_constraintEnd_toStartOf="@id/tv_wicket_team2"
             app:layout_constraintTop_toTopOf="@id/tv_score_team1" />

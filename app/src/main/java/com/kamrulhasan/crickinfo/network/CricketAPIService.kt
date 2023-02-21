@@ -11,7 +11,7 @@ import com.kamrulhasan.crickinfo.model.season.Seasons
 import com.kamrulhasan.crickinfo.model.squad.SquadTeams
 import com.kamrulhasan.crickinfo.model.team.Teams
 import com.kamrulhasan.crickinfo.model.team.TeamsData
-import com.kamrulhasan.crickinfo.model.upcomingmatch.UpcomingMatch
+import com.kamrulhasan.crickinfo.model.venues.Venues
 import com.kamrulhasan.topnews.utils.*
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -112,6 +112,10 @@ interface CricketAPIService {
         @Query("api_token") api_token: String = API_TOKEN
     ): Seasons
 
+    @GET(VENUES_END)
+    suspend fun getVenues(
+        @Query("api_token") api_token: String = API_TOKEN
+    ): Venues
 
     @GET(GET_CRICKET_NEWS)
     fun getCricketNews(): Call<News>
