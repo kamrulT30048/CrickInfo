@@ -9,8 +9,15 @@
         android:id="@+id/fixturesFragment"
         android:icon="@drawable/icon_bat_ball"
         android:title="@string/matches" />
+
+    <item
+        android:id="@+id/playersFragment"
+        android:icon="@drawable/icon_person"
+        android:title="@string/players" />
+
     <item
         android:id="@+id/newsFragment"
         android:icon="@drawable/icon_news"
         android:title="@string/news" />
+
 </menu>

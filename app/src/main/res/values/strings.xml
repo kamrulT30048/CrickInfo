@@ -75,4 +75,16 @@
     <string name="elected">Elected:</string>
     <string name="team2">Team2</string>
     <string name="team1">Team1</string>
+    <string name="scorecard">SCORECARD</string>
+    <string name="extra">Extra:</string>
+    <string name="b">B</string>
+    <string name="_4s">4s</string>
+    <string name="_6s">6s</string>
+    <string name="name">Name</string>
+    <string name="o">O</string>
+    <string name="players">Players</string>
+    <string name="live">Live</string>
+    <string name="cricket_news">Cricket News</string>
+    <string name="see_more">See More -></string>
+    <string name="please_check_your_internet_connection">Please check your internet connection.</string>
 </resources>

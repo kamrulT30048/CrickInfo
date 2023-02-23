@@ -13,7 +13,6 @@ import com.kamrulhasan.crickinfo.adapter.FixtureAdapter
 import com.kamrulhasan.crickinfo.databinding.FragmentUpcomingMatchBinding
 import com.kamrulhasan.crickinfo.model.fixture.FixturesData
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
-import com.kamrulhasan.topnews.utils.DateConverter
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
@@ -24,6 +23,7 @@ class UpcomingMatchFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: CrickInfoViewModel
+
 
     private var matchList: List<FixturesData>? = listOf()
 
@@ -45,7 +45,7 @@ class UpcomingMatchFragment : Fragment() {
         val formatter = SimpleDateFormat("yyyy-MM-dd")
         val todayDate = formatter.format(today.time)
 
-        today.add(Calendar.MONTH,3)
+        today.add(Calendar.MONTH, 3)
         val lastDate = formatter.format(today.time)
 
         val upcomingDate = "$todayDate,$lastDate"
@@ -57,19 +57,19 @@ class UpcomingMatchFragment : Fragment() {
         viewModel.upcomingMatch.observe(viewLifecycleOwner) {
             Log.d(TAG, "onViewCreated: before $it")
 
-            if(it != null){
-                val adapterViewState = binding.matchRecyclerView.layoutManager?.onSaveInstanceState()
+            if (it != null) {
+                val adapterViewState =
+                    binding.matchRecyclerView.layoutManager?.onSaveInstanceState()
                 binding.matchRecyclerView.layoutManager?.onRestoreInstanceState(adapterViewState)
 
                 Log.d(TAG, "onViewCreated: $it")
-                binding.matchRecyclerView.adapter = FixtureAdapter(it, viewModel, viewLifecycleOwner)
-            }
-            else{
+                binding.matchRecyclerView.adapter =
+                    FixtureAdapter(it, viewModel, viewLifecycleOwner)
+            } else {
                 Log.d(TAG, "onViewCreated: null")
             }
 
         }
-
         val bottomNav: BottomNavigationView = requireActivity().findViewById(R.id.bottom_nav_bar)
 
         binding.matchRecyclerView.setOnScrollChangeListener { _: View?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
@@ -79,8 +79,12 @@ class UpcomingMatchFragment : Fragment() {
                 bottomNav.visibility = View.VISIBLE
             }
         }
+    }
 
+    override fun onPause() {
+        super.onPause()
 
-
+        val bottomNav: BottomNavigationView = requireActivity().findViewById(R.id.bottom_nav_bar)
+        bottomNav.visibility = View.VISIBLE
     }
 }

@@ -28,11 +28,6 @@ class RecentMatchFragment : Fragment() {
 
     private var matchList: List<FixturesData> = listOf()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -64,6 +59,7 @@ class RecentMatchFragment : Fragment() {
         }
 
         val bottomNav: BottomNavigationView = requireActivity().findViewById(R.id.bottom_nav_bar)
+
         binding.matchRecyclerView.setOnScrollChangeListener { _: View?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
             if (scrollY > oldScrollY) {
                 bottomNav.visibility = View.GONE
@@ -73,38 +69,10 @@ class RecentMatchFragment : Fragment() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
 
-    // Search menu
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-        inflater.inflate(R.menu.search_menu, menu)
-        val search = menu.findItem(R.id.search_item)
-        val searchView = search?.actionView as SearchView
-        searchView.queryHint = "Search"
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-
-                Toast.makeText(
-                    MyApplication.appContext,
-                    "Result has been showed.",
-                    Toast.LENGTH_SHORT
-                ).show()
-                return true
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                Toast.makeText(
-                    MyApplication.appContext,
-                    "search completed",
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                return true
-            }
-        })
-    }
-
-    private fun searchArticle(toString: String) {
-        Toast.makeText(MyApplication.appContext, "search completed", Toast.LENGTH_SHORT).show()
+        val bottomNav: BottomNavigationView = requireActivity().findViewById(R.id.bottom_nav_bar)
+        bottomNav.visibility = View.VISIBLE
     }
 }

@@ -30,13 +30,15 @@ const val BASE_URL_NEWS = "https://newsapi.org/v2/"
 
 /// API Key
 const val API_TOKEN = "dH8NTCnnxtGtW3ev2FSfqOaq4jcTWToNZ6r7AXW7RS8TWgekkd270L2jStLT"
+const val API_TOKEN_LIVE = "hNf2oXFWaRWVINxXWzIZczPrbbH1db5WMoQ6osus2XhsK3Z5wI4D3Nsf8vTY"
+
 const val API_KEY_NEWS = "2bd7895cc96e4a88bb0b58f85b4bca0d"
 
-const val GET_CRICKET_NEWS = "everything?q=cricket&sortBy=publishedAt&pageSize=20&apiKey=$API_KEY_NEWS"
-
+const val GET_CRICKET_NEWS_HOME = "everything?q=cricket&sortBy=publishedAt&pageSize=5&apiKey=$API_KEY_NEWS"
+const val GET_CRICKET_NEWS = "everything?q=cricket&sortBy=publishedAt&pageSize=30&apiKey=$API_KEY_NEWS"
 
 // specific api link
-const val FIXTURES_END = "fixtures"             //?api_token=$api_token"
+const val FIXTURES_END = "fixtures"
 const val OFFICIALS_END = "officials"
 const val COUNTRIES_END = "countries"
 const val SEASONS_END = "seasons"
@@ -44,12 +46,10 @@ const val VENUES_END = "venues"
 const val LEAGUES_END = "leagues"
 const val TEAM_END = "teams"
 const val PLAYER_END = "players"
-
-
+const val LIVE_END = "livescores"
 
 // internet connectivity error massage
 const val CHECK_INTERNET = "Please check your internet connection to reload!!"
-
 
 // Notification Channel constants
 

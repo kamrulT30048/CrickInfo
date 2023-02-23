@@ -1,19 +1,38 @@
 package com.kamrulhasan.crickinfo.ui.fragment
 
 import android.os.Bundle
+import android.view.*
+import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModelProvider
 import com.kamrulhasan.crickinfo.R
+import com.kamrulhasan.crickinfo.adapter.PlayerAdapter
 import com.kamrulhasan.crickinfo.databinding.FragmentPlayersBinding
+import com.kamrulhasan.crickinfo.model.custom.CustomPlayer
+import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
+import com.kamrulhasan.topnews.utils.MyApplication
+import java.util.*
 
 private const val TAG = "PlayersFragment"
 
 class PlayersFragment : Fragment() {
 
-    private var _binding : FragmentPlayersBinding? = null
+    private var _binding: FragmentPlayersBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var viewModel: CrickInfoViewModel
+    private lateinit var viewLifecycle: LifecycleOwner
+
+    private var playerList = emptyList<CustomPlayer>()
+    private var tempPlayerMutableList = mutableListOf<CustomPlayer>()
+    private var tempPlayerList = playerList
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,7 +45,68 @@ class PlayersFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //todo
+
+        viewModel = ViewModelProvider(this)[CrickInfoViewModel::class.java]
+        viewLifecycle = viewLifecycleOwner
+
+        viewModel.playerList.observe(viewLifecycleOwner) {
+            binding.playerRecyclerView.adapter =
+                it?.let { it1 ->
+                    playerList = it
+                    tempPlayerList = it
+                    PlayerAdapter(tempPlayerList, viewModel, viewLifecycleOwner)
+                }
+        }
+    }
+
+    // Search menu
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        inflater.inflate(R.menu.search_menu, menu)
+        val search = menu.findItem(R.id.search_item)
+        val searchView = search?.actionView as SearchView
+        searchView.queryHint = "Search"
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+
+                Toast.makeText(
+                    MyApplication.appContext,
+                    "Result has been showed.",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                searchPlayer(newText.toString())
+
+                return true
+            }
+        })
+    }
+
+    private fun searchPlayer(text: String) {
+
+        tempPlayerMutableList.clear()
+        val searchText = text.toLowerCase(Locale.getDefault())
+        tempPlayerList = if (searchText.isNotEmpty()) {
+//            Toast.makeText(MyApplication.appContext, "search completed", Toast.LENGTH_SHORT).show()
+
+            playerList.forEach {
+                if (it.name?.toLowerCase(Locale.getDefault())?.contains(searchText) == true) {
+                    tempPlayerMutableList.add(it)
+                }
+            }
+            tempPlayerMutableList
+        } else {
+            playerList
+        }
+        //save recyclerview state
+//        val adapterViewState = binding.playerRecyclerView.layoutManager?.onSaveInstanceState()
+//        binding.playerRecyclerView.layoutManager?.onRestoreInstanceState(adapterViewState)
+
+        binding.playerRecyclerView.adapter = PlayerAdapter(tempPlayerList, viewModel,viewLifecycle)
     }
 
 }

@@ -39,6 +39,10 @@ class MainActivity : AppCompatActivity() {
                     navController.navigate(R.id.fixturesFragment)
                     true
                 }
+               R.id.playersFragment -> {
+                    navController.navigate(R.id.playersFragment)
+                    true
+                }
                 R.id.newsFragment -> {
                     navController.navigate(R.id.newsFragment)
                     true

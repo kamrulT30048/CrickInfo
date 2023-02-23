@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kamrulhasan.crickinfo.R
 import com.kamrulhasan.crickinfo.model.news.Article
+import com.kamrulhasan.topnews.utils.DateConverter
 import com.kamrulhasan.topnews.utils.MyApplication
 import com.kamrulhasan.topnews.utils.URL_KEY
 
@@ -35,7 +36,7 @@ class NewsAdapter(
 
         val newsItem = newsList[position]
 
-        holder.publishedDate.text = newsItem.publishedAt
+        holder.publishedDate.text = newsItem.publishedAt?.let { DateConverter.zoneToDateTime(it) }
         holder.title.text = newsItem.title
         holder.desc.text = newsItem.description
 

@@ -2,11 +2,15 @@ package com.kamrulhasan.crickinfo.ui.fragment
 
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.kamrulhasan.crickinfo.R
@@ -14,6 +18,8 @@ import com.kamrulhasan.crickinfo.adapter.NewsAdapter
 import com.kamrulhasan.crickinfo.databinding.FragmentNewsBinding
 import com.kamrulhasan.crickinfo.model.news.Article
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
+import com.kamrulhasan.topnews.utils.MyApplication
+import com.kamrulhasan.topnews.utils.verifyAvailableNetwork
 
 class NewsFragment : Fragment() {
 
@@ -38,14 +44,42 @@ class NewsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(this)[CrickInfoViewModel::class.java]
+        val connection = verifyAvailableNetwork(requireActivity() as AppCompatActivity)
+        if (newsList.isEmpty() && !connection) {
 
-        viewModel.getNewsArticle()
+            binding.ivCloudOff.setImageResource(R.drawable.icon_cloud_off_24)
+            binding.ivCloudOff.visibility = View.VISIBLE
+            binding.tvCloudOff.visibility = View.VISIBLE
+
+        } else if (newsList.isEmpty()) {
+
+            binding.ivCloudOff.setImageResource(R.drawable.icon_loading)
+            binding.ivCloudOff.visibility = View.VISIBLE
+            binding.tvCloudOff.visibility = View.GONE
+
+            viewModel.getNewsArticle()
+
+            //handle data loading error
+            Handler(Looper.getMainLooper()).postDelayed({
+                if(newsList.isEmpty()){
+                    binding.ivCloudOff.setImageResource(R.drawable.icon_sync_problem_24)
+                    binding.ivCloudOff.visibility = View.VISIBLE
+                    Toast.makeText(
+                        MyApplication.appContext, "Data Sync Failed,\n" +
+                                " Refresh Again!!", Toast.LENGTH_SHORT).show()
+                }
+            }, 5000)
+        }
 
         viewModel.news.observe(viewLifecycleOwner) {
 
             if (it != null) {
                 newsList = it
                 binding.recyclerView.adapter = NewsAdapter(newsList)
+                if (newsList.isNotEmpty()) {
+                    binding.ivCloudOff.visibility = View.GONE
+                    binding.tvCloudOff.visibility = View.GONE
+                }
             }
 
         }
@@ -59,6 +93,12 @@ class NewsFragment : Fragment() {
                 bottomNav.visibility = View.VISIBLE
             }
         }
+    }
+    override fun onPause() {
+        super.onPause()
+
+        val bottomNav: BottomNavigationView = requireActivity().findViewById(R.id.bottom_nav_bar)
+        bottomNav.visibility = View.VISIBLE
     }
 
 }

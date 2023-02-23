@@ -2,6 +2,7 @@ package com.kamrulhasan.crickinfo.ui.fragment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.util.TypedValue
 import androidx.fragment.app.Fragment
@@ -10,14 +11,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
-import com.google.android.material.tabs.TabLayoutMediator
 import com.kamrulhasan.crickinfo.R
+import com.kamrulhasan.crickinfo.adapter.BattingAdapter
+import com.kamrulhasan.crickinfo.adapter.BowlingAdapter
 import com.kamrulhasan.crickinfo.adapter.LineupAdapter
-import com.kamrulhasan.crickinfo.adapter.MatchDetailsViewPagerAdapter
-import com.kamrulhasan.crickinfo.adapter.ViewPagerAdapter
 import com.kamrulhasan.crickinfo.databinding.FragmentMatchDetailsBinding
 import com.kamrulhasan.crickinfo.model.fixture.FixturesData
-import com.kamrulhasan.crickinfo.model.lineup.Lineup
+import com.kamrulhasan.crickinfo.model.match.Batting
+import com.kamrulhasan.crickinfo.model.match.Lineup
+import com.kamrulhasan.crickinfo.model.match.Bowling
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
 import com.kamrulhasan.topnews.utils.DateConverter
 import com.kamrulhasan.topnews.utils.MATCH_ID
@@ -57,21 +59,40 @@ class MatchDetailsFragment : Fragment() {
 
         viewModel = ViewModelProvider(this)[CrickInfoViewModel::class.java]
 
-        /*      val adapter = MatchDetailsViewPagerAdapter(childFragmentManager, lifecycle)
-              binding.matchDetailsViewPager.adapter = adapter
+        binding.layoutMatchInfo.visibility = View.VISIBLE
+        binding.layoutScorecard.visibility = View.GONE
+        binding.layoutTeamSquad.visibility = View.GONE
+        binding.layoutMatchUmpire.visibility = View.GONE
 
-              TabLayoutMediator(
-                  binding.matchDetailsTabLayout,
-                  binding.matchDetailsViewPager) { tab, position ->
-                  when (position) {
-                      0 -> tab.text = "Info"
-                      1 -> tab.text = "ScoreCard"
-                      2 -> tab.text = "Squad"
-                  }
-              }.attach()*/
+        binding.tvMatchInfo.setOnClickListener {
+            binding.layoutMatchInfo.visibility = View.VISIBLE
+            binding.layoutScorecard.visibility = View.GONE
+            binding.layoutTeamSquad.visibility = View.GONE
+            binding.layoutMatchUmpire.visibility = View.GONE
+        }
+        binding.tvTeamSquad.setOnClickListener {
+            binding.layoutMatchInfo.visibility = View.GONE
+            binding.layoutScorecard.visibility = View.GONE
+            binding.layoutTeamSquad.visibility = View.VISIBLE
+            binding.layoutMatchUmpire.visibility = View.GONE
+        }
+
+        binding.tvTeamScoreCard.setOnClickListener {
+            binding.layoutMatchInfo.visibility = View.GONE
+            binding.layoutScorecard.visibility = View.VISIBLE
+            binding.layoutTeamSquad.visibility = View.GONE
+            binding.layoutMatchUmpire.visibility = View.GONE
+        }
+        binding.tvMatchUmpire.setOnClickListener {
+            binding.layoutMatchInfo.visibility = View.GONE
+            binding.layoutScorecard.visibility = View.GONE
+            binding.layoutTeamSquad.visibility = View.GONE
+            binding.layoutMatchUmpire.visibility = View.VISIBLE
+        }
+
+
 
         match?.let { it ->
-
 
             //binding.tvDate.text = it.starting_at?.let { DateConverter.zoneToDate(it) }
             binding.tvMatchDate.text = it.starting_at?.let { DateConverter.zoneToDate(it) }
@@ -88,8 +109,41 @@ class MatchDetailsFragment : Fragment() {
             if (it.status == "Finished") {
                 binding.tvStatus.setTextColor(resources.getColor(R.color.red))
             } else if (it.status == "NS") {
+
                 binding.tvStatus.text = "Upcoming"
                 binding.tvStatus.setTextColor(resources.getColor(R.color.green_dark))
+
+                it.starting_at?.let {
+
+                    val countdownDuration = DateConverter.stringToDateLong(it) - DateConverter.todayToDateLong()
+
+                    Log.d(TAG, "onBindViewHolder: ms: $countdownDuration")
+                    val countHour = countdownDuration.div((1000 * 60 * 60))
+
+                    if (countHour in 1..48) {
+                        val countdownTimer = object : CountDownTimer(countdownDuration, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {
+                                // Update the countdown text view with the remaining time
+                                var secondsRemaining = millisUntilFinished / 1000
+                                var minute = secondsRemaining / 60
+                                secondsRemaining %= 60
+                                val hour = minute / 60
+                                minute %= 60
+                                binding.tvStatus.text = "Upcoming"
+                                binding.tvTimeCountDown.text = "$hour:$minute:$secondsRemaining"
+                            }
+
+                            override fun onFinish() {
+                                // Update the countdown text view with the final message
+//                                holder.notes.text = ""
+                                binding.tvStatus.text = "Live"
+                                binding.tvTimeCountDown.text = "Live"
+                                viewModel.readUpcomingMatch()
+                            }
+                        }
+                        countdownTimer.start()
+                    }
+                }
             }
             //series
             binding.tvSeries.text = it.round
@@ -122,7 +176,7 @@ class MatchDetailsFragment : Fragment() {
                     }
             }
 
-            // MOM
+            // Man of Match
             it.man_of_match_id?.let { it1 ->
                 viewModel.getPlayerNameById(it1)
                 viewModel.playerName.observe(viewLifecycleOwner) {
@@ -185,12 +239,14 @@ class MatchDetailsFragment : Fragment() {
                 .observe(viewLifecycleOwner) {
                     binding.tvTeam1.text = it
                     binding.tvNameTeam1.text = it
+                    binding.tvTeam1Card.text = it
                 }
 
             viewModel.readTeamCode(it.visitorteam_id)
                 .observe(viewLifecycleOwner) {
                     binding.tvTeam2.text = it
                     binding.tvNameTeam2.text = it
+                    binding.tvTeam2Card.text = it
                 }
 
             // read team image url
@@ -263,8 +319,8 @@ class MatchDetailsFragment : Fragment() {
                     }
                 }
 
-            //// Lineup calling
-            viewModel.getLineup(it.id)
+            //// Match details calling
+            viewModel.getMatchDetails(it.id)
 
             val localTeam = it.localteam_id
             val visitorTeam = it.visitorteam_id
@@ -272,14 +328,65 @@ class MatchDetailsFragment : Fragment() {
             val lineupLocal = mutableListOf<Lineup>()
             val lineupVisitor = mutableListOf<Lineup>()
 
-            viewModel.lineup.observe(viewLifecycleOwner) { it1 ->
+            val battingTeam1 = mutableListOf<Batting>()
+            val bowlingTeam1 = mutableListOf<Bowling>()
+            val battingTeam2 = mutableListOf<Batting>()
+            val bowlingTeam2 = mutableListOf<Bowling>()
+
+            var team1Extra = 0
+            var team2Extra = 0
+
+            // lineup
+            viewModel.matchDetails.observe(viewLifecycleOwner) { it1 ->
+
+
+
+                battingTeam1.clear()
+                battingTeam2.clear()
+                bowlingTeam1.clear()
+                bowlingTeam2.clear()
+
+                it1?.batting?.forEach { batting ->
+                    if (batting.team_id == localTeam) {
+                        battingTeam1.add(batting)
+                    } else {
+                        battingTeam2.add(batting)
+                    }
+                }
+                binding.recyclerViewBattingScorecard.adapter =
+                    BattingAdapter(battingTeam1, viewModel, viewLifecycleOwner)
+
+                /////// calculating extra runs
+
+                it1?.scoreboards?.forEach { score ->
+                    if (score.team_id == localTeam && score.type == "extra") {
+                        team1Extra =
+                            (score.wide ?: 0) + (score.noball_runs ?: 0) + (score.noball_balls ?: 0)
+                        +(score.bye ?: 0) + (score.leg_bye ?: 0) + (score.penalty ?: 0)
+                    }
+                    else if(score.team_id == visitorTeam && score.type == "extra"){
+                        team2Extra =
+                            (score.wide ?: 0) + (score.noball_runs ?: 0) + (score.noball_balls ?: 0)
+                        +(score.bye ?: 0) + (score.leg_bye ?: 0) + (score.penalty ?: 0)
+                    }
+                }
+                binding.tvTeamExtra.text = "Extra: ( $team1Extra )"
+
+                it1?.bowling?.forEach { bowling ->
+                    if (bowling.team_id == localTeam) {
+                        bowlingTeam1.add(bowling)
+                    } else {
+                        bowlingTeam2.add(bowling)
+                    }
+                }
+                binding.recyclerViewBowlingScorecard.adapter =
+                    BowlingAdapter(bowlingTeam1, viewModel, viewLifecycleOwner)
 
                 lineupLocal.clear()
                 lineupVisitor.clear()
+                Log.d(TAG, "onViewCreated: lineup: ${it1?.lineup?.size}")
 
-                Log.d(TAG, "onViewCreated: lineup: ${it1?.size}")
-
-                it1?.forEach {
+                it1?.lineup?.forEach {
                     if (it.lineup?.team_id == localTeam) {
                         lineupLocal.add(it)
                     } else {
@@ -289,7 +396,53 @@ class MatchDetailsFragment : Fragment() {
                 binding.recyclerViewTeamSquad.adapter = LineupAdapter(lineupLocal)
             }
 
-            binding.tvNameTeam1.setBackgroundColor(resources.getColor(R.color.gray_light_0))
+            ///////// scorecard for team1  \\\\\\\\\\\
+
+            binding.tvTeam1Card.setOnClickListener {
+
+                binding.recyclerViewBattingScorecard.adapter =
+                    BattingAdapter(battingTeam1, viewModel, viewLifecycleOwner)
+
+                binding.tvTeamExtra.text = "Extra: ( $team1Extra )"
+
+                binding.recyclerViewBowlingScorecard.adapter =
+                    BowlingAdapter(bowlingTeam1, viewModel, viewLifecycleOwner)
+
+                // text background change
+                binding.tvTeam1Card.setBackgroundResource(R.drawable.selected)
+                binding.tvTeam2Card.setBackgroundResource(R.drawable.non_selected)
+                // text color change
+                binding.tvTeam1Card.setTextColor(resources.getColor(R.color.white))
+                binding.tvTeam2Card.setTextColor(resources.getColor(R.color.black))
+                // text size change
+                binding.tvTeam1Card.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
+                binding.tvTeam2Card.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+            }
+
+            ///////// scorecard for team2  \\\\\\\\\\\
+
+            binding.tvTeam2Card.setOnClickListener {
+
+                binding.recyclerViewBattingScorecard.adapter =
+                    BattingAdapter(battingTeam2, viewModel, viewLifecycleOwner)
+
+                binding.tvTeamExtra.text = "Extra: ( $team2Extra )"
+
+                binding.recyclerViewBowlingScorecard.adapter =
+                    BowlingAdapter(bowlingTeam2, viewModel, viewLifecycleOwner)
+
+                // text background change
+                binding.tvTeam2Card.setBackgroundResource(R.drawable.selected)
+                binding.tvTeam1Card.setBackgroundResource(R.drawable.non_selected)
+
+                // text color change
+                binding.tvTeam2Card.setTextColor(resources.getColor(R.color.white))
+                binding.tvTeam1Card.setTextColor(resources.getColor(R.color.black))
+
+                // text size change
+                binding.tvTeam2Card.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
+                binding.tvTeam1Card.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+            }
 
 //            viewModel.getSquadByTeamId(it.localteam_id)
             /*var list = listOf<Squad>()
@@ -304,25 +457,40 @@ class MatchDetailsFragment : Fragment() {
 
                 binding.recyclerViewTeamSquad.adapter = LineupAdapter(lineupLocal)
 
-                binding.tvNameTeam1.setBackgroundColor(resources.getColor(R.color.gray_light_0))
-                binding.tvNameTeam2.setBackgroundColor(resources.getColor(R.color.olive_light_00))
+                // text background change
+                binding.tvNameTeam1.setBackgroundResource(R.drawable.selected)
+                binding.tvNameTeam2.setBackgroundResource(R.drawable.non_selected)
 
-                binding.tvNameTeam1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
-                binding.tvNameTeam2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
+                // text color change
+                binding.tvNameTeam1.setTextColor(resources.getColor(R.color.white))
+                binding.tvNameTeam2.setTextColor(resources.getColor(R.color.black))
+
+                // text size change
+                binding.tvNameTeam1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
+                binding.tvNameTeam2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
             }
 
             val visitorId = it.visitorteam_id
+
             binding.tvNameTeam2.setOnClickListener {
 //                viewModel.getSquadByTeamId(visitorId)
 
                 binding.recyclerViewTeamSquad.adapter = LineupAdapter(lineupVisitor)
 
-                binding.tvNameTeam1.setBackgroundColor(resources.getColor(R.color.olive_light_00))
-                binding.tvNameTeam2.setBackgroundColor(resources.getColor(R.color.gray_light_0))
+                // text background change
+                binding.tvNameTeam2.setBackgroundResource(R.drawable.selected)
+                binding.tvNameTeam1.setBackgroundResource(R.drawable.non_selected)
 
-                binding.tvNameTeam1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
-                binding.tvNameTeam2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
+                // text color change
+                binding.tvNameTeam2.setTextColor(resources.getColor(R.color.white))
+                binding.tvNameTeam1.setTextColor(resources.getColor(R.color.black))
+
+                // text size change
+                binding.tvNameTeam1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+                binding.tvNameTeam2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
             }
+
+
         }
 
 

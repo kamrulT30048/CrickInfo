@@ -1,5 +1,6 @@
 package com.kamrulhasan.crickinfo.ui.fragment
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -43,16 +44,30 @@ class WebViewFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val connection = verifyAvailableNetwork(requireActivity() as AppCompatActivity)
+
 
         bottomNav = requireActivity().findViewById(R.id.bottom_nav_bar)
-        
+
         binding.webView.webViewClient = WebViewClient()
         binding.webView.visibility = View.VISIBLE
 
-        // load news
-        binding.webView.loadUrl(newsUrl)
+        binding.webView.webViewClient = WebViewClient()
+        binding.webView.visibility = View.VISIBLE
+        // this will load the url of the website
+        if (connection) {
+            // load news
+            binding.webView.loadUrl(newsUrl)
+            binding.ivCloudOff.visibility = View.GONE
+            binding.tvCloudOff.visibility = View.GONE
+        } else {
+            binding.webView.visibility = View.GONE
+            binding.ivCloudOff.visibility = View.VISIBLE
+            binding.tvCloudOff.visibility = View.VISIBLE
+        }
 
         // this will enable the javascript settings, it can also allow xss vulnerabilities
         binding.webView.settings.javaScriptEnabled = true

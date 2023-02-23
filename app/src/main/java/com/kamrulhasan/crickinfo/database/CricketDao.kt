@@ -1,5 +1,6 @@
 package com.kamrulhasan.crickinfo.database
 
+import android.os.LimitExceededException
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
@@ -7,6 +8,7 @@ import androidx.room.OnConflictStrategy.IGNORE
 import androidx.room.Query
 import com.kamrulhasan.crickinfo.model.country.Country
 import com.kamrulhasan.crickinfo.model.country.CountryData
+import com.kamrulhasan.crickinfo.model.custom.CustomPlayer
 import com.kamrulhasan.crickinfo.model.fixture.FixturesData
 import com.kamrulhasan.crickinfo.model.fixture.Run
 import com.kamrulhasan.crickinfo.model.leagues.LeaguesData
@@ -21,6 +23,9 @@ interface CricketDao {
 
     @Insert(onConflict = IGNORE)
     suspend fun addTeam(teamsData: TeamsData)
+
+    @Insert(onConflict = IGNORE)
+    suspend fun addPlayer(player: CustomPlayer)
 
     @Insert(onConflict = IGNORE)
     suspend fun addFixtures(fixturesData: FixturesData)
@@ -46,6 +51,9 @@ interface CricketDao {
     @Query("SELECT * FROM fixtures_data ORDER BY starting_at DESC")
     fun readAllFixturesData(): LiveData<List<FixturesData>?>
 
+    @Query("SELECT * FROM player_table ORDER BY name ASC")
+    fun readAllPlayers(): LiveData<List<CustomPlayer>?>
+
     // read upcoming matches
     @Query(
         "SELECT * FROM fixtures_data " +
@@ -62,6 +70,19 @@ interface CricketDao {
     )
     fun readRecentFixtures(todayDate: String, passedDate: String): LiveData<List<FixturesData>?>
 
+    /// read recent matches short list//////////////
+
+    @Query(
+        "SELECT * FROM fixtures_data " +
+                "WHERE starting_at BETWEEN :todayDate AND :lastDate " +
+                "ORDER BY starting_at ASC LIMIT :limit"
+    )
+    fun readUpcomingFixturesSort(
+        todayDate: String,
+        lastDate: String,
+        limit: Int
+    ): LiveData<List<FixturesData>?>
+
     @Query("SELECT * FROM team_data ")
     fun readAllTeam(): LiveData<List<TeamsData>>
 
@@ -72,6 +93,18 @@ interface CricketDao {
 
     @Query("SELECT image_path FROM team_data WHERE id = :team_id")
     fun readTeamIconById(team_id: Int): LiveData<String>
+
+    //read player name
+    @Query("SELECT name FROM player_table WHERE id = :id")
+    fun readPlayerNameById(id: Int): LiveData<String>
+
+    //read player image url
+    @Query("SELECT image_path FROM player_table WHERE id = :id")
+    fun readPlayerImageUrlById(id: Int): LiveData<String>
+
+    //read player country id
+    @Query("SELECT country_id FROM player_table WHERE id = :id")
+    fun readPlayerCountryById(id: Int): LiveData<Int>
 
     /// run information
 

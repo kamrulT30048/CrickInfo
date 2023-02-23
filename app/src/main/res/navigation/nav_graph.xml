@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_homeFragment_to_newsFragment"
             app:destination="@id/newsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_playersFragment"
+            app:destination="@id/playersFragment" />
     </fragment>
     <fragment
         android:id="@+id/fixturesFragment"
@@ -112,4 +115,9 @@
             app:argType="integer"
             android:defaultValue="0" />
     </fragment>
+    <fragment
+        android:id="@+id/playersFragment"
+        android:name="com.kamrulhasan.crickinfo.ui.fragment.PlayersFragment"
+        android:label="Players"
+        tools:layout="@layout/fragment_players" />
 </navigation>

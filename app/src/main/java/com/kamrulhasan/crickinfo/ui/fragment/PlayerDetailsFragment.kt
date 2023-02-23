@@ -1,6 +1,5 @@
 package com.kamrulhasan.crickinfo.ui.fragment
 
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -17,9 +16,9 @@ import com.kamrulhasan.crickinfo.model.custom.CustomBowling
 import com.kamrulhasan.crickinfo.model.player.Career
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
 import com.kamrulhasan.topnews.utils.DateConverter
+import com.kamrulhasan.topnews.utils.MyApplication
 import com.kamrulhasan.topnews.utils.PLAYER_ID
 import java.util.Calendar
-import java.util.Date
 import kotlin.math.floor
 
 private const val TAG = "PlayerDetailsFragment"
@@ -56,14 +55,35 @@ class PlayerDetailsFragment : Fragment() {
         viewModel = ViewModelProvider(this)[CrickInfoViewModel::class.java]
 
         Log.d(TAG, "onViewCreated: $player")
+
+        viewModel.readPlayerNameById(player).observe(viewLifecycleOwner) { name ->
+             name?.let { binding.tvPlayerName.text =it }
+        }
+
+        viewModel.readPlayerCountryById(player)?.observe(viewLifecycleOwner) { country ->
+            country?.let { countryId ->
+                viewModel.readCountryById(countryId).observe(viewLifecycleOwner) {
+                    binding.tvCountry.text = it
+                }
+            }
+        }
+
+        viewModel.readPlayerImageUrlById(player)?.observe(viewLifecycleOwner) { imageUrl ->
+            Glide
+                .with(MyApplication.appContext)
+                .load(imageUrl)
+                .fitCenter()
+                .placeholder(R.drawable.icon_match)
+                .into(binding.ivPlayer)
+        }
+
         viewModel.getPlayerById(player)
+
+        var career: List<Career>? = null
 
         viewModel.player.observe(viewLifecycleOwner) { playersData ->
             playersData?.let { it ->
-                Glide.with(requireContext()).load(it.image_path).fitCenter()
-                    .placeholder(R.drawable.icon_person).into(binding.ivPlayer)
 
-                binding.tvPlayerName.text = it.fullname
                 binding.tvFirstName.text = it.firstname
                 binding.tvLastName.text = it.lastname
 
@@ -72,14 +92,7 @@ class PlayerDetailsFragment : Fragment() {
                     val dobYear = DateConverter.dateToYear(dob)
                     val ageYear = Calendar.getInstance().get(Calendar.YEAR) - dobYear
 
-//                    val date = DateConverter.stringToDate(it1)
-//                    val dobMili = DateConverter.dateToLong(date)
-//                    val todayMili = Calendar.getInstance().time.time
-//                    val ageSec =  (todayMili - dobMili)/1000  // get age in sec
-//                    val ageYear = ((ageSec/(60*60))/24)/365   // get age year
-
                     val age = "$ageYear Years ($dob)"
-
                     binding.tvDob.text = age
                 }
 
@@ -95,56 +108,70 @@ class PlayerDetailsFragment : Fragment() {
                 binding.tvPlayerBattingStyle.text = it.battingstyle
                 binding.tvPlayerBowlingStyle.text = it.bowlingstyle
 
-                it.country_id?.let { country_id ->
-                    viewModel.readCountryById(country_id).observe(viewLifecycleOwner) { country ->
-                        binding.tvCountry.text = country
-                    }
-                }
                 binding.tvCurrentTeam.text = if (it.teams != null && it.teams.isNotEmpty()) {
                     Log.d(TAG, "onViewCreated: teams: ${it.teams.size}")
                     it.teams[0].name
                 } else {
                     "__"
                 }
-                val career = it.career
 
-                if (career != null && career.isNotEmpty()) {
+                career = it.career
 
-                    /////////// Batting Career \\\\\\\\\\\\\
-
-                    // by default show batting career
-                    setBatingStatistics(career)
-
-                    binding.tvBatting.setOnClickListener {
-                        binding.tvBatting.setBackgroundColor(resources.getColor(R.color.gray_light_0))
-                        binding.tvBowling.setBackgroundColor(resources.getColor(R.color.olive_light_00))
-
-                        binding.tvBatting.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
-                        binding.tvBowling.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
-
-                        binding.layoutBowling.visibility = View.GONE
-                        binding.layoutBatting.visibility = View.VISIBLE
-
-                        setBatingStatistics(career)
-                    }
-
-                    /////////// Bowling Career \\\\\\\\\\\\\
-
-                    binding.tvBowling.setOnClickListener {
-                        binding.tvBowling.setBackgroundColor(resources.getColor(R.color.gray_light_0))
-                        binding.tvBatting.setBackgroundColor(resources.getColor(R.color.olive_light_00))
-
-                        binding.tvBatting.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
-                        binding.tvBowling.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
-
-                        binding.layoutBowling.visibility = View.VISIBLE
-                        binding.layoutBatting.visibility = View.GONE
-
-                        setBowlingStatistics(career)
-                    }
+                career?.let {
+                    setBatingStatistics(it)
                 }
             }
         }
+
+        ///////////////////////////////////////
+        /////////// Batting Career \\\\\\\\\\\\\
+        ///////////////////////////////////////
+        binding.tvBatting.setOnClickListener {
+            // text background change
+            binding.tvBatting.setBackgroundResource(R.drawable.selected)
+            binding.tvBowling.setBackgroundResource(R.drawable.non_selected)
+
+            // text color change
+            binding.tvBatting.setTextColor(resources.getColor(R.color.white))
+            binding.tvBowling.setTextColor(resources.getColor(R.color.black))
+
+            // text size change
+            binding.tvBatting.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
+            binding.tvBowling.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+
+            binding.layoutBowling.visibility = View.GONE
+            binding.layoutBatting.visibility = View.VISIBLE
+
+            // show batting career
+            career?.let {
+                setBatingStatistics(it)
+            }
+        }
+        ///////////////////////////////////////
+        /////////// Bowling Career \\\\\\\\\\\\\
+        ////////////////////////////////////////
+        binding.tvBowling.setOnClickListener {
+            // text background change
+            binding.tvBowling.setBackgroundResource(R.drawable.selected)
+            binding.tvBatting.setBackgroundResource(R.drawable.non_selected)
+
+            // text color change
+            binding.tvBatting.setTextColor(resources.getColor(R.color.black))
+            binding.tvBowling.setTextColor(resources.getColor(R.color.white))
+
+            // text size change
+            binding.tvBatting.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+            binding.tvBowling.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
+
+            binding.layoutBowling.visibility = View.VISIBLE
+            binding.layoutBatting.visibility = View.GONE
+
+            // show bowling career
+            career?.let {
+                setBowlingStatistics(it)
+            }
+        }
+
     }
 
     ////////////////////////////

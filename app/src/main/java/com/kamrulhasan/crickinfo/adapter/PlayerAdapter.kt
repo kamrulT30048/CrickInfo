@@ -1,29 +1,34 @@
 package com.kamrulhasan.crickinfo.adapter
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kamrulhasan.crickinfo.R
+import com.kamrulhasan.crickinfo.model.custom.CustomPlayer
 import com.kamrulhasan.crickinfo.model.player.PlayersData
 import com.kamrulhasan.crickinfo.model.team.TeamsData
+import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
 import com.kamrulhasan.topnews.utils.MyApplication
+import com.kamrulhasan.topnews.utils.PLAYER_ID
 
 class PlayerAdapter(
-    private val playerData: List<PlayersData>,
-    private val viewModel: ViewModel
+    private val player: List<CustomPlayer>,
+    private val viewModel: CrickInfoViewModel,
+    private val viewLifecycleOwner: LifecycleOwner,
 ) :RecyclerView.Adapter<PlayerAdapter.PlayerHolder>(){
 
     class PlayerHolder(binding: View) : RecyclerView.ViewHolder(binding.rootView){
         val playerImage : ImageView = binding.findViewById(R.id.iv_player)
         val playerName: TextView = binding.findViewById(R.id.tv_player_name)
         val playerType : TextView = binding.findViewById(R.id.tv_player_position)
-//        val playerCountry : TextView = binding.findViewById(R.id.tv_player_county)
-//        val playerTeam : TextView = binding.findViewById(R.id.tv_player_team)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerHolder {
@@ -33,20 +38,31 @@ class PlayerAdapter(
     }
 
     override fun onBindViewHolder(holder: PlayerHolder, position: Int) {
-        val playerItem = playerData[position]
+        val playerItem = player[position]
 
         holder.playerImage.setImageResource(R.drawable.icon_image_24)
-        holder.playerName.text = playerItem.fullname
-        holder.playerType.text = playerItem.position?.name
+        holder.playerName.text = playerItem.name
+
+        playerItem.country_id?.let {
+            viewModel.readCountryById(it).observe(viewLifecycleOwner) { country ->
+                holder.playerType.text = country
+            }
+        }
         Glide
             .with(holder.itemView.context)
             .load(playerItem.image_path)
             .fitCenter()
             .placeholder(R.drawable.icon_match)
             .into(holder.playerImage)
+
+        holder.itemView.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putInt(PLAYER_ID, playerItem.id)
+            holder.itemView.findNavController().navigate(R.id.playerDetailsFragment, bundle)
+        }
     }
 
     override fun getItemCount(): Int {
-        return playerData.size
+        return player.size
     }
 }

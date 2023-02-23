@@ -1,6 +1,6 @@
-package com.kamrulhasan.crickinfo.model.match
+package com.kamrulhasan.crickinfo.model.player
 
-data class Lineup(
+data class PlayerData(
     val battingstyle: String?,
     val bowlingstyle: String?,
     val country_id: Int?,
@@ -11,7 +11,6 @@ data class Lineup(
     val id: Int,
     val image_path: String?,
     val lastname: String?,
-    val lineup: LineupX?,
     val position: Position?,
     val resource: String?,
     val updated_at: String?

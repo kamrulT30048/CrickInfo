@@ -11,9 +11,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kamrulhasan.crickinfo.R
-import com.kamrulhasan.crickinfo.model.lineup.Lineup
-import com.kamrulhasan.crickinfo.model.squad.Squad
-import com.kamrulhasan.topnews.utils.MATCH_ID
+import com.kamrulhasan.crickinfo.model.match.Lineup
 import com.kamrulhasan.topnews.utils.MyApplication
 import com.kamrulhasan.topnews.utils.PLAYER_ID
 

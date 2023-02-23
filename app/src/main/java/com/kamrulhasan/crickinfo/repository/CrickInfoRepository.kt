@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import com.kamrulhasan.crickinfo.database.CricketDao
 import com.kamrulhasan.crickinfo.model.country.Country
 import com.kamrulhasan.crickinfo.model.country.CountryData
+import com.kamrulhasan.crickinfo.model.custom.CustomPlayer
 import com.kamrulhasan.crickinfo.model.fixture.FixturesData
 import com.kamrulhasan.crickinfo.model.fixture.Run
 import com.kamrulhasan.crickinfo.model.leagues.LeaguesData
@@ -17,14 +18,20 @@ class CrickInfoRepository(private val cricketDao: CricketDao) {
 
     val readAllFixturesData: LiveData<List<FixturesData>?> = cricketDao.readAllFixturesData()
     val readAllTeamsData: LiveData<List<TeamsData>> = cricketDao.readAllTeam()
+    val readAllPlayers: LiveData<List<CustomPlayer>?> = cricketDao.readAllPlayers()
 
-    fun readUpcomingFixtures(todayDate: String, lastDate: String): LiveData<List<FixturesData>?>{
-        return  cricketDao.readUpcomingFixtures(todayDate,lastDate)
+    fun readUpcomingFixtures(todayDate: String, lastDate: String): LiveData<List<FixturesData>?> {
+        return cricketDao.readUpcomingFixtures(todayDate, lastDate)
     }
 
     // read recent matches
-    fun readRecentFixtures(todayDate: String, passedDate: String): LiveData<List<FixturesData>?>{
-        return  cricketDao.readRecentFixtures(todayDate,passedDate)
+    fun readRecentFixtures(todayDate: String, passedDate: String): LiveData<List<FixturesData>?> {
+        return cricketDao.readRecentFixtures(todayDate, passedDate)
+    }
+
+    // read recent matches short list
+    fun readUpcomingShort(todayDate: String, passedDate: String, limit: Int): LiveData<List<FixturesData>?> {
+        return cricketDao.readUpcomingFixturesSort(todayDate, passedDate, limit)
     }
 
     suspend fun addFixturesData(fixturesData: FixturesData) {
@@ -43,6 +50,16 @@ class CrickInfoRepository(private val cricketDao: CricketDao) {
 
     fun readTeamIconById(id: Int): LiveData<String> {
         return cricketDao.readTeamIconById(id)
+    }
+
+    fun readPlayerNameById(id: Int): LiveData<String> {
+        return cricketDao.readPlayerNameById(id)
+    }
+    fun readPlayerImageUrlById(id: Int): LiveData<String> {
+        return cricketDao.readPlayerImageUrlById(id)
+    }
+    fun readPlayerCountryById(id: Int): LiveData<Int> {
+        return cricketDao.readPlayerCountryById(id)
     }
 
     // get run
@@ -108,6 +125,10 @@ class CrickInfoRepository(private val cricketDao: CricketDao) {
 
     suspend fun addCountries(countryData: CountryData) {
         cricketDao.addCountries(countryData)
+    }
+
+    suspend fun addPlayer(player: CustomPlayer) {
+        cricketDao.addPlayer(player)
     }
 
 

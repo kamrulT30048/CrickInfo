@@ -35,11 +35,17 @@ class DateConverter {
         }
 
         @SuppressLint("SimpleDateFormat")
-        fun stringToDate(date: String): Date {
-            val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'")
+        fun stringToDateLong(date: String): Long {
+            val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", Locale.getDefault())
             format.timeZone = TimeZone.getTimeZone("UTC")
-            return format.parse(date)!!
+            return format.parse(date)?.time ?: 0
         }
+        @SuppressLint("SimpleDateFormat")
+        fun todayToDateLong(): Long {
+            val today = Calendar.getInstance()
+            return  today.time.time
+        }
+
 
         fun longToDate(time: Long): Date {
             return Date(time)

@@ -1,6 +1,9 @@
 package com.kamrulhasan.crickinfo.adapter
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.CountDownTimer
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +21,8 @@ import com.kamrulhasan.topnews.utils.DateConverter
 import com.kamrulhasan.topnews.utils.MATCH_ID
 import com.kamrulhasan.topnews.utils.MyApplication
 import com.kamrulhasan.topnews.utils.URL_KEY
+import java.text.SimpleDateFormat
+import java.util.*
 
 private const val TAG = "FixtureAdapter"
 
@@ -48,6 +53,7 @@ class FixtureAdapter(
         return FixturesHolder(view)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: FixturesHolder, position: Int) {
         val fixturesItem = fixtureList[position]
 //        val team = viewModel.teamsData.value
@@ -56,11 +62,44 @@ class FixtureAdapter(
         holder.matchType.text = fixturesItem.round
 
         if (fixturesItem.status == "NS") {
-            holder.notes.text = "Upcoming"
-            holder.status.text = "cown"
+
+//            val inputFormat =
+//                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", Locale.getDefault())
+            holder.status.text = "Upcoming"
+
+            fixturesItem.starting_at?.let {
+
+                val countdownDuration = DateConverter.stringToDateLong(it) - DateConverter.todayToDateLong()
+
+                Log.d(TAG, "onBindViewHolder: ms: $countdownDuration")
+                val countHour = countdownDuration.div((1000 * 60 * 60))
+
+                if (countHour in 1..48) {
+                    val countdownTimer = object : CountDownTimer(countdownDuration, 1000) {
+                        override fun onTick(millisUntilFinished: Long) {
+                            // Update the countdown text view with the remaining time
+                            var secondsRemaining = millisUntilFinished / 1000
+                            var minute = secondsRemaining / 60
+                            secondsRemaining %= 60
+                            val hour = minute / 60
+                            minute %= 60
+                            holder.status.text = "Upcoming"
+                            holder.notes.text = "$hour:$minute:$secondsRemaining"
+                        }
+
+                        override fun onFinish() {
+                            // Update the countdown text view with the final message
+                            holder.notes.text = ""
+                            holder.status.text = "Live"
+                            viewModel.readUpcomingMatch()
+                        }
+                    }
+                    countdownTimer.start()
+                }
+            }
+//            holder.status.text = "Upcoming"
         } else {
             holder.notes.text = fixturesItem.note
-
             // run
             viewModel.readScoreById(fixturesItem.localteam_id, fixturesItem.id)
                 .observe(viewLifecycleOwner) {
