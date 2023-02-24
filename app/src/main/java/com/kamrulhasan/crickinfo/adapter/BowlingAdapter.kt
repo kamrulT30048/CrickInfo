@@ -38,6 +38,7 @@ class BowlingAdapter(
 
         battingItem.player_id.let { it1 ->
             viewModel.getPlayerNameById(it1)
+
             viewModel.readPlayerNameById(it1).observe(viewLifecycleOwner) {
                 if (battingItem.active == true) {
                     holder.playerName.text = "$it*"

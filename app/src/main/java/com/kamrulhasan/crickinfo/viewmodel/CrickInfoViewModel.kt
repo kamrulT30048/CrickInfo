@@ -13,14 +13,10 @@ import com.kamrulhasan.crickinfo.model.news.Article
 import com.kamrulhasan.crickinfo.model.fixture.FixturesData
 import com.kamrulhasan.crickinfo.model.leagues.LeaguesData
 import com.kamrulhasan.crickinfo.model.lineup.Lineup
-import com.kamrulhasan.crickinfo.model.match.Match
 import com.kamrulhasan.crickinfo.model.match.MatchData
 import com.kamrulhasan.crickinfo.model.officials.OfficialsData
 import com.kamrulhasan.crickinfo.model.player.PlayersData
 import com.kamrulhasan.crickinfo.model.season.SeasonsData
-import com.kamrulhasan.crickinfo.model.squad.Squad
-import com.kamrulhasan.crickinfo.model.squad.SquadTeams
-import com.kamrulhasan.crickinfo.model.squad.SquadTeamsData
 import com.kamrulhasan.crickinfo.model.team.TeamsData
 import com.kamrulhasan.crickinfo.model.venues.VenuesData
 import com.kamrulhasan.crickinfo.network.CricketApi
@@ -34,11 +30,11 @@ private const val TAG = "CrickInfoViewModel"
 
 class CrickInfoViewModel(application: Application) : AndroidViewModel(application) {
 
-    var fixturesData: LiveData<List<FixturesData>?>
+    //    var fixturesData: LiveData<List<FixturesData>?>
     var upcomingMatch: LiveData<List<FixturesData>?>
     var recentMatch: LiveData<List<FixturesData>?>
     var shortList: LiveData<List<FixturesData>?>
-    var teamsData: LiveData<List<TeamsData>>
+//    var teamsData: LiveData<List<TeamsData>>
 
     private var _news: MutableLiveData<List<Article>?> = MutableLiveData<List<Article>?>()
     val news: LiveData<List<Article>?> = _news
@@ -71,91 +67,45 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
                 .cricketDao()
         )
 
-        fixturesData = repository.readAllFixturesData
-
         recentMatch = repository.readRecentFixtures(
             DateConverter.todayDate(),
-            DateConverter.passedThreeMonth()
+            DateConverter.passedTwoMonth()
         )
+
         shortList = repository.readUpcomingShort(
             DateConverter.todayDate(),
-            DateConverter.upcomingThreeMonth(),
+            DateConverter.upcomingTwoMonth(),
             2
         )
+
         upcomingMatch = repository.readUpcomingFixtures(
             DateConverter.todayDate(),
-            DateConverter.upcomingThreeMonth()
+            DateConverter.upcomingTwoMonth()
         )
-        playerList = repository.readAllPlayers
-        teamsData = repository.readAllTeamsData
 
+        playerList = repository.readAllPlayers
+
+    }
+
+    //// Api call from main activity
+    fun apiCallOnce() {
+        getUpcomingMatches()
+        getRecentMatches()
         getLeaguesData()
         getOfficialsData()
         getTeamsData()
-        getFixturesData()
         getCountries()
         getSeasons()
         getVenues()
+        deleteFixtures(DateConverter.passedTwoMonth())
     }
 
-    /// read all players
-    fun readUpcomingMatch() {
-        upcomingMatch = repository.readUpcomingFixtures(
-            DateConverter.todayDate(),
-            DateConverter.upcomingThreeMonth()
-        )
-    }
+
+    ////////////////// Player \\\\\\\\\\\\\\\\\\
 
     /// read all players
     fun readAllPlayers() {
         playerList = repository.readAllPlayers
-    }
-
-    ///  read team code
-    fun readTeamCode(id: Int): LiveData<String> {
-        return repository.readTeamCodeById(id)
-    }
-
-    fun readTeamUrl(id: Int): LiveData<String> {
-        return repository.readTeamIconById(id)
-    }
-
-    /// read run
-    fun readScoreById(team_id: Int, fixture_id: Int): LiveData<Int> {
-        return repository.readTeamScoreById(team_id, fixture_id)
-    }
-
-    fun readWicketById(team_id: Int, fixture_id: Int): LiveData<Int> {
-        return repository.readTeamWicketById(team_id, fixture_id)
-    }
-
-    fun readOverById(team_id: Int, fixture_id: Int): LiveData<Double> {
-        return repository.readTeamOverById(team_id, fixture_id)
-    }
-
-    // officials
-    fun readOfficialsById(id: Int): LiveData<String> {
-        return repository.readOfficialsById(id)
-    }
-
-    // officials
-    fun readLeaguesById(id: Int): LiveData<String> {
-        return repository.readLeaguesById(id)
-    }
-
-    // officials
-    fun readCountryById(id: Int): LiveData<String> {
-        return repository.readCountryById(id)
-    }
-
-    // Venues Name
-    fun readVenuesNameById(id: Int): LiveData<String> {
-        return repository.readVenuesNameById(id)
-    }
-
-    // Venues City
-    fun readVenuesCityById(id: Int): LiveData<String> {
-        return repository.readVenuesCityById(id)
     }
 
     // player name
@@ -171,19 +121,109 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
     fun readPlayerCountryById(id: Int): LiveData<Int>? {
         return repository.readPlayerCountryById(id)
     }
+
     fun readPlayerImageUrlById(id: Int): LiveData<String>? {
         return repository.readPlayerImageUrlById(id)
     }
 
+    ////////////////// Team \\\\\\\\\\\\\\\\\\
+
+    ///  read team code
+    fun readTeamCode(id: Int): LiveData<String> {
+        return repository.readTeamCodeById(id)
+    }
+
+    // team url string
+    fun readTeamUrl(id: Int): LiveData<String> {
+        return repository.readTeamIconById(id)
+    }
+
+    ////////////////// Runs \\\\\\\\\\\\\\\\\\
+
+    /// read run
+    fun readScoreById(team_id: Int, fixture_id: Int): LiveData<Int> {
+        return repository.readTeamScoreById(team_id, fixture_id)
+    }
+
+    fun readWicketById(team_id: Int, fixture_id: Int): LiveData<Int> {
+        return repository.readTeamWicketById(team_id, fixture_id)
+    }
+
+    fun readOverById(team_id: Int, fixture_id: Int): LiveData<Double> {
+        return repository.readTeamOverById(team_id, fixture_id)
+    }
+
+    ////////////////// Officials \\\\\\\\\\\\\\\\\\
+
+    // Officials Name
+    fun readOfficialsById(id: Int): LiveData<String> {
+        return repository.readOfficialsById(id)
+    }
+
+    ////////////////// Leagues \\\\\\\\\\\\\\\\\\
+
+    // Leagues Name
+    fun readLeaguesById(id: Int): LiveData<String> {
+        return repository.readLeaguesById(id)
+    }
+
+    ////////////////// Country \\\\\\\\\\\\\\\\\\
+
+    // Country Name
+    fun readCountryById(id: Int): LiveData<String> {
+        return repository.readCountryById(id)
+    }
+
+    ////////////////// Venues \\\\\\\\\\\\\\\\\\
+
+    // Venues Name
+    fun readVenuesNameById(id: Int): LiveData<String> {
+        return repository.readVenuesNameById(id)
+    }
+
+    // Venues City
+    fun readVenuesCityById(id: Int): LiveData<String> {
+        return repository.readVenuesCityById(id)
+    }
+
+    ////////////////// Fixtures \\\\\\\\\\\\\\\\\\
+
     // read recent matches short list
-    fun readRecentMatchShortList(limit: Int) {
+    fun readUpcomingMatchShortList(limit: Int) {
         shortList = repository.readUpcomingShort(
             DateConverter.todayDate(),
-            DateConverter.upcomingThreeMonth(),
+            DateConverter.upcomingTwoMonth(),
             limit
         )
         Log.d(TAG, "readRecentMatchShortList: ${shortList.value}")
     }
+
+    /// read upcoming matches
+    fun readUpcomingMatch() {
+        upcomingMatch = repository.readUpcomingFixtures(
+            DateConverter.todayDate(),
+            DateConverter.upcomingTwoMonth()
+        )
+    }
+
+    private fun readRecentMatch() {
+        try {
+            upcomingMatch = repository.readRecentFixtures(
+                DateConverter.todayDate(),
+                DateConverter.passedTwoMonth()
+            )
+
+        } catch (e: Exception) {
+            Log.e(TAG, "readRecentMatches: $e")
+        }
+    }
+
+
+    /*
+    * ###################################################
+    *                Fixtures Api Call
+    * ####################################################
+    */
 
     // add Matches info into database
     private fun getFixturesData() {
@@ -212,10 +252,10 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
         readAllFixtures()
     }
 
-    // get upcoming match
+    // get upcoming match from api
     fun getUpcomingMatches() {
         val firstDate = DateConverter.todayDate()
-        val lastDate = DateConverter.upcomingThreeMonth()
+        val lastDate = DateConverter.upcomingTwoMonth()
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -229,18 +269,14 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
             } catch (e: Exception) {
                 Log.e(TAG, "getUpcomingMatches: $e")
             }
-            try {
-                upcomingMatch = repository.readUpcomingFixtures(firstDate, lastDate)
-            } catch (e: Exception) {
-                Log.e(TAG, "getUpcomingMatches: $e")
-            }
+            readUpcomingMatch()
         }
     }
 
-    // recent matches
+    // get recent matches from api
     fun getRecentMatches() {
         val todayDate = DateConverter.todayDate()
-        val passedDate = DateConverter.passedThreeMonth()
+        val passedDate = DateConverter.passedTwoMonth()
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -264,13 +300,18 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
             } catch (e: Exception) {
                 Log.d(TAG, "getRecentMatches: $e")
             }
-            try {
-                upcomingMatch = repository.readRecentFixtures(todayDate, passedDate)
-            } catch (e: Exception) {
-                Log.e(TAG, "getRecentMatches: $e")
-            }
+            readRecentMatch()
         }
     }
+
+    private fun readAllFixtures() {
+//        try {
+//            fixturesData = repository.readAllFixturesData
+//        } catch (e: Exception) {
+//            Log.e(TAG, "readAllFixtures: $e")
+//        }
+    }
+
 
     // get match lineup
     fun getLineup(id: Int) {
@@ -297,6 +338,23 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    // delete match details from database
+    fun deleteFixtures(date: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                repository.deleteFixtures(date)
+            } catch (e: Exception) {
+                Log.e(TAG, "getMatchDetails: $e")
+            }
+        }
+    }
+
+    /*
+    * ###################################################
+    *                Players Api Call
+    * ####################################################
+    */
+
     // ok///get [player] by id
     fun getPlayerById(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -310,7 +368,7 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
                         temp.id,
                         temp.image_path,
                         temp.fullname,
-                        temp.country_id,
+                        temp.country_id
                     )
                     repository.addPlayer(player)
                 } else {
@@ -348,162 +406,6 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    private fun readAllFixtures() {
-        try {
-            fixturesData = repository.readAllFixturesData
-        } catch (e: Exception) {
-            Log.e(TAG, "readAllFixtures: $e")
-        }
-    }
-
-    // add team data into database
-    private fun getTeamsData() {
-
-        viewModelScope.launch(Dispatchers.IO) {
-            var teamsList: List<TeamsData> = listOf()
-            try {
-                teamsList = CricketApi.retrofitService.getTeams().data
-            } catch (e: Exception) {
-                Log.e(TAG, "getTeamsData: $e")
-            }
-
-            teamsList.forEach {
-                repository.addTeams(it)
-
-                ////////////////////////////////////////////////
-//                getSquadByTeamId(it.id)
-                ///////////////////////////////////////////////
-            }
-        }
-    }
-
-    // add officials data into database
-    private fun getOfficialsData() {
-
-        viewModelScope.launch(Dispatchers.IO) {
-            var officialsList: List<OfficialsData>? = listOf()
-            try {
-                officialsList = CricketApi.retrofitService.getOfficials().data
-            } catch (e: Exception) {
-                Log.e(TAG, "getTeamsData: $e")
-            }
-            officialsList?.forEach {
-                repository.addOfficials(it)
-            }
-        }
-    }
-
-    // add Leagues data into database
-    private fun getLeaguesData() {
-
-        viewModelScope.launch(Dispatchers.IO) {
-            var leaguesList: List<LeaguesData>? = listOf()
-            try {
-                leaguesList = CricketApi.retrofitService.getLeagues().data
-            } catch (e: Exception) {
-                Log.e(TAG, "getTeamsData: $e")
-            }
-            leaguesList?.forEach {
-                repository.addLeagues(it)
-            }
-        }
-    }
-
-    // add Leagues data into database
-    private fun getCountries() {
-
-        viewModelScope.launch(Dispatchers.IO) {
-            var countriesList: List<CountryData>? = listOf()
-            try {
-                countriesList = CricketApi.retrofitService.getCountries().data
-            } catch (e: Exception) {
-                Log.e(TAG, "getTeamsData: $e")
-            }
-            countriesList?.forEach {
-                repository.addCountries(it)
-            }
-        }
-    }
-
-    // add Leagues data into database
-    private fun getSeasons() {
-
-        viewModelScope.launch(Dispatchers.IO) {
-            var seasonsList: List<SeasonsData>? = listOf()
-            try {
-                seasonsList = CricketApi.retrofitService.getSeasons().data
-            } catch (e: Exception) {
-                Log.e(TAG, "getTeamsData: $e")
-            }
-            seasonsList?.forEach {
-                repository.addSeasons(it)
-            }
-        }
-    }
-
-    // add Venues data into database
-    private fun getVenues() {
-
-        viewModelScope.launch(Dispatchers.IO) {
-            var seasonsList: List<VenuesData>? = listOf()
-            try {
-                seasonsList = CricketApi.retrofitService.getVenues().data
-            } catch (e: Exception) {
-                Log.e(TAG, "getTeamsData: $e")
-            }
-            seasonsList?.forEach {
-                repository.addVenues(it)
-            }
-        }
-    }
-
-    // get cricket news
-    fun getNewsArticle() {
-
-        viewModelScope.launch(Dispatchers.IO) {
-
-            try {
-
-                val articles = CricketApi.news_retrofitService.getCricketNews().await().articles
-                _news.postValue(articles)
-
-            } catch (e: Exception) {
-                Log.e("TAG", "getNewsArticle: $e")
-            }
-        }
-    }
-
-    // get cricket news
-    fun getNewsArticleHome() {
-
-        viewModelScope.launch(Dispatchers.IO) {
-
-            try {
-
-                val articles = CricketApi.news_retrofitService.getCricketNewsHome().await().articles
-                _news.postValue(articles)
-
-            } catch (e: Exception) {
-                Log.e("TAG", "getNewsArticleHome: $e")
-            }
-        }
-    }
-
-    // get live matches
-    fun getLiveMatches() {
-
-        viewModelScope.launch(Dispatchers.IO) {
-
-            try {
-
-                val matches = CricketApi.news_retrofitService.getLiveMatches().await().data
-                _liveMatches.postValue(matches)
-
-            } catch (e: Exception) {
-                Log.e("TAG", "getNewsArticle: $e")
-            }
-        }
-    }
 
     //ok//Team Squad
     fun getSquadByTeamId(team_id: Int) {
@@ -528,6 +430,208 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
 
             } catch (e: Exception) {
                 Log.e(TAG, "getTeamSquad: $e")
+            }
+        }
+    }
+
+
+    /*
+    * ###################################################
+    *                Teams Api Call
+    * ####################################################
+    */
+
+    // add team data into database
+    private fun getTeamsData() {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            var teamsList: List<TeamsData> = listOf()
+            try {
+                teamsList = CricketApi.retrofitService.getTeams().data
+            } catch (e: Exception) {
+                Log.e(TAG, "getTeamsData: $e")
+            }
+
+            teamsList.forEach {
+                repository.addTeams(it)
+
+                ////////////////////////////////////////////////
+//                getSquadByTeamId(it.id)
+                ///////////////////////////////////////////////
+            }
+        }
+    }
+
+    /*
+    * ###################################################
+    *                Officials Api Call
+    * ####################################################
+    */
+
+    // add officials data into database
+    private fun getOfficialsData() {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            var officialsList: List<OfficialsData>? = listOf()
+            try {
+                officialsList = CricketApi.retrofitService.getOfficials().data
+            } catch (e: Exception) {
+                Log.e(TAG, "getTeamsData: $e")
+            }
+            officialsList?.forEach {
+                repository.addOfficials(it)
+            }
+        }
+    }
+
+    /*
+    * ###################################################
+    *                Leagues Api Call
+    * ####################################################
+    */
+
+    // add Leagues data into database
+    private fun getLeaguesData() {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            var leaguesList: List<LeaguesData>? = listOf()
+            try {
+                leaguesList = CricketApi.retrofitService.getLeagues().data
+            } catch (e: Exception) {
+                Log.e(TAG, "getTeamsData: $e")
+            }
+
+            /// add in database
+            leaguesList?.forEach {
+                repository.addLeagues(it)
+            }
+        }
+    }
+
+    /*
+    * ###################################################
+    *               Country Api Call
+    * ####################################################
+    */
+
+    private fun getCountries() {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            var countriesList: List<CountryData>? = listOf()
+            try {
+                countriesList = CricketApi.retrofitService.getCountries().data
+            } catch (e: Exception) {
+                Log.e(TAG, "getTeamsData: $e")
+            }
+            countriesList?.forEach {
+                repository.addCountries(it)
+            }
+        }
+    }
+
+    /*
+    * ###################################################
+    *                Leagues Api Call
+    * ####################################################
+    */
+
+    private fun getSeasons() {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            var seasonsList: List<SeasonsData>? = listOf()
+            try {
+                seasonsList = CricketApi.retrofitService.getSeasons().data
+            } catch (e: Exception) {
+                Log.e(TAG, "getTeamsData: $e")
+            }
+
+            // add Leagues data into database
+            seasonsList?.forEach {
+                repository.addSeasons(it)
+            }
+        }
+    }
+
+    /*
+    * ###################################################
+    *                Leagues Api Call
+    * ####################################################
+    */
+
+    private fun getVenues() {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            var seasonsList: List<VenuesData>? = listOf()
+            try {
+                seasonsList = CricketApi.retrofitService.getVenues().data
+            } catch (e: Exception) {
+                Log.e(TAG, "getTeamsData: $e")
+            }
+
+            // add Venues data into database
+            seasonsList?.forEach {
+                repository.addVenues(it)
+            }
+        }
+    }
+
+    /*
+    * #######################################################
+    *                Cricket News Api Call
+    * #######################################################
+    */
+
+    // get all cricket news
+    fun getNewsArticle() {
+
+        viewModelScope.launch(Dispatchers.IO) {
+
+            try {
+
+                val articles = CricketApi.news_retrofitService.getCricketNews().await().articles
+                _news.postValue(articles)
+
+            } catch (e: Exception) {
+                Log.e("TAG", "getNewsArticle: $e")
+            }
+        }
+    }
+
+    // get top 5 cricket news
+    fun getNewsArticleHome() {
+
+        viewModelScope.launch(Dispatchers.IO) {
+
+            try {
+
+                val articles = CricketApi.news_retrofitService.getCricketNewsHome().await().articles
+                _news.postValue(articles)
+
+            } catch (e: Exception) {
+                Log.e("TAG", "getNewsArticleHome: $e")
+            }
+        }
+    }
+
+
+    /*
+    * ###################################################
+    *                Live match Api Call
+    * ####################################################
+    */
+
+    // get live matches
+    fun getLiveMatches() {
+
+        viewModelScope.launch(Dispatchers.IO) {
+
+            try {
+
+                val matches = CricketApi.news_retrofitService.getLiveMatches().await().data
+                _liveMatches.postValue(matches)
+
+            } catch (e: Exception) {
+                Log.e("TAG", "getNewsArticle: $e")
             }
         }
     }

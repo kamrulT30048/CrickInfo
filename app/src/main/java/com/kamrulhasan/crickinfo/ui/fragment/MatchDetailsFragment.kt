@@ -3,6 +3,8 @@ package com.kamrulhasan.crickinfo.ui.fragment
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.util.TypedValue
 import androidx.fragment.app.Fragment
@@ -15,7 +17,6 @@ import com.kamrulhasan.crickinfo.R
 import com.kamrulhasan.crickinfo.adapter.BattingAdapter
 import com.kamrulhasan.crickinfo.adapter.BowlingAdapter
 import com.kamrulhasan.crickinfo.adapter.LineupAdapter
-import com.kamrulhasan.crickinfo.databinding.FragmentMatchDetailsBinding
 import com.kamrulhasan.crickinfo.model.fixture.FixturesData
 import com.kamrulhasan.crickinfo.model.match.Batting
 import com.kamrulhasan.crickinfo.model.match.Lineup
@@ -23,6 +24,8 @@ import com.kamrulhasan.crickinfo.model.match.Bowling
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
 import com.kamrulhasan.topnews.utils.DateConverter
 import com.kamrulhasan.topnews.utils.MATCH_ID
+import com.kamrulhasan.crickinfo.databinding.FragmentMatchDetailsBinding
+import com.kamrulhasan.crickinfo.network.NetworkConnection
 
 private const val TAG = "MatchDetailsFragment"
 
@@ -95,27 +98,33 @@ class MatchDetailsFragment : Fragment() {
         match?.let { it ->
 
             //binding.tvDate.text = it.starting_at?.let { DateConverter.zoneToDate(it) }
-            binding.tvMatchDate.text = it.starting_at?.let { DateConverter.zoneToDate(it) }
-            binding.tvMatchTime.text = it.starting_at?.let { DateConverter.zoneToTime(it) }
+            binding.tvMatchDate.text = it.starting_at?.let {
+                resources.getString(R.string.info_show, DateConverter.zoneToDate(it) )
+            }
+            binding.tvMatchTime.text = it.starting_at?.let {
+                resources.getString(R.string.info_show, DateConverter.zoneToTime(it))
+            }
             // match notes
             binding.tvMatchNotes.text = if (it.note == "") {
-                "NA"
+                resources.getString(R.string.info_show, "NA")
             } else {
-                it.note
+                resources.getString(R.string.info_show, it.note)
             }
 
             //Match Status
-            binding.tvStatus.text = it.status
+            binding.tvStatus.text = resources.getString(R.string.info_show, it.status)
+
             if (it.status == "Finished") {
                 binding.tvStatus.setTextColor(resources.getColor(R.color.red))
             } else if (it.status == "NS") {
 
-                binding.tvStatus.text = "Upcoming"
+                binding.tvStatus.text = resources.getString(R.string.info_show, "Upcoming")
                 binding.tvStatus.setTextColor(resources.getColor(R.color.green_dark))
 
                 it.starting_at?.let {
 
-                    val countdownDuration = DateConverter.stringToDateLong(it) - DateConverter.todayToDateLong()
+                    val countdownDuration =
+                        DateConverter.stringToDateLong(it) - DateConverter.todayToDateLong()
 
                     Log.d(TAG, "onBindViewHolder: ms: $countdownDuration")
                     val countHour = countdownDuration.div((1000 * 60 * 60))
@@ -129,7 +138,7 @@ class MatchDetailsFragment : Fragment() {
                                 secondsRemaining %= 60
                                 val hour = minute / 60
                                 minute %= 60
-                                binding.tvStatus.text = "Upcoming"
+                                binding.tvStatus.text = activity?.getString(R.string.info_show, "Upcoming")
                                 binding.tvTimeCountDown.text = "$hour:$minute:$secondsRemaining"
                             }
 
@@ -146,24 +155,25 @@ class MatchDetailsFragment : Fragment() {
                 }
             }
             //series
-            binding.tvSeries.text = it.round
+            binding.tvSeries.text = resources.getString(R.string.info_show, it.round)
             // match notes
             binding.tvElected.text = if (it.elected == "" || it.elected.isNullOrEmpty()) {
-                "NA"
+                resources.getString(R.string.info_show, "NA")
             } else {
-                it.elected
+                resources.getString(R.string.info_show, it.elected)
+
             }
 
             it.venue_id?.let { it1 ->
                 //venue
                 viewModel.readVenuesNameById(it1)
                     .observe(viewLifecycleOwner) {
-                        binding.tvVenues.text = it
+                        binding.tvVenues.text = resources.getString(R.string.info_show, it)
                     }
                 //venues city
                 viewModel.readVenuesCityById(it1)
                     .observe(viewLifecycleOwner) {
-                        binding.tvVenuesCity.text = it
+                        binding.tvVenuesCity.text = resources.getString(R.string.info_show, it)
                     }
 
             }
@@ -172,7 +182,7 @@ class MatchDetailsFragment : Fragment() {
             it.winner_team_id?.let { it1 ->
                 viewModel.readTeamCode(it1)
                     .observe(viewLifecycleOwner) {
-                        binding.tvMatchWonTeam.text = it
+                        binding.tvMatchWonTeam.text = resources.getString(R.string.info_show, it)
                     }
             }
 
@@ -181,7 +191,7 @@ class MatchDetailsFragment : Fragment() {
                 viewModel.getPlayerNameById(it1)
                 viewModel.playerName.observe(viewLifecycleOwner) {
                     Log.d(TAG, "onViewCreated: $it")
-                    binding.tvManOfTheMatch.text = it
+                    binding.tvManOfTheMatch.text = resources.getString(R.string.info_show, it)
                 }
             }
 
@@ -189,7 +199,7 @@ class MatchDetailsFragment : Fragment() {
             it.toss_won_team_id?.let { it1 ->
                 viewModel.readTeamCode(it1)
                     .observe(viewLifecycleOwner) {
-                        binding.tvTossWonTeam.text = it
+                        binding.tvTossWonTeam.text = resources.getString(R.string.info_show, it)
                     }
             }
 
@@ -322,6 +332,56 @@ class MatchDetailsFragment : Fragment() {
             //// Match details calling
             viewModel.getMatchDetails(it.id)
 
+            NetworkConnection().observe(viewLifecycleOwner) { network ->
+                if (viewModel.matchDetails.value == null && !network) {
+
+//                    binding.ivCloudOff.setImageResource(R.drawable.icon_cloud_off_24)
+//                    binding.ivCloudOff.visibility = View.VISIBLE
+//                    binding.tvCloudOff.visibility = View.VISIBLE
+
+                } else if (viewModel.matchDetails.value == null) {
+
+                    // read team image url
+                    viewModel.readTeamUrl(it.localteam_id)
+                        .observe(viewLifecycleOwner) {
+                            Glide
+                                .with(requireContext())
+                                .load(it)
+                                .fitCenter()
+                                .placeholder(R.drawable.icon_match)
+                                .into(binding.ivTeam1)
+                        }
+
+                    viewModel.readTeamUrl(it.visitorteam_id)
+                        .observe(viewLifecycleOwner) {
+                            Glide
+                                .with(requireContext())
+                                .load(it)
+                                .fitCenter()
+                                .placeholder(R.drawable.icon_match)
+                                .into(binding.ivTeam2)
+                        }
+
+//                    binding.ivCloudOff.setImageResource(R.drawable.icon_loading)
+//                    binding.ivCloudOff.visibility = View.VISIBLE
+//                    binding.tvCloudOff.visibility = View.GONE
+
+                    viewModel.getMatchDetails(it.id)
+
+                    //handle data loading error
+                    Handler(Looper.getMainLooper()).postDelayed({
+//                        if (newsList.isEmpty()) {
+//                            binding.ivCloudOff.setImageResource(R.drawable.icon_sync_problem_24)
+//                            binding.ivCloudOff.visibility = View.VISIBLE
+//                            Toast.makeText(
+//                                MyApplication.appContext, "Data Sync Failed,\n" +
+//                                        " Refresh Again!!", Toast.LENGTH_SHORT
+//                            ).show()
+//                        }
+                    }, 5000)
+                }
+            }
+
             val localTeam = it.localteam_id
             val visitorTeam = it.visitorteam_id
 
@@ -336,10 +396,8 @@ class MatchDetailsFragment : Fragment() {
             var team1Extra = 0
             var team2Extra = 0
 
-            // lineup
+            // match details
             viewModel.matchDetails.observe(viewLifecycleOwner) { it1 ->
-
-
 
                 battingTeam1.clear()
                 battingTeam2.clear()
@@ -363,8 +421,7 @@ class MatchDetailsFragment : Fragment() {
                         team1Extra =
                             (score.wide ?: 0) + (score.noball_runs ?: 0) + (score.noball_balls ?: 0)
                         +(score.bye ?: 0) + (score.leg_bye ?: 0) + (score.penalty ?: 0)
-                    }
-                    else if(score.team_id == visitorTeam && score.type == "extra"){
+                    } else if (score.team_id == visitorTeam && score.type == "extra") {
                         team2Extra =
                             (score.wide ?: 0) + (score.noball_runs ?: 0) + (score.noball_balls ?: 0)
                         +(score.bye ?: 0) + (score.leg_bye ?: 0) + (score.penalty ?: 0)
@@ -415,8 +472,8 @@ class MatchDetailsFragment : Fragment() {
                 binding.tvTeam1Card.setTextColor(resources.getColor(R.color.white))
                 binding.tvTeam2Card.setTextColor(resources.getColor(R.color.black))
                 // text size change
-                binding.tvTeam1Card.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
-                binding.tvTeam2Card.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+                binding.tvTeam1Card.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+                binding.tvTeam2Card.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
             }
 
             ///////// scorecard for team2  \\\\\\\\\\\
@@ -440,8 +497,8 @@ class MatchDetailsFragment : Fragment() {
                 binding.tvTeam1Card.setTextColor(resources.getColor(R.color.black))
 
                 // text size change
-                binding.tvTeam2Card.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
-                binding.tvTeam1Card.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+                binding.tvTeam2Card.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+                binding.tvTeam1Card.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
             }
 
 //            viewModel.getSquadByTeamId(it.localteam_id)
@@ -466,8 +523,8 @@ class MatchDetailsFragment : Fragment() {
                 binding.tvNameTeam2.setTextColor(resources.getColor(R.color.black))
 
                 // text size change
-                binding.tvNameTeam1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
-                binding.tvNameTeam2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+                binding.tvNameTeam1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+                binding.tvNameTeam2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
             }
 
             val visitorId = it.visitorteam_id
@@ -486,8 +543,8 @@ class MatchDetailsFragment : Fragment() {
                 binding.tvNameTeam1.setTextColor(resources.getColor(R.color.black))
 
                 // text size change
-                binding.tvNameTeam1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
-                binding.tvNameTeam2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
+                binding.tvNameTeam1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+                binding.tvNameTeam2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
             }
 
 

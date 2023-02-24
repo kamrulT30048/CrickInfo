@@ -30,7 +30,11 @@ class CrickInfoRepository(private val cricketDao: CricketDao) {
     }
 
     // read recent matches short list
-    fun readUpcomingShort(todayDate: String, passedDate: String, limit: Int): LiveData<List<FixturesData>?> {
+    fun readUpcomingShort(
+        todayDate: String,
+        passedDate: String,
+        limit: Int
+    ): LiveData<List<FixturesData>?> {
         return cricketDao.readUpcomingFixturesSort(todayDate, passedDate, limit)
     }
 
@@ -55,9 +59,11 @@ class CrickInfoRepository(private val cricketDao: CricketDao) {
     fun readPlayerNameById(id: Int): LiveData<String> {
         return cricketDao.readPlayerNameById(id)
     }
+
     fun readPlayerImageUrlById(id: Int): LiveData<String> {
         return cricketDao.readPlayerImageUrlById(id)
     }
+
     fun readPlayerCountryById(id: Int): LiveData<Int> {
         return cricketDao.readPlayerCountryById(id)
     }
@@ -129,6 +135,10 @@ class CrickInfoRepository(private val cricketDao: CricketDao) {
 
     suspend fun addPlayer(player: CustomPlayer) {
         cricketDao.addPlayer(player)
+    }
+
+    suspend fun deleteFixtures(date: String) {
+        cricketDao.deleteOldFixtures(date)
     }
 
 

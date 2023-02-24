@@ -17,6 +17,7 @@ import com.kamrulhasan.crickinfo.R
 import com.kamrulhasan.crickinfo.adapter.NewsAdapter
 import com.kamrulhasan.crickinfo.databinding.FragmentNewsBinding
 import com.kamrulhasan.crickinfo.model.news.Article
+import com.kamrulhasan.crickinfo.network.NetworkConnection
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
 import com.kamrulhasan.topnews.utils.MyApplication
 import com.kamrulhasan.topnews.utils.verifyAvailableNetwork
@@ -45,32 +46,35 @@ class NewsFragment : Fragment() {
 
         viewModel = ViewModelProvider(this)[CrickInfoViewModel::class.java]
         val connection = verifyAvailableNetwork(requireActivity() as AppCompatActivity)
-        if (newsList.isEmpty() && !connection) {
 
-            binding.ivCloudOff.setImageResource(R.drawable.icon_cloud_off_24)
-            binding.ivCloudOff.visibility = View.VISIBLE
-            binding.tvCloudOff.visibility = View.VISIBLE
+        NetworkConnection().observe(viewLifecycleOwner) {
+            if (newsList.isEmpty() && !it) {
 
-        } else if (newsList.isEmpty()) {
+                binding.ivCloudOff.setImageResource(R.drawable.icon_cloud_off_24)
+                binding.ivCloudOff.visibility = View.VISIBLE
+                binding.tvCloudOff.visibility = View.VISIBLE
 
-            binding.ivCloudOff.setImageResource(R.drawable.icon_loading)
-            binding.ivCloudOff.visibility = View.VISIBLE
-            binding.tvCloudOff.visibility = View.GONE
+            } else if (newsList.isEmpty()) {
 
-            viewModel.getNewsArticle()
+                binding.ivCloudOff.setImageResource(R.drawable.icon_loading)
+                binding.ivCloudOff.visibility = View.VISIBLE
+                binding.tvCloudOff.visibility = View.GONE
 
-            //handle data loading error
-            Handler(Looper.getMainLooper()).postDelayed({
-                if(newsList.isEmpty()){
-                    binding.ivCloudOff.setImageResource(R.drawable.icon_sync_problem_24)
-                    binding.ivCloudOff.visibility = View.VISIBLE
-                    Toast.makeText(
-                        MyApplication.appContext, "Data Sync Failed,\n" +
-                                " Refresh Again!!", Toast.LENGTH_SHORT).show()
-                }
-            }, 5000)
+                viewModel.getNewsArticle()
+
+                //handle data loading error
+                Handler(Looper.getMainLooper()).postDelayed({
+                    if (newsList.isEmpty()) {
+                        binding.ivCloudOff.setImageResource(R.drawable.icon_sync_problem_24)
+                        binding.ivCloudOff.visibility = View.VISIBLE
+                        Toast.makeText(
+                            MyApplication.appContext, "Data Sync Failed,\n" +
+                                    " Refresh Again!!", Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }, 5000)
+            }
         }
-
         viewModel.news.observe(viewLifecycleOwner) {
 
             if (it != null) {

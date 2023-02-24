@@ -3,8 +3,10 @@ package com.kamrulhasan.crickinfo.database
 import android.os.LimitExceededException
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.IGNORE
+import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
 import com.kamrulhasan.crickinfo.model.country.Country
 import com.kamrulhasan.crickinfo.model.country.CountryData
@@ -27,7 +29,7 @@ interface CricketDao {
     @Insert(onConflict = IGNORE)
     suspend fun addPlayer(player: CustomPlayer)
 
-    @Insert(onConflict = IGNORE)
+    @Insert(onConflict = REPLACE)
     suspend fun addFixtures(fixturesData: FixturesData)
 
     @Insert(onConflict = IGNORE)
@@ -48,6 +50,9 @@ interface CricketDao {
     @Insert(onConflict = IGNORE)
     suspend fun addCountries(countryData: CountryData)
 
+    @Query(" DELETE FROM fixtures_data WHERE starting_at < :date")
+    suspend fun deleteOldFixtures(date: String)
+
     @Query("SELECT * FROM fixtures_data ORDER BY starting_at DESC")
     fun readAllFixturesData(): LiveData<List<FixturesData>?>
 
@@ -58,7 +63,7 @@ interface CricketDao {
     @Query(
         "SELECT * FROM fixtures_data " +
                 "WHERE starting_at BETWEEN :todayDate AND :lastDate " +
-                "ORDER BY starting_at ASC"
+                "ORDER BY starting_at ASC LIMIT 30"
     )
     fun readUpcomingFixtures(todayDate: String, lastDate: String): LiveData<List<FixturesData>?>
 
@@ -66,7 +71,7 @@ interface CricketDao {
     @Query(
         "SELECT * FROM fixtures_data " +
                 "WHERE starting_at BETWEEN :passedDate AND :todayDate " +
-                "ORDER BY starting_at DESC"
+                "ORDER BY starting_at DESC LIMIT 30"
     )
     fun readRecentFixtures(todayDate: String, passedDate: String): LiveData<List<FixturesData>?>
 

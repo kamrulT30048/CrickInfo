@@ -1,5 +1,7 @@
 package com.kamrulhasan.crickinfo.adapter
 
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,6 +41,7 @@ class BattingAdapter(
 
         battingItem.player_id.let { it1 ->
             viewModel.getPlayerNameById(it1)
+
             viewModel.readPlayerNameById(it1).observe(viewLifecycleOwner) {
                 if (battingItem.active == true) {
                     holder.playerName.text = "$it*"

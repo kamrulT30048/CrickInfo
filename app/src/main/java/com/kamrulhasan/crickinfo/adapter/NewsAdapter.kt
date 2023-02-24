@@ -1,6 +1,8 @@
 package com.kamrulhasan.crickinfo.adapter
 
 import android.os.Bundle
+import android.os.CountDownTimer
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +16,8 @@ import com.kamrulhasan.crickinfo.model.news.Article
 import com.kamrulhasan.topnews.utils.DateConverter
 import com.kamrulhasan.topnews.utils.MyApplication
 import com.kamrulhasan.topnews.utils.URL_KEY
+
+private const val TAG = "NewsAdapter"
 
 class NewsAdapter(
     private val newsList: List<Article>
@@ -36,7 +40,7 @@ class NewsAdapter(
 
         val newsItem = newsList[position]
 
-        holder.publishedDate.text = newsItem.publishedAt?.let { DateConverter.zoneToDateTime(it) }
+        holder.publishedDate.text = newsItem.publishedAt?.let { DateConverter.zoneToDate(it) }
         holder.title.text = newsItem.title
         holder.desc.text = newsItem.description
 

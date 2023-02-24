@@ -34,7 +34,7 @@ class LiveMatchFragment : Fragment() {
 
         viewModel = ViewModelProvider(this)[CrickInfoViewModel::class.java]
 
-        viewModel.readRecentMatchShortList(2)
+        viewModel.readUpcomingMatchShortList(2)
         viewModel.getLiveMatches()
         viewModel.liveMatches.observe(viewLifecycleOwner){
             binding.recyclerViewLive.adapter =

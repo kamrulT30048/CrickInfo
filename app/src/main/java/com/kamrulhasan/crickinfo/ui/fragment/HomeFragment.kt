@@ -17,7 +17,9 @@ import com.kamrulhasan.crickinfo.adapter.FixtureAdapter
 import com.kamrulhasan.crickinfo.adapter.LiveMatchAdapter
 import com.kamrulhasan.crickinfo.adapter.NewsAdapter
 import com.kamrulhasan.crickinfo.databinding.FragmentHomeBinding
+import com.kamrulhasan.crickinfo.model.fixture.FixturesData
 import com.kamrulhasan.crickinfo.model.news.Article
+import com.kamrulhasan.crickinfo.network.NetworkConnection
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
 import com.kamrulhasan.topnews.utils.MyApplication
 import com.kamrulhasan.topnews.utils.URL_KEY
@@ -31,6 +33,8 @@ class HomeFragment : Fragment() {
     private lateinit var viewModel: CrickInfoViewModel
 
     private var articleList = emptyList<Article>()
+    private var _matchList = mutableListOf<List<FixturesData>?>()
+    private var matchList = _matchList
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,8 +51,43 @@ class HomeFragment : Fragment() {
         viewModel = ViewModelProvider(this)[CrickInfoViewModel::class.java]
         val connection = verifyAvailableNetwork(requireActivity() as AppCompatActivity)
 
-        viewModel.readRecentMatchShortList(2)
+        viewModel.readUpcomingMatchShortList(2)
         viewModel.getLiveMatches()
+
+        NetworkConnection().observe(viewLifecycleOwner){
+//            if(it){
+//                Toast.makeText(MyApplication.appContext, "Internet is connected.", Toast.LENGTH_SHORT).show()
+//            }else{
+//                Toast.makeText(MyApplication.appContext, "No Internet !!!", Toast.LENGTH_SHORT).show()
+//            }
+            if (articleList.isEmpty() && !it) {
+
+                binding.ivCloudOff.setImageResource(R.drawable.icon_cloud_off_24)
+                binding.ivCloudOff.visibility = View.VISIBLE
+                binding.tvCloudOff.visibility = View.VISIBLE
+                binding.layoutHomeNews.visibility = View.GONE
+
+            } else if (articleList.isEmpty()) {
+
+                binding.ivCloudOff.setImageResource(R.drawable.icon_loading)
+                binding.ivCloudOff.visibility = View.VISIBLE
+                binding.tvCloudOff.visibility = View.GONE
+                binding.layoutHomeNews.visibility = View.GONE
+
+                viewModel.getNewsArticleHome()
+
+                //handle data loading error
+                Handler(Looper.getMainLooper()).postDelayed({
+                    if(articleList.isEmpty()){
+                        binding.ivCloudOff.setImageResource(R.drawable.icon_sync_problem_24)
+                        binding.ivCloudOff.visibility = View.VISIBLE
+                        Toast.makeText(
+                            MyApplication.appContext, "Data Sync Failed,\n" +
+                                    " Refresh Again!!", Toast.LENGTH_SHORT).show()
+                    }
+                }, 5000)
+            }
+        }
 
         if (articleList.isEmpty() && !connection) {
 
@@ -77,6 +116,7 @@ class HomeFragment : Fragment() {
                 }
             }, 5000)
         }
+
 
         viewModel.shortList.observe(viewLifecycleOwner) {
             binding.recyclerViewHome.adapter =

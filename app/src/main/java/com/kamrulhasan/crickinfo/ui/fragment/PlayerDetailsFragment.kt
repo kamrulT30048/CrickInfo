@@ -1,6 +1,8 @@
 package com.kamrulhasan.crickinfo.ui.fragment
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.util.TypedValue
 import androidx.fragment.app.Fragment
@@ -14,6 +16,7 @@ import com.kamrulhasan.crickinfo.databinding.FragmentPlayerDetailsBinding
 import com.kamrulhasan.crickinfo.model.custom.CustomBatting
 import com.kamrulhasan.crickinfo.model.custom.CustomBowling
 import com.kamrulhasan.crickinfo.model.player.Career
+import com.kamrulhasan.crickinfo.network.NetworkConnection
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
 import com.kamrulhasan.topnews.utils.DateConverter
 import com.kamrulhasan.topnews.utils.MyApplication
@@ -57,7 +60,9 @@ class PlayerDetailsFragment : Fragment() {
         Log.d(TAG, "onViewCreated: $player")
 
         viewModel.readPlayerNameById(player).observe(viewLifecycleOwner) { name ->
-             name?.let { binding.tvPlayerName.text =it }
+            name?.let {
+                binding.tvPlayerName.text = it
+            }
         }
 
         viewModel.readPlayerCountryById(player)?.observe(viewLifecycleOwner) { country ->
@@ -79,13 +84,27 @@ class PlayerDetailsFragment : Fragment() {
 
         viewModel.getPlayerById(player)
 
+        NetworkConnection().observe(viewLifecycleOwner) { network ->
+            if (viewModel.player.value == null && !network) {
+
+            } else if (viewModel.player.value == null) {
+
+                viewModel.getPlayerById(player)
+
+                //handle data loading error
+                Handler(Looper.getMainLooper()).postDelayed({
+
+                }, 5000)
+            }
+        }
+
         var career: List<Career>? = null
 
         viewModel.player.observe(viewLifecycleOwner) { playersData ->
             playersData?.let { it ->
 
-                binding.tvFirstName.text = it.firstname
-                binding.tvLastName.text = it.lastname
+                binding.tvFirstName.text = resources.getString(R.string.info_show, it.firstname)
+                binding.tvLastName.text = resources.getString(R.string.info_show, it.lastname)
 
                 it.dateofbirth?.let { it1 ->
                     val dob = DateConverter.zoneToDate(it1)
@@ -93,7 +112,7 @@ class PlayerDetailsFragment : Fragment() {
                     val ageYear = Calendar.getInstance().get(Calendar.YEAR) - dobYear
 
                     val age = "$ageYear Years ($dob)"
-                    binding.tvDob.text = age
+                    binding.tvDob.text = resources.getString(R.string.info_show, age)
                 }
 
                 val gender = if (it.gender == "m") {
@@ -103,16 +122,27 @@ class PlayerDetailsFragment : Fragment() {
                 } else {
                     "NA"
                 }
-                binding.tvGender.text = gender
-                binding.tvPlayerPosition.text = it.position?.name
-                binding.tvPlayerBattingStyle.text = it.battingstyle
-                binding.tvPlayerBowlingStyle.text = it.bowlingstyle
+                binding.tvGender.text = resources.getString(R.string.info_show, gender)
+
+                it.position?.name?.let { position ->
+                    binding.tvPlayerPosition.text =
+                        resources.getString(R.string.info_show, position)
+                }
+                it.battingstyle?.let { style ->
+                    binding.tvPlayerBattingStyle.text =
+                        resources.getString(R.string.info_show, style)
+                }
+
+                it.bowlingstyle?.let { style ->
+                    binding.tvPlayerBowlingStyle.text =
+                        resources.getString(R.string.info_show, style)
+                }
 
                 binding.tvCurrentTeam.text = if (it.teams != null && it.teams.isNotEmpty()) {
                     Log.d(TAG, "onViewCreated: teams: ${it.teams.size}")
-                    it.teams[0].name
+                    resources.getString(R.string.info_show, it.teams[0].name)
                 } else {
-                    "__"
+                    resources.getString(R.string.info_show, "__")
                 }
 
                 career = it.career
@@ -136,8 +166,8 @@ class PlayerDetailsFragment : Fragment() {
             binding.tvBowling.setTextColor(resources.getColor(R.color.black))
 
             // text size change
-            binding.tvBatting.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
-            binding.tvBowling.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+            binding.tvBatting.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+            binding.tvBowling.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
 
             binding.layoutBowling.visibility = View.GONE
             binding.layoutBatting.visibility = View.VISIBLE
@@ -160,8 +190,8 @@ class PlayerDetailsFragment : Fragment() {
             binding.tvBowling.setTextColor(resources.getColor(R.color.white))
 
             // text size change
-            binding.tvBatting.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
-            binding.tvBowling.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
+            binding.tvBatting.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+            binding.tvBowling.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
 
             binding.layoutBowling.visibility = View.VISIBLE
             binding.layoutBatting.visibility = View.GONE

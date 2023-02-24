@@ -60,18 +60,18 @@ class DateConverter {
             return "${todayDate}T${hour}:${minute}:00.000000Z"
         }
 
-        fun upcomingThreeMonth(): String {
+        fun upcomingTwoMonth(): String {
             val today = Calendar.getInstance()
             val formatter = SimpleDateFormat("yyyy-MM-dd")
-            today.add(Calendar.MONTH, 3)
+            today.add(Calendar.MONTH, 2)
             val lastDate = formatter.format(today.time)
             return "${lastDate}T23:59:00.000000Z"
         }
 
-        fun passedThreeMonth(): String {
+        fun passedTwoMonth(): String {
             val today = Calendar.getInstance()
             val formatter = SimpleDateFormat("yyyy-MM-dd")
-            today.add(Calendar.MONTH, -3)
+            today.add(Calendar.MONTH, -2)
             val lastDate = formatter.format(today.time)
             Log.d("TAG", "passedThreeMonth: $lastDate")
 
