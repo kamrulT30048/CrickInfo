@@ -11,8 +11,8 @@
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:defaultNavHost="true"
         android:background="@color/gray_light_0"
+        app:defaultNavHost="true"
         app:layout_constraintBottom_toTopOf="@id/bottom_nav_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,17 +30,17 @@
         app:menu="@menu/bottom_nav_menu" />
 
     <TextView
+        android:id="@+id/tv_connection_loss"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:id="@+id/tv_connection_loss"
         android:background="@color/gray_dark"
-        android:textColor="@color/white"
         android:gravity="center"
+        android:text="@string/no_connection"
+        android:textColor="@color/white"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/bottom_nav_bar"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="@string/no_connection"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bottom_nav_bar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

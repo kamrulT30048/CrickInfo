@@ -34,7 +34,7 @@ class HomeFragment : Fragment() {
 
     private var articleList = emptyList<Article>()
     private var _matchList = mutableListOf<List<FixturesData>?>()
-    private var matchList = _matchList
+    private var matchList = emptyList<FixturesData>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,15 +51,10 @@ class HomeFragment : Fragment() {
         viewModel = ViewModelProvider(this)[CrickInfoViewModel::class.java]
         val connection = verifyAvailableNetwork(requireActivity() as AppCompatActivity)
 
-        viewModel.readUpcomingMatchShortList(2)
-        viewModel.getLiveMatches()
+        viewModel.readUpcomingMatchShortList(3)
 
-        NetworkConnection().observe(viewLifecycleOwner){
-//            if(it){
-//                Toast.makeText(MyApplication.appContext, "Internet is connected.", Toast.LENGTH_SHORT).show()
-//            }else{
-//                Toast.makeText(MyApplication.appContext, "No Internet !!!", Toast.LENGTH_SHORT).show()
-//            }
+        NetworkConnection().observe(viewLifecycleOwner) {
+
             if (articleList.isEmpty() && !it) {
 
                 binding.ivCloudOff.setImageResource(R.drawable.icon_cloud_off_24)
@@ -78,50 +73,31 @@ class HomeFragment : Fragment() {
 
                 //handle data loading error
                 Handler(Looper.getMainLooper()).postDelayed({
-                    if(articleList.isEmpty()){
+                    if (articleList.isEmpty()) {
                         binding.ivCloudOff.setImageResource(R.drawable.icon_sync_problem_24)
                         binding.ivCloudOff.visibility = View.VISIBLE
                         Toast.makeText(
-                            MyApplication.appContext, "Data Sync Failed,\n" +
-                                    " Refresh Again!!", Toast.LENGTH_SHORT).show()
+                            MyApplication.appContext, "Data Sync Failed", Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }, 5000)
             }
         }
-
-        if (articleList.isEmpty() && !connection) {
-
-            binding.ivCloudOff.setImageResource(R.drawable.icon_cloud_off_24)
-            binding.ivCloudOff.visibility = View.VISIBLE
-            binding.tvCloudOff.visibility = View.VISIBLE
-            binding.layoutHomeNews.visibility = View.GONE
-
-        } else if (articleList.isEmpty()) {
-
-            binding.ivCloudOff.setImageResource(R.drawable.icon_loading)
-            binding.ivCloudOff.visibility = View.VISIBLE
-            binding.tvCloudOff.visibility = View.GONE
-            binding.layoutHomeNews.visibility = View.GONE
-
-            viewModel.getNewsArticleHome()
-
-            //handle data loading error
-            Handler(Looper.getMainLooper()).postDelayed({
-                if(articleList.isEmpty()){
-                    binding.ivCloudOff.setImageResource(R.drawable.icon_sync_problem_24)
-                    binding.ivCloudOff.visibility = View.VISIBLE
-                    Toast.makeText(
-                        MyApplication.appContext, "Data Sync Failed,\n" +
-                            " Refresh Again!!", Toast.LENGTH_SHORT).show()
-                }
-            }, 5000)
-        }
-
-
-        viewModel.shortList.observe(viewLifecycleOwner) {
+        if (matchList.isNotEmpty()) {
             binding.recyclerViewHome.adapter =
-                it?.let { it1 -> FixtureAdapter(it1, viewModel, viewLifecycleOwner) }
+                FixtureAdapter(matchList, viewModel, viewLifecycleOwner)
+            binding.ivCloudOff.visibility = View.GONE
+            binding.tvCloudOff.visibility = View.GONE
+        }
+        viewModel.shortList.observe(viewLifecycleOwner) {
 
+            it?.let { it1 ->
+                if (matchList != it1) {
+                    matchList = it1
+                    binding.recyclerViewHome.adapter =
+                        FixtureAdapter(it1, viewModel, viewLifecycleOwner)
+                }
+            }
         }
 
 

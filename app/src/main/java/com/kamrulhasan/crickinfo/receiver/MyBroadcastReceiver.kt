@@ -1,4 +1,4 @@
-package com.kamrulhasan.crickinfo.utils
+package com.kamrulhasan.crickinfo.receiver
 
 import android.content.BroadcastReceiver
 import android.content.Context

@@ -68,8 +68,7 @@ class NewsFragment : Fragment() {
                         binding.ivCloudOff.setImageResource(R.drawable.icon_sync_problem_24)
                         binding.ivCloudOff.visibility = View.VISIBLE
                         Toast.makeText(
-                            MyApplication.appContext, "Data Sync Failed,\n" +
-                                    " Refresh Again!!", Toast.LENGTH_SHORT
+                            MyApplication.appContext, "Data Sync Failed", Toast.LENGTH_SHORT
                         ).show()
                     }
                 }, 5000)

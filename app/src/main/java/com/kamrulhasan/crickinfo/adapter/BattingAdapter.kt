@@ -10,11 +10,13 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.kamrulhasan.crickinfo.R
 import com.kamrulhasan.crickinfo.model.match.Batting
+import com.kamrulhasan.crickinfo.model.match.Lineup
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
 import com.kamrulhasan.topnews.utils.MyApplication
 
 class BattingAdapter(
     private val batting: List<Batting>,
+    private val battingLineup: List<Lineup>,
     private val viewModel: CrickInfoViewModel,
     private val viewLifecycleOwner: LifecycleOwner
 ) : RecyclerView.Adapter<BattingAdapter.BattingHolder>() {
@@ -41,12 +43,22 @@ class BattingAdapter(
 
         battingItem.player_id.let { it1 ->
             viewModel.getPlayerNameById(it1)
-
-            viewModel.readPlayerNameById(it1).observe(viewLifecycleOwner) {
-                if (battingItem.active == true) {
-                    holder.playerName.text = "$it*"
-                } else {
-                    holder.playerName.text = it
+            var flag = false
+            battingLineup.forEach {
+                if (it1 == it.id) {
+                    flag = true
+                    holder.playerName.text = it.fullname
+                }
+            }
+            if (!flag) {
+                viewModel.readPlayerNameById(it1).observe(viewLifecycleOwner) {
+                    if (!it.isNullOrEmpty()) {
+                        if (battingItem.active == true) {
+                            holder.playerName.text = "$it*"
+                        } else {
+                            holder.playerName.text = it
+                        }
+                    }
                 }
             }
         }

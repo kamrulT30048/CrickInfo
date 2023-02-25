@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -15,6 +16,7 @@ import com.kamrulhasan.crickinfo.databinding.ActivityMainBinding
 import com.kamrulhasan.crickinfo.network.NetworkConnection
 import com.kamrulhasan.crickinfo.utils.MyNotification
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
+import com.kamrulhasan.topnews.utils.MyApplication
 import java.util.*
 
 
@@ -74,13 +76,17 @@ class MainActivity : AppCompatActivity() {
             if (it) {
 
                 /// if api is not call before
-
                 if (!primaryApiCall) {
                     viewModel.apiCallOnce()
                     primaryApiCall = true
                 }
                 binding.tvConnectionLoss.visibility = View.GONE
-                Snackbar.make(rootView, "Internet is connected.", Snackbar.LENGTH_SHORT).show()
+                Toast.makeText(
+                    MyApplication.appContext,
+                    "Internet is connected.",
+                    Toast.LENGTH_SHORT
+                ).show()
+//                Snackbar.make(rootView, "Internet is connected.", Snackbar.LENGTH_SHORT).show()
             } else {
                 binding.tvConnectionLoss.visibility = View.VISIBLE
                 Snackbar.make(rootView, "No Internet !!!", Snackbar.LENGTH_SHORT).show()

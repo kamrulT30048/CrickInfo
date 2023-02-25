@@ -2,11 +2,14 @@ package com.kamrulhasan.crickinfo.ui.fragment
 
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -14,7 +17,9 @@ import com.kamrulhasan.crickinfo.R
 import com.kamrulhasan.crickinfo.adapter.FixtureAdapter
 import com.kamrulhasan.crickinfo.databinding.FragmentUpcomingMatchBinding
 import com.kamrulhasan.crickinfo.model.fixture.FixturesData
+import com.kamrulhasan.crickinfo.network.NetworkConnection
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
+import com.kamrulhasan.topnews.utils.MyApplication
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
@@ -27,7 +32,7 @@ class UpcomingMatchFragment : Fragment() {
     private lateinit var viewModel: CrickInfoViewModel
 
 
-    private var matchList: List<FixturesData>? = listOf()
+    private var matchList = emptyList<FixturesData>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,7 +49,7 @@ class UpcomingMatchFragment : Fragment() {
 
         viewModel = ViewModelProvider(this)[CrickInfoViewModel::class.java]
 
-        val today = Calendar.getInstance()
+        /*val today = Calendar.getInstance()
         val formatter = SimpleDateFormat("yyyy-MM-dd")
         val todayDate = formatter.format(today.time)
 
@@ -52,22 +57,57 @@ class UpcomingMatchFragment : Fragment() {
         val lastDate = formatter.format(today.time)
 
         val upcomingDate = "$todayDate,$lastDate"
-        Log.d(TAG, "onViewCreated: dateLimit: $upcomingDate")
+        Log.d(TAG, "onViewCreated: dateLimit: $upcomingDate")*/
 
-        viewModel.getUpcomingMatches()
-        binding.matchRecyclerView.setHasFixedSize(true)
+        NetworkConnection().observe(viewLifecycleOwner) { network ->
+            if (viewModel.upcomingMatch.value == null && !network) {
 
+                binding.ivCloudOff.setImageResource(R.drawable.icon_cloud_off_24)
+                binding.ivCloudOff.visibility = View.VISIBLE
+                binding.tvCloudOff.visibility = View.VISIBLE
+
+            } else if (viewModel.upcomingMatch.value == null ) {
+
+                binding.ivCloudOff.setImageResource(R.drawable.icon_loading)
+                binding.ivCloudOff.visibility = View.VISIBLE
+                binding.tvCloudOff.visibility = View.GONE
+
+                viewModel.readUpcomingMatch()
+
+                //handle data loading error
+                Handler(Looper.getMainLooper()).postDelayed({
+                    if (matchList.isEmpty()) {
+                        binding.ivCloudOff.setImageResource(R.drawable.icon_sync_problem_24)
+                        binding.ivCloudOff.visibility = View.VISIBLE
+                        Toast.makeText(
+                            MyApplication.appContext, "Data Sync Failed", Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        binding.ivCloudOff.visibility = View.GONE
+                        binding.tvCloudOff.visibility = View.GONE
+                    }
+                }, 2000)
+            }
+        }
+        if (matchList.isNotEmpty()) {
+            binding.matchRecyclerView.adapter =
+                FixtureAdapter(matchList, viewModel, viewLifecycleOwner)
+            binding.ivCloudOff.visibility = View.GONE
+            binding.tvCloudOff.visibility = View.GONE
+        }
         viewModel.upcomingMatch.observe(viewLifecycleOwner) {
-            Log.d(TAG, "onViewCreated: before $it")
 
             if (it != null) {
-                val adapterViewState =
-                    binding.matchRecyclerView.layoutManager?.onSaveInstanceState()
-                binding.matchRecyclerView.layoutManager?.onRestoreInstanceState(adapterViewState)
-
-                Log.d(TAG, "onViewCreated: $it")
-                binding.matchRecyclerView.adapter =
-                    FixtureAdapter(it, viewModel, viewLifecycleOwner)
+                if (it != matchList) {
+                    matchList = it
+                    if (matchList.isNotEmpty()) {
+                        binding.ivCloudOff.visibility = View.GONE
+                        binding.tvCloudOff.visibility = View.GONE
+                    }
+                    Log.d(TAG, "onViewCreated: $it")
+                    binding.matchRecyclerView.adapter =
+                        FixtureAdapter(matchList, viewModel, viewLifecycleOwner)
+                }
             } else {
                 Log.d(TAG, "onViewCreated: null")
             }

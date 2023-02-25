@@ -34,6 +34,7 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
     var upcomingMatch: LiveData<List<FixturesData>?>
     var recentMatch: LiveData<List<FixturesData>?>
     var shortList: LiveData<List<FixturesData>?>
+    var liveList: LiveData<List<FixturesData>?>
 //    var teamsData: LiveData<List<TeamsData>>
 
     private var _news: MutableLiveData<List<Article>?> = MutableLiveData<List<Article>?>()
@@ -45,9 +46,9 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
     private var _matchDetails: MutableLiveData<MatchData?> = MutableLiveData<MatchData?>()
     val matchDetails: LiveData<MatchData?> = _matchDetails
 
-    private var _liveMatches: MutableLiveData<List<MatchData>?> =
-        MutableLiveData<List<MatchData>?>()
-    val liveMatches: LiveData<List<MatchData>?> = _liveMatches
+    private var _liveMatches: MutableLiveData<List<FixturesData>?> =
+        MutableLiveData<List<FixturesData>?>()
+    val liveMatches: LiveData<List<FixturesData>?> = _liveMatches
 
     private var _player = MutableLiveData<PlayersData?>()
     val player: LiveData<PlayersData?> = _player
@@ -68,18 +69,24 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
         )
 
         recentMatch = repository.readRecentFixtures(
-            DateConverter.todayDate(),
+            DateConverter.todayDateForRecentTimeZone(),
             DateConverter.passedTwoMonth()
         )
 
+        liveList = repository.readUpcomingShort(
+            DateConverter.customDateForLiveTimeZone("-05"),
+            DateConverter.customDateForLiveTimeZone("+05"),
+            5
+        )
+
         shortList = repository.readUpcomingShort(
-            DateConverter.todayDate(),
-            DateConverter.upcomingTwoMonth(),
-            2
+            DateConverter.customDateForLiveTimeZone("-05"),
+            DateConverter.upcomingTwoWeek(),
+            3
         )
 
         upcomingMatch = repository.readUpcomingFixtures(
-            DateConverter.todayDate(),
+            DateConverter.todayDateWithTimeZone(),
             DateConverter.upcomingTwoMonth()
         )
 
@@ -191,7 +198,7 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
     // read recent matches short list
     fun readUpcomingMatchShortList(limit: Int) {
         shortList = repository.readUpcomingShort(
-            DateConverter.todayDate(),
+            DateConverter.todayDateWithTimeZone(),
             DateConverter.upcomingTwoMonth(),
             limit
         )
@@ -201,7 +208,7 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
     /// read upcoming matches
     fun readUpcomingMatch() {
         upcomingMatch = repository.readUpcomingFixtures(
-            DateConverter.todayDate(),
+            DateConverter.todayDateWithTimeZone(),
             DateConverter.upcomingTwoMonth()
         )
     }
@@ -209,7 +216,7 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
     private fun readRecentMatch() {
         try {
             upcomingMatch = repository.readRecentFixtures(
-                DateConverter.todayDate(),
+                DateConverter.todayDateForRecentTimeZone(),
                 DateConverter.passedTwoMonth()
             )
 
@@ -254,7 +261,7 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
 
     // get upcoming match from api
     fun getUpcomingMatches() {
-        val firstDate = DateConverter.todayDate()
+        val firstDate = DateConverter.todayDateWithTimeZone()
         val lastDate = DateConverter.upcomingTwoMonth()
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -275,7 +282,7 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
 
     // get recent matches from api
     fun getRecentMatches() {
-        val todayDate = DateConverter.todayDate()
+        val todayDate = DateConverter.todayDateForRecentTimeZone()
         val passedDate = DateConverter.passedTwoMonth()
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -627,8 +634,8 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
 
             try {
 
-                val matches = CricketApi.news_retrofitService.getLiveMatches().await().data
-                _liveMatches.postValue(matches)
+                val matches = CricketApi.news_retrofitService.getLiveMatches().await()
+                _liveMatches.postValue(matches.data)
 
             } catch (e: Exception) {
                 Log.e("TAG", "getNewsArticle: $e")

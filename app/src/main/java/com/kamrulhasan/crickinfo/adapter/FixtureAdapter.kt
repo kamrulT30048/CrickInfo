@@ -17,14 +17,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kamrulhasan.crickinfo.R
 import com.kamrulhasan.crickinfo.model.fixture.FixturesData
-import com.kamrulhasan.crickinfo.ui.fragment.FixturesFragmentDirections
 import com.kamrulhasan.crickinfo.utils.MyNotification
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
 import com.kamrulhasan.topnews.utils.DateConverter
 import com.kamrulhasan.topnews.utils.MATCH_ID
 import com.kamrulhasan.topnews.utils.MyApplication
-import com.kamrulhasan.topnews.utils.URL_KEY
-import java.text.SimpleDateFormat
+import com.kamrulhasan.topnews.utils.oneHourMillis
 import java.util.*
 
 private const val TAG = "FixtureAdapter"
@@ -72,14 +70,18 @@ class FixtureAdapter(
 
             fixturesItem.starting_at?.let {
 
-                var countdownDuration = DateConverter.stringToDateLong(it) - DateConverter.todayToDateLong()
+                var countdownDuration = DateConverter.stringToDateLong(it) - DateConverter.todayDateToLong()
                 countdownDuration-= 15*60*1000
 
                 Log.d(TAG, "onBindViewHolder: ms: $countdownDuration")
-                val countHour = countdownDuration.div((1000 * 60 * 60))
 
-                when (countHour) {
-                    in 0..48 -> {
+                if((countdownDuration / oneHourMillis) < 100 ){
+                    MyNotification.scheduleNotification(DateConverter.stringToDateLong(it),
+                        "A Cricket Match will Start in 15 Min")
+                }
+                when (countdownDuration.div(1000 * 60)) {
+                    in 0..(48*60) -> {
+
                         val countdownTimer = object : CountDownTimer(countdownDuration, 1000) {
                             override fun onTick(millisUntilFinished: Long) {
                                 // Update the countdown text view with the remaining time
@@ -98,24 +100,27 @@ class FixtureAdapter(
                                 holder.status.text = "Live"
                                 viewModel.readUpcomingMatch()
 
-                                MyNotification.makeStatusNotification(
-                                    "A match is starting in 15 minute..!!"
-                                )
                                 Handler(Looper.getMainLooper()).postDelayed({
                                     viewModel.getRecentMatches()
                                     viewModel.getUpcomingMatches()
 
-                                }, 5*60*60*1000)
+                                }, 5*oneHourMillis)
                             }
                         }
                         countdownTimer.start()
                     }
-                    in -4..0 -> {
+                    in (-4*60)..0 -> {
                         holder.notes.text = ""
                         holder.status.text = "Live"
                     }
                     else -> {
-                        holder.status.text = "Upcoming"
+                        val day = (countdownDuration/ oneHourMillis)/24
+                        if(day > 2){
+                            holder.notes.text = "${day}days remaining"
+                            holder.status.text = "Upcoming"
+                        }else{
+                            holder.status.text = ""
+                        }
                     }
                 }
             }

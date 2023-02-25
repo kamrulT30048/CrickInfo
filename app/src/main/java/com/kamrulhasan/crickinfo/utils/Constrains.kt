@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import java.util.*
 
+const val oneHourMillis:Long = 3600000
 //By Default Image
 const val IMAGE_URL =
     "https://www.google.com/imgres?imgurl=https%3A%2F%2Fvectorportal.com%2Fstorage%2Ftennis-ball-on-fire-vector_8379.jpg&imgrefurl=https%3A%2F%2Fvectorportal.com%2Fvector%2Ftennis-ball-on-fire-vector.ai%2F6883&tbnid=HBE9AZ-skCEvnM&vet=12ahUKEwiD2LGGvYX9AhXkitgFHfG6AdcQMygHegQIARBN..i&docid=so-ii3tHemQQJM&w=660&h=660&q=cricket%20icon&hl=en&ved=2ahUKEwiD2LGGvYX9AhXkitgFHfG6AdcQMygHegQIARBN"

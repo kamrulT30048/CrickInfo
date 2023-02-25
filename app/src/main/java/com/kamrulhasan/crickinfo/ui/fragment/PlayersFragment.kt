@@ -1,6 +1,9 @@
 package com.kamrulhasan.crickinfo.ui.fragment
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
@@ -11,6 +14,7 @@ import com.kamrulhasan.crickinfo.R
 import com.kamrulhasan.crickinfo.adapter.PlayerAdapter
 import com.kamrulhasan.crickinfo.databinding.FragmentPlayersBinding
 import com.kamrulhasan.crickinfo.model.custom.CustomPlayer
+import com.kamrulhasan.crickinfo.network.NetworkConnection
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
 import com.kamrulhasan.topnews.utils.MyApplication
 import java.util.*
@@ -48,6 +52,39 @@ class PlayersFragment : Fragment() {
 
         viewModel = ViewModelProvider(this)[CrickInfoViewModel::class.java]
         viewLifecycle = viewLifecycleOwner
+
+        NetworkConnection().observe(viewLifecycleOwner) { network ->
+            if (playerList.isEmpty() && !network) {
+                // load news
+                Log.d(TAG, "onViewCreated: cloud off")
+                binding.ivCloudOff.visibility = View.VISIBLE
+                binding.tvCloudOff.visibility = View.VISIBLE
+            } else if (playerList.isEmpty()) {
+                viewModel.getLiveMatches()
+                Log.d(TAG, "onViewCreated: hey jan")
+                binding.ivCloudOff.setImageResource(R.drawable.icon_loading)
+                binding.ivCloudOff.visibility = View.VISIBLE
+                binding.tvCloudOff.visibility = View.GONE
+            } else {
+                binding.ivCloudOff.visibility = View.GONE
+                binding.tvCloudOff.visibility = View.GONE
+            }
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (playerList.isEmpty() && !network) {
+                    binding.ivCloudOff.setImageResource(R.drawable.icon_cloud_off_24)
+                    binding.ivCloudOff.visibility = View.VISIBLE
+                    binding.tvCloudOff.visibility = View.VISIBLE
+                } else if (playerList.isEmpty()) {
+                    binding.ivCloudOff.setImageResource(R.drawable.icon_sync_problem_24)
+                    binding.ivCloudOff.visibility = View.VISIBLE
+                    binding.tvCloudOff.visibility = View.GONE
+                } else {
+                    binding.ivCloudOff.visibility = View.GONE
+                    binding.tvCloudOff.visibility = View.GONE
+                }
+            }, 5000)
+        }
 
         viewModel.playerList.observe(viewLifecycleOwner) {
             binding.playerRecyclerView.adapter =
@@ -106,6 +143,11 @@ class PlayersFragment : Fragment() {
 //        val adapterViewState = binding.playerRecyclerView.layoutManager?.onSaveInstanceState()
 //        binding.playerRecyclerView.layoutManager?.onRestoreInstanceState(adapterViewState)
 
+        if (tempPlayerList.isEmpty()){
+            binding.tvItemNa.visibility = View.VISIBLE
+        }else{
+            binding.tvItemNa.visibility = View.GONE
+        }
         binding.playerRecyclerView.adapter = PlayerAdapter(tempPlayerList, viewModel,viewLifecycle)
     }
 

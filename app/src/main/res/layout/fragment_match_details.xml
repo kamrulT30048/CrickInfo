@@ -17,6 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:text="@string/t20i"
+            android:textColor="@color/gray_dark"
             android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -112,6 +113,18 @@
             app:layout_constraintTop_toBottomOf="@id/iv_team1" />
 
         <TextView
+            android:id="@+id/tv_day_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/date"
+            android:textColor="@color/olive"
+            android:textSize="16sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/iv_team2"
+            app:layout_constraintStart_toStartOf="@id/iv_team1"
+            app:layout_constraintTop_toBottomOf="@id/tv_team2" />
+
+        <TextView
             android:id="@+id/tv_score_team2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -151,8 +164,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
             android:layout_marginTop="15dp"
+            android:layout_marginEnd="5dp"
             android:background="@drawable/item_shape"
             android:elevation="5dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -175,6 +188,7 @@
                     android:textSize="20sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -183,8 +197,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/olive_light_00"
-                    android:paddingBottom="60dp"
                     android:paddingStart="5dp"
+                    android:paddingBottom="60dp"
+                    android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_match_info">
 
@@ -223,7 +238,7 @@
                         app:layout_constraintTop_toBottomOf="@id/tv_match_notes" />
 
                     <TextView
-                        android:id="@+id/tv_series"
+                        android:id="@+id/tv_round"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:padding="5dp"
@@ -241,7 +256,7 @@
                         android:text="@string/venue"
                         android:textSize="16sp"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/tv_series" />
+                        app:layout_constraintTop_toBottomOf="@id/tv_round" />
 
                     <TextView
                         android:id="@+id/tv_venues"
@@ -252,7 +267,7 @@
                         android:textSize="16sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/tv_title_series"
-                        app:layout_constraintTop_toBottomOf="@id/tv_series" />
+                        app:layout_constraintTop_toBottomOf="@id/tv_round" />
 
                     <TextView
                         android:id="@+id/tv_title_venues_city"
@@ -431,8 +446,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
             android:layout_marginTop="15dp"
+            android:layout_marginEnd="5dp"
             android:background="@drawable/item_shape"
             android:elevation="5dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -470,7 +485,7 @@
                     app:layout_constraintTop_toBottomOf="@id/tv_team_score_card">
 
                     <TextView
-                        android:id="@+id/tv_team1_card"
+                        android:id="@+id/tv_card_inning_1"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="15dp"
@@ -479,16 +494,16 @@
                         android:gravity="center"
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
-                        android:text="@string/team1"
+                        android:text="@string/_1st_inning"
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        app:layout_constraintEnd_toStartOf="@id/tv_team2_card"
+                        app:layout_constraintEnd_toStartOf="@id/tv_card_inning_2"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/tv_team2_card"
+                        android:id="@+id/tv_card_inning_2"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:layout_marginStart="15dp"
@@ -497,14 +512,14 @@
                         android:gravity="center"
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
-                        android:text="@string/team2"
+                        android:text="@string/_2nd_inning"
                         android:textColor="@color/black"
                         android:textSize="14sp"
                         android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="@id/tv_team1_card"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_card_inning_1"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/tv_team1_card"
-                        app:layout_constraintTop_toTopOf="@id/tv_team1_card" />
+                        app:layout_constraintStart_toEndOf="@id/tv_card_inning_1"
+                        app:layout_constraintTop_toTopOf="@id/tv_card_inning_1" />
 
                     <TextView
                         android:id="@+id/tv_batting"
@@ -512,84 +527,110 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="20dp"
+                        android:padding="5dp"
                         android:text="@string/batting"
                         android:textColor="@color/black"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/tv_team1_card" />
+                        app:layout_constraintTop_toBottomOf="@id/tv_card_inning_1" />
 
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/tv_batting_team"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="20dp"
+                        android:background="@drawable/non_selected"
+                        android:padding="5dp"
+                        android:text="@string/pending"
+                        android:textColor="@color/olive_dark"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toEndOf="@id/tv_batting"
+                        app:layout_constraintTop_toBottomOf="@id/tv_card_inning_1" />
+
+                    <androidx.cardview.widget.CardView
                         android:id="@+id/layout_batting_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
                         android:layout_marginTop="10dp"
-                        android:orientation="horizontal"
+                        android:layout_marginEnd="5dp"
+                        android:background="@drawable/item_shape"
+                        android:elevation="5dp"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/tv_batting">
+                        app:layout_constraintTop_toBottomOf="@id/tv_batting_team">
 
-                        <TextView
-                            android:id="@+id/tv_player_name"
-                            android:layout_width="0dp"
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="20dp"
-                            android:layout_weight="4"
-                            android:padding="5dp"
-                            android:text="@string/name"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
+                            android:orientation="horizontal">
 
-                        <TextView
-                            android:id="@+id/tv_runs"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="@string/r"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
+                            <TextView
+                                android:id="@+id/tv_player_name"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="20dp"
+                                android:layout_weight="4"
+                                android:padding="5dp"
+                                android:text="@string/name"
+                                android:textColor="@color/black"
+                                android:textSize="14sp" />
 
-                        <TextView
-                            android:id="@+id/tv_balls"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="@string/b"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
+                            <TextView
+                                android:id="@+id/tv_runs"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="@string/r"
+                                android:textColor="@color/black"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
 
-                        <TextView
-                            android:id="@+id/tv_four_s"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="@string/_4s"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
+                            <TextView
+                                android:id="@+id/tv_balls"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="@string/b"
+                                android:textColor="@color/black"
+                                android:textSize="14sp" />
 
-                        <TextView
-                            android:id="@+id/tv_six_s"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="@string/_6s"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
+                            <TextView
+                                android:id="@+id/tv_four_s"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="@string/_4s"
+                                android:textColor="@color/black"
+                                android:textSize="14sp" />
 
-                        <TextView
-                            android:id="@+id/tv_stick_rate"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1.2"
-                            android:gravity="center"
-                            android:text="@string/sr"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
+                            <TextView
+                                android:id="@+id/tv_six_s"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="@string/_6s"
+                                android:textColor="@color/black"
+                                android:textSize="14sp" />
 
-                    </LinearLayout>
+                            <TextView
+                                android:id="@+id/tv_stick_rate"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1.2"
+                                android:gravity="center"
+                                android:text="@string/sr"
+                                android:textColor="@color/black"
+                                android:textSize="14sp" />
+
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recycler_view_batting_scorecard"
@@ -606,9 +647,9 @@
                         android:id="@+id/tv_team_extra"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
                         android:text="@string/extra"
                         android:textSize="18sp"
-                        android:layout_marginStart="5dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/recycler_view_batting_scorecard" />
 
@@ -618,6 +659,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="20dp"
+                        android:padding="5dp"
                         android:text="@string/bowling"
                         android:textColor="@color/black"
                         android:textSize="16sp"
@@ -625,67 +667,92 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tv_team_extra" />
 
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/tv_bowling_team"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="20dp"
+                        android:background="@drawable/non_selected"
+                        android:padding="5dp"
+                        android:text="@string/pending"
+                        android:textColor="@color/olive_dark"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toEndOf="@id/tv_bowling"
+                        app:layout_constraintTop_toBottomOf="@id/tv_team_extra" />
+
+                    <androidx.cardview.widget.CardView
                         android:id="@+id/layout_bowling_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
                         android:layout_marginTop="10dp"
-                        android:orientation="horizontal"
+                        android:layout_marginEnd="5dp"
+                        android:background="@drawable/item_shape"
+                        android:elevation="5dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tv_bowling">
 
-                        <TextView
-                            android:id="@+id/tv_bowling_player_name"
-                            android:layout_width="0dp"
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="20dp"
-                            android:layout_weight="4"
-                            android:padding="5dp"
-                            android:text="@string/name"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
+                            android:orientation="horizontal">
 
-                        <TextView
-                            android:id="@+id/tv_over"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="@string/o"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
+                            <TextView
+                                android:id="@+id/tv_bowling_player_name"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="20dp"
+                                android:layout_weight="4"
+                                android:padding="5dp"
+                                android:text="@string/name"
+                                android:textColor="@color/black"
+                                android:textSize="14sp" />
 
-                        <TextView
-                            android:id="@+id/tv_bowling_runs"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="@string/r"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
+                            <TextView
+                                android:id="@+id/tv_over"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="@string/o"
+                                android:textColor="@color/black"
+                                android:textSize="14sp" />
 
-                        <TextView
-                            android:id="@+id/tv_wicket"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="@string/w"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
+                            <TextView
+                                android:id="@+id/tv_bowling_runs"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="@string/r"
+                                android:textColor="@color/black"
+                                android:textSize="14sp" />
 
-                        <TextView
-                            android:id="@+id/tv_economy_rate"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1.2"
-                            android:gravity="center"
-                            android:text="@string/econ"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
+                            <TextView
+                                android:id="@+id/tv_wicket"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="@string/w"
+                                android:textColor="@color/black"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
 
-                    </LinearLayout>
+                            <TextView
+                                android:id="@+id/tv_economy_rate"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1.2"
+                                android:gravity="center"
+                                android:text="@string/econ"
+                                android:textColor="@color/black"
+                                android:textSize="14sp" />
+
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recycler_view_bowling_scorecard"
@@ -709,8 +776,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
             android:layout_marginTop="15dp"
+            android:layout_marginEnd="5dp"
             android:background="@drawable/item_shape"
             android:elevation="5dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -742,11 +809,12 @@
                     android:layout_height="wrap_content"
                     android:background="@color/olive_light_00"
                     android:paddingBottom="50dp"
+                    android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_team_squad">
 
                     <TextView
-                        android:id="@+id/tv_name_team1"
+                        android:id="@+id/tv_lineup_team_1"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="15dp"
@@ -758,12 +826,12 @@
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        app:layout_constraintEnd_toStartOf="@id/tv_name_team2"
+                        app:layout_constraintEnd_toStartOf="@id/tv_lineup_team_2"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/tv_name_team2"
+                        android:id="@+id/tv_lineup_team_2"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:layout_marginStart="15dp"
@@ -774,10 +842,10 @@
                         android:textColor="@color/black"
                         android:textSize="14sp"
                         android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="@id/tv_name_team1"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_lineup_team_1"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/tv_name_team1"
-                        app:layout_constraintTop_toTopOf="@id/tv_name_team1" />
+                        app:layout_constraintStart_toEndOf="@id/tv_lineup_team_1"
+                        app:layout_constraintTop_toTopOf="@id/tv_lineup_team_1" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recycler_view_team_squad"
@@ -788,21 +856,23 @@
                         app:layoutManager="LinearLayoutManager"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/tv_name_team1" />
+                        app:layout_constraintTop_toBottomOf="@id/tv_lineup_team_1" />
 
                     <TextView
                         android:id="@+id/tv_na"
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="@string/not_available"
-                        android:visibility="gone"
+                        android:textSize="16sp"
+                        android:visibility="visible"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/recycler_view_team_squad" />
+                        app:layout_constraintTop_toTopOf="@+id/recycler_view_team_squad" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
@@ -811,8 +881,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
             android:layout_marginTop="15dp"
+            android:layout_marginEnd="5dp"
             android:background="@drawable/item_shape"
             android:elevation="5dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -820,9 +890,9 @@
             app:layout_constraintTop_toBottomOf="@id/card_view_match_lineup">
 
             <LinearLayout
-                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tv_match_umpire"
@@ -838,56 +908,100 @@
                     app:layout_constraintTop_toTopOf="parent"
                     tools:layout_editor_absoluteX="-29dp" />
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/layout_match_umpire"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/olive_light_00"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_match_umpire">
+                    android:paddingStart="10dp"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="50dp">
+
+                    <TextView
+                        android:id="@+id/tv_title_first_umpire"
+                        android:layout_width="130dp"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:text="@string/first_umpire"
+                        android:textSize="16sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/tv_first_umpire"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="5dp"
-                        android:textColor="@color/black"
+                        android:padding="5dp"
+                        android:text="@string/na"
                         android:textSize="16sp"
-                        tools:text="@string/umpire" />
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/tv_title_first_umpire"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_title_second_umpire"
+                        android:layout_width="130dp"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:text="@string/second_umpire"
+                        android:textSize="16sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_first_umpire" />
 
                     <TextView
                         android:id="@+id/tv_second_umpire"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
-                        android:textColor="@color/black"
+                        android:padding="5dp"
+                        android:text="@string/na"
                         android:textSize="16sp"
-                        tools:text="@string/umpire" />
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/tv_title_second_umpire"
+                        app:layout_constraintTop_toBottomOf="@id/tv_first_umpire" />
+
+                    <TextView
+                        android:id="@+id/tv_title_tv_umpire"
+                        android:layout_width="130dp"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:text="@string/third_umpire"
+                        android:textSize="16sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_second_umpire" />
 
                     <TextView
                         android:id="@+id/tv_tv_umpire"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
-                        android:textColor="@color/black"
+                        android:padding="5dp"
+                        android:text="@string/na"
                         android:textSize="16sp"
-                        tools:text="@string/umpire" />
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/tv_title_tv_umpire"
+                        app:layout_constraintTop_toBottomOf="@id/tv_second_umpire" />
+
+                    <TextView
+                        android:id="@+id/tv_title_match_referee"
+                        android:layout_width="130dp"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:text="@string/referee"
+                        android:textSize="16sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_tv_umpire" />
 
                     <TextView
                         android:id="@+id/tv_referee"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
-                        android:clipToPadding="false"
-                        android:paddingBottom="80dp"
-                        android:textColor="@color/black"
+                        android:padding="5dp"
+                        android:text="@string/na"
                         android:textSize="16sp"
-                        tools:text="@string/umpire" />
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/tv_title_match_referee"
+                        app:layout_constraintTop_toBottomOf="@id/tv_tv_umpire" />
 
-                </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 

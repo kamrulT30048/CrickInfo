@@ -3,6 +3,7 @@ package com.kamrulhasan.crickinfo.network
 import com.kamrulhasan.crickinfo.model.country.Country
 import com.kamrulhasan.crickinfo.model.news.News
 import com.kamrulhasan.crickinfo.model.fixture.Fixtures
+import com.kamrulhasan.crickinfo.model.fixture.FixturesData
 import com.kamrulhasan.crickinfo.model.leagues.Leagues
 import com.kamrulhasan.crickinfo.model.lineup.FixturesLineup
 import com.kamrulhasan.crickinfo.model.match.LiveMatches
@@ -57,9 +58,9 @@ interface CricketAPIService {
 
     @GET(LIVE_END)
     suspend fun getLiveMatches(
-        @Query("include") include: String = "scoreboards,batting,bowling,lineup",
+        @Query("include") include: String = "runs",
         @Query("api_token") api_token: String = API_TOKEN_LIVE
-    ): Call<LiveMatches>
+    ): Call<Fixtures>
 
     @GET("$FIXTURES_END/{fixtures_id}")
     fun getLineup(
