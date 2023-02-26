@@ -12,16 +12,14 @@ import com.kamrulhasan.crickinfo.model.custom.CustomPlayer
 import com.kamrulhasan.crickinfo.model.news.Article
 import com.kamrulhasan.crickinfo.model.fixture.FixturesData
 import com.kamrulhasan.crickinfo.model.leagues.LeaguesData
-import com.kamrulhasan.crickinfo.model.lineup.Lineup
 import com.kamrulhasan.crickinfo.model.match.MatchData
 import com.kamrulhasan.crickinfo.model.officials.OfficialsData
 import com.kamrulhasan.crickinfo.model.player.PlayersData
-import com.kamrulhasan.crickinfo.model.season.SeasonsData
 import com.kamrulhasan.crickinfo.model.team.TeamsData
 import com.kamrulhasan.crickinfo.model.venues.VenuesData
 import com.kamrulhasan.crickinfo.network.CricketApi
 import com.kamrulhasan.crickinfo.repository.CrickInfoRepository
-import com.kamrulhasan.topnews.utils.DateConverter
+import com.kamrulhasan.crickinfo.utils.DateConverter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.await
@@ -30,18 +28,13 @@ private const val TAG = "CrickInfoViewModel"
 
 class CrickInfoViewModel(application: Application) : AndroidViewModel(application) {
 
-    //    var fixturesData: LiveData<List<FixturesData>?>
     var upcomingMatch: LiveData<List<FixturesData>?>
     var recentMatch: LiveData<List<FixturesData>?>
     var shortList: LiveData<List<FixturesData>?>
-    var liveList: LiveData<List<FixturesData>?>
-//    var teamsData: LiveData<List<TeamsData>>
+    var playerList: LiveData<List<CustomPlayer>?>
 
     private var _news: MutableLiveData<List<Article>?> = MutableLiveData<List<Article>?>()
     val news: LiveData<List<Article>?> = _news
-
-    private var _lineup: MutableLiveData<List<Lineup>?> = MutableLiveData<List<Lineup>?>()
-    val lineup: LiveData<List<Lineup>?> = _lineup
 
     private var _matchDetails: MutableLiveData<MatchData?> = MutableLiveData<MatchData?>()
     val matchDetails: LiveData<MatchData?> = _matchDetails
@@ -55,9 +48,6 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
 
     private var _playerName = MutableLiveData<String?>()
     val playerName: LiveData<String?> = _playerName
-
-    //    private var _playerList = MutableLiveData<List<Squad>?>()
-    var playerList: LiveData<List<CustomPlayer>?>
 
     private val repository: CrickInfoRepository
 
@@ -73,12 +63,6 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
             DateConverter.passedTwoMonth()
         )
 
-        liveList = repository.readUpcomingShort(
-            DateConverter.customDateForLiveTimeZone("-05"),
-            DateConverter.customDateForLiveTimeZone("+05"),
-            5
-        )
-
         shortList = repository.readUpcomingShort(
             DateConverter.customDateForLiveTimeZone("-05"),
             DateConverter.upcomingTwoWeek(),
@@ -91,7 +75,6 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
         )
 
         playerList = repository.readAllPlayers
-
     }
 
     //// Api call from main activity
@@ -102,14 +85,11 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
         getOfficialsData()
         getTeamsData()
         getCountries()
-        getSeasons()
         getVenues()
         deleteFixtures(DateConverter.passedTwoMonth())
     }
 
-
-    ////////////////// Player \\\\\\\\\\\\\\\\\\
-
+    /// Player
     /// read all players
     fun readAllPlayers() {
         playerList = repository.readAllPlayers
@@ -118,23 +98,17 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
     // player name
     fun readPlayerNameById(id: Int): LiveData<String> {
         return repository.readPlayerNameById(id)
-//        if(player.value == ""){
-//            getPlayerById(id)
-//            player = repository.readPlayerNameById(id)
-//        }
-
     }
 
-    fun readPlayerCountryById(id: Int): LiveData<Int>? {
+    fun readPlayerCountryById(id: Int): LiveData<Int> {
         return repository.readPlayerCountryById(id)
     }
 
-    fun readPlayerImageUrlById(id: Int): LiveData<String>? {
+    fun readPlayerImageUrlById(id: Int): LiveData<String> {
         return repository.readPlayerImageUrlById(id)
     }
 
-    ////////////////// Team \\\\\\\\\\\\\\\\\\
-
+    /// Team
     ///  read team code
     fun readTeamCode(id: Int): LiveData<String> {
         return repository.readTeamCodeById(id)
@@ -145,8 +119,7 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
         return repository.readTeamIconById(id)
     }
 
-    ////////////////// Runs \\\\\\\\\\\\\\\\\\
-
+    /// Runs
     /// read run
     fun readScoreById(team_id: Int, fixture_id: Int): LiveData<Int> {
         return repository.readTeamScoreById(team_id, fixture_id)
@@ -160,29 +133,25 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
         return repository.readTeamOverById(team_id, fixture_id)
     }
 
-    ////////////////// Officials \\\\\\\\\\\\\\\\\\
-
+    /// Officials
     // Officials Name
     fun readOfficialsById(id: Int): LiveData<String> {
         return repository.readOfficialsById(id)
     }
 
-    ////////////////// Leagues \\\\\\\\\\\\\\\\\\
-
+    /// Leagues
     // Leagues Name
     fun readLeaguesById(id: Int): LiveData<String> {
         return repository.readLeaguesById(id)
     }
 
-    ////////////////// Country \\\\\\\\\\\\\\\\\\
-
+    /// Country
     // Country Name
     fun readCountryById(id: Int): LiveData<String> {
         return repository.readCountryById(id)
     }
 
-    ////////////////// Venues \\\\\\\\\\\\\\\\\\
-
+    //// Venues
     // Venues Name
     fun readVenuesNameById(id: Int): LiveData<String> {
         return repository.readVenuesNameById(id)
@@ -193,8 +162,7 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
         return repository.readVenuesCityById(id)
     }
 
-    ////////////////// Fixtures \\\\\\\\\\\\\\\\\\
-
+    //// Fixtures
     // read recent matches short list
     fun readUpcomingMatchShortList(limit: Int) {
         shortList = repository.readUpcomingShort(
@@ -202,7 +170,7 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
             DateConverter.upcomingTwoMonth(),
             limit
         )
-        Log.d(TAG, "readRecentMatchShortList: ${shortList.value}")
+        Log.d(TAG, "readRecentMatchShortList: ${shortList.value?.size}")
     }
 
     /// read upcoming matches
@@ -225,40 +193,11 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-
     /*
     * ###################################################
     *                Fixtures Api Call
     * ####################################################
     */
-
-    // add Matches info into database
-    private fun getFixturesData() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val fixturesDataTemp = CricketApi.retrofitService.getFixturesData().data!!
-                Log.d(TAG, "getFixturesData: ${fixturesDataTemp.size}")
-                fixturesDataTemp.forEach {
-                    repository.addFixturesData(it)
-
-                    val runs = it.runs
-                    if (runs != null && runs.isNotEmpty()) {
-                        if (runs.size == 2) {
-                            repository.addRun(runs[0])
-                            repository.addRun(runs[1])
-                        } else if (runs.size == 1) {
-                            repository.addRun(runs[0])
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "getFixturesData: Fixtures Api call failed")
-                Log.e(TAG, "getFixturesData: $e")
-            }
-        }
-        readAllFixtures()
-    }
-
     // get upcoming match from api
     fun getUpcomingMatches() {
         val firstDate = DateConverter.todayDateWithTimeZone()
@@ -311,27 +250,6 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    private fun readAllFixtures() {
-//        try {
-//            fixturesData = repository.readAllFixturesData
-//        } catch (e: Exception) {
-//            Log.e(TAG, "readAllFixtures: $e")
-//        }
-    }
-
-
-    // get match lineup
-    fun getLineup(id: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val lineupTemp = CricketApi.retrofitService.getLineup(id).await()
-                _lineup.postValue(lineupTemp.data?.lineup)
-            } catch (e: Exception) {
-                Log.e(TAG, "getLineup: $e")
-            }
-        }
-    }
-
     // get match details
     fun getMatchDetails(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -346,7 +264,7 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     // delete match details from database
-    fun deleteFixtures(date: String) {
+    private fun deleteFixtures(date: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 repository.deleteFixtures(date)
@@ -361,7 +279,6 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
     *                Players Api Call
     * ####################################################
     */
-
     // ok///get [player] by id
     fun getPlayerById(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -386,7 +303,6 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
             }
         }
     }
-
 
     // get [player] by id
     fun getPlayerNameById(id: Int) {
@@ -413,12 +329,9 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-
-    //ok//Team Squad
-    fun getSquadByTeamId(team_id: Int) {
-
+    //Team Squad
+    private fun getSquadByTeamId(team_id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-
             try {
                 Log.d(TAG, "getSquadByTeamId: before")
                 val playersCall = CricketApi.retrofitService.getPlayersByTeam(team_id).await()
@@ -441,13 +354,11 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-
     /*
     * ###################################################
     *                Teams Api Call
     * ####################################################
     */
-
     // add team data into database
     private fun getTeamsData() {
 
@@ -461,10 +372,11 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
 
             teamsList.forEach {
                 repository.addTeams(it)
-
-                ////////////////////////////////////////////////
-//                getSquadByTeamId(it.id)
-                ///////////////////////////////////////////////
+                // add team squad
+                if (playerList.value.isNullOrEmpty()) {
+                    getSquadByTeamId(it.id)
+                    Log.d(TAG, "getTeamsData: Team squad")
+                }
             }
         }
     }
@@ -474,7 +386,6 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
     *                Officials Api Call
     * ####################################################
     */
-
     // add officials data into database
     private fun getOfficialsData() {
 
@@ -496,10 +407,8 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
     *                Leagues Api Call
     * ####################################################
     */
-
     // add Leagues data into database
     private fun getLeaguesData() {
-
         viewModelScope.launch(Dispatchers.IO) {
             var leaguesList: List<LeaguesData>? = listOf()
             try {
@@ -520,9 +429,7 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
     *               Country Api Call
     * ####################################################
     */
-
     private fun getCountries() {
-
         viewModelScope.launch(Dispatchers.IO) {
             var countriesList: List<CountryData>? = listOf()
             try {
@@ -538,35 +445,10 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
 
     /*
     * ###################################################
-    *                Leagues Api Call
+    *                Venues Api Call
     * ####################################################
     */
-
-    private fun getSeasons() {
-
-        viewModelScope.launch(Dispatchers.IO) {
-            var seasonsList: List<SeasonsData>? = listOf()
-            try {
-                seasonsList = CricketApi.retrofitService.getSeasons().data
-            } catch (e: Exception) {
-                Log.e(TAG, "getTeamsData: $e")
-            }
-
-            // add Leagues data into database
-            seasonsList?.forEach {
-                repository.addSeasons(it)
-            }
-        }
-    }
-
-    /*
-    * ###################################################
-    *                Leagues Api Call
-    * ####################################################
-    */
-
     private fun getVenues() {
-
         viewModelScope.launch(Dispatchers.IO) {
             var seasonsList: List<VenuesData>? = listOf()
             try {
@@ -587,14 +469,10 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
     *                Cricket News Api Call
     * #######################################################
     */
-
     // get all cricket news
     fun getNewsArticle() {
-
         viewModelScope.launch(Dispatchers.IO) {
-
             try {
-
                 val articles = CricketApi.news_retrofitService.getCricketNews().await().articles
                 _news.postValue(articles)
 
@@ -606,11 +484,8 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
 
     // get top 5 cricket news
     fun getNewsArticleHome() {
-
         viewModelScope.launch(Dispatchers.IO) {
-
             try {
-
                 val articles = CricketApi.news_retrofitService.getCricketNewsHome().await().articles
                 _news.postValue(articles)
 
@@ -620,20 +495,15 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-
     /*
     * ###################################################
     *                Live match Api Call
     * ####################################################
     */
-
     // get live matches
     fun getLiveMatches() {
-
         viewModelScope.launch(Dispatchers.IO) {
-
             try {
-
                 val matches = CricketApi.news_retrofitService.getLiveMatches().await()
                 _liveMatches.postValue(matches.data)
 
@@ -642,6 +512,4 @@ class CrickInfoViewModel(application: Application) : AndroidViewModel(applicatio
             }
         }
     }
-
-
 }

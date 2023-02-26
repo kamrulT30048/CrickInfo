@@ -7,28 +7,25 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModel
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kamrulhasan.crickinfo.R
 import com.kamrulhasan.crickinfo.model.custom.CustomPlayer
-import com.kamrulhasan.crickinfo.model.player.PlayersData
-import com.kamrulhasan.crickinfo.model.team.TeamsData
+import com.kamrulhasan.crickinfo.utils.MyApplication
+import com.kamrulhasan.crickinfo.utils.PLAYER_ID
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
-import com.kamrulhasan.topnews.utils.MyApplication
-import com.kamrulhasan.topnews.utils.PLAYER_ID
 
 class PlayerAdapter(
     private val player: List<CustomPlayer>,
     private val viewModel: CrickInfoViewModel,
-    private val viewLifecycleOwner: LifecycleOwner,
-) :RecyclerView.Adapter<PlayerAdapter.PlayerHolder>(){
+    private val viewLifecycleOwner: LifecycleOwner
+) : RecyclerView.Adapter<PlayerAdapter.PlayerHolder>() {
 
-    class PlayerHolder(binding: View) : RecyclerView.ViewHolder(binding.rootView){
-        val playerImage : ImageView = binding.findViewById(R.id.iv_player)
+    class PlayerHolder(binding: View) : RecyclerView.ViewHolder(binding.rootView) {
+        val playerImage: ImageView = binding.findViewById(R.id.iv_player)
         val playerName: TextView = binding.findViewById(R.id.tv_player_name)
-        val playerType : TextView = binding.findViewById(R.id.tv_player_position)
+        val playerType: TextView = binding.findViewById(R.id.tv_player_position)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerHolder {

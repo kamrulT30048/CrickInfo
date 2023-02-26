@@ -9,7 +9,6 @@ import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.annotation.RequiresApi
-import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -18,8 +17,8 @@ import com.kamrulhasan.crickinfo.adapter.FixtureAdapter
 import com.kamrulhasan.crickinfo.databinding.FragmentRecentMatchBinding
 import com.kamrulhasan.crickinfo.model.fixture.FixturesData
 import com.kamrulhasan.crickinfo.network.NetworkConnection
+import com.kamrulhasan.crickinfo.utils.MyApplication
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
-import com.kamrulhasan.topnews.utils.MyApplication
 
 private const val TAG = "RecentMatchFragment"
 
@@ -48,6 +47,7 @@ class RecentMatchFragment : Fragment() {
 
         viewModel = ViewModelProvider(this)[CrickInfoViewModel::class.java]
         viewOwner = viewLifecycleOwner
+
         NetworkConnection().observe(viewLifecycleOwner) { network ->
             if (matchList.isEmpty() && !network) {
 
@@ -71,8 +71,7 @@ class RecentMatchFragment : Fragment() {
                         Toast.makeText(
                             MyApplication.appContext, "Data Sync Failed", Toast.LENGTH_SHORT
                         ).show()
-                    }
-                    else{
+                    } else {
                         binding.ivCloudOff.visibility = View.GONE
                         binding.tvCloudOff.visibility = View.GONE
                     }
@@ -92,7 +91,7 @@ class RecentMatchFragment : Fragment() {
             if (it != null) {
                 if (it != matchList) {
                     matchList = it
-                    if(matchList.isNotEmpty()){
+                    if (matchList.isNotEmpty()) {
                         binding.ivCloudOff.visibility = View.GONE
                         binding.tvCloudOff.visibility = View.GONE
                     }

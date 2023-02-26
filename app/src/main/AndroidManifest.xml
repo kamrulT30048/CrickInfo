@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
-        android:name="com.kamrulhasan.topnews.utils.MyApplication"
+        android:name="com.kamrulhasan.crickinfo.utils.MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -31,7 +31,7 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <receiver android:name=".MyBroadcastReceiver"/>
+        <receiver android:name=".receiver.MyBroadcastReceiver"/>
     </application>
 
 </manifest>

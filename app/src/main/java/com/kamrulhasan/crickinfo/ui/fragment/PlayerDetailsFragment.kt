@@ -17,10 +17,10 @@ import com.kamrulhasan.crickinfo.model.custom.CustomBatting
 import com.kamrulhasan.crickinfo.model.custom.CustomBowling
 import com.kamrulhasan.crickinfo.model.player.Career
 import com.kamrulhasan.crickinfo.network.NetworkConnection
+import com.kamrulhasan.crickinfo.utils.DateConverter
+import com.kamrulhasan.crickinfo.utils.MyApplication
+import com.kamrulhasan.crickinfo.utils.PLAYER_ID
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
-import com.kamrulhasan.topnews.utils.DateConverter
-import com.kamrulhasan.topnews.utils.MyApplication
-import com.kamrulhasan.topnews.utils.PLAYER_ID
 import java.util.Calendar
 import kotlin.math.floor
 
@@ -41,7 +41,6 @@ class PlayerDetailsFragment : Fragment() {
         arguments?.let {
             player = it.getInt(PLAYER_ID, 0)
         }
-
     }
 
     override fun onCreateView(
@@ -65,7 +64,7 @@ class PlayerDetailsFragment : Fragment() {
             }
         }
 
-        viewModel.readPlayerCountryById(player)?.observe(viewLifecycleOwner) { country ->
+        viewModel.readPlayerCountryById(player).observe(viewLifecycleOwner) { country ->
             country?.let { countryId ->
                 viewModel.readCountryById(countryId).observe(viewLifecycleOwner) {
                     binding.tvCountry.text = it
@@ -73,7 +72,7 @@ class PlayerDetailsFragment : Fragment() {
             }
         }
 
-        viewModel.readPlayerImageUrlById(player)?.observe(viewLifecycleOwner) { imageUrl ->
+        viewModel.readPlayerImageUrlById(player).observe(viewLifecycleOwner) { imageUrl ->
             Glide
                 .with(MyApplication.appContext)
                 .load(imageUrl)
@@ -85,9 +84,7 @@ class PlayerDetailsFragment : Fragment() {
         viewModel.getPlayerById(player)
 
         NetworkConnection().observe(viewLifecycleOwner) { network ->
-            if (viewModel.player.value == null && !network) {
-
-            } else if (viewModel.player.value == null) {
+            if (viewModel.player.value == null && network) {
 
                 viewModel.getPlayerById(player)
 
@@ -115,12 +112,16 @@ class PlayerDetailsFragment : Fragment() {
                     binding.tvDob.text = resources.getString(R.string.info_show, age)
                 }
 
-                val gender = if (it.gender == "m") {
-                    "Male"
-                } else if (it.gender == "f") {
-                    "Female"
-                } else {
-                    "NA"
+                val gender = when (it.gender) {
+                    "m" -> {
+                        "Male"
+                    }
+                    "f" -> {
+                        "Female"
+                    }
+                    else -> {
+                        "NA"
+                    }
                 }
                 binding.tvGender.text = resources.getString(R.string.info_show, gender)
 
@@ -201,7 +202,6 @@ class PlayerDetailsFragment : Fragment() {
                 setBowlingStatistics(it)
             }
         }
-
     }
 
     ////////////////////////////
@@ -296,8 +296,6 @@ class PlayerDetailsFragment : Fragment() {
         binding.tvBowlingTestAvg.text = bowling.avg.toString()
         binding.tvBowlingTestStickRate.text = bowling.stickRate.toString()
         binding.tvBowlingTestFiveWicket.text = bowling.fiveWicket.toString()
-
-
     }
 
     /////////////////////////////
@@ -343,7 +341,6 @@ class PlayerDetailsFragment : Fragment() {
                 if (it1.batting?.hundreds != null) {
                     hundreds += it1.batting.hundreds
                 }
-
             }
         }
 
@@ -374,7 +371,7 @@ class PlayerDetailsFragment : Fragment() {
                 seasonCount += 1
 
                 if (it1.bowling?.matches != null) {
-                    matches += it1.bowling.matches!!
+                    matches += it1.bowling.matches
                 }
 
                 if (it1.bowling?.runs != null) {
@@ -400,7 +397,6 @@ class PlayerDetailsFragment : Fragment() {
                 if (it1.bowling?.five_wickets != null) {
                     fiveWickets += it1.bowling.five_wickets
                 }
-
             }
         }
 
@@ -425,6 +421,5 @@ class PlayerDetailsFragment : Fragment() {
         return CustomBowling(
             matches, runs, wicket, economy, average, stickRate, fiveWickets
         )
-
     }
 }

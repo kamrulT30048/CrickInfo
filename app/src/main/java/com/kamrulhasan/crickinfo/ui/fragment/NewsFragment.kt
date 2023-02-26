@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.kamrulhasan.crickinfo.R
@@ -18,9 +17,8 @@ import com.kamrulhasan.crickinfo.adapter.NewsAdapter
 import com.kamrulhasan.crickinfo.databinding.FragmentNewsBinding
 import com.kamrulhasan.crickinfo.model.news.Article
 import com.kamrulhasan.crickinfo.network.NetworkConnection
+import com.kamrulhasan.crickinfo.utils.MyApplication
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
-import com.kamrulhasan.topnews.utils.MyApplication
-import com.kamrulhasan.topnews.utils.verifyAvailableNetwork
 
 class NewsFragment : Fragment() {
 
@@ -45,7 +43,6 @@ class NewsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(this)[CrickInfoViewModel::class.java]
-        val connection = verifyAvailableNetwork(requireActivity() as AppCompatActivity)
 
         NetworkConnection().observe(viewLifecycleOwner) {
             if (newsList.isEmpty() && !it) {
@@ -84,7 +81,6 @@ class NewsFragment : Fragment() {
                     binding.tvCloudOff.visibility = View.GONE
                 }
             }
-
         }
 
         val bottomNav: BottomNavigationView = requireActivity().findViewById(R.id.bottom_nav_bar)
@@ -97,11 +93,11 @@ class NewsFragment : Fragment() {
             }
         }
     }
+
     override fun onPause() {
         super.onPause()
 
         val bottomNav: BottomNavigationView = requireActivity().findViewById(R.id.bottom_nav_bar)
         bottomNav.visibility = View.VISIBLE
     }
-
 }

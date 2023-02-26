@@ -8,33 +8,21 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import android.view.View
-import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.kamrulhasan.crickinfo.R
-import com.kamrulhasan.crickinfo.model.fixture.FixturesData
 import com.kamrulhasan.crickinfo.receiver.MyBroadcastReceiver
 import com.kamrulhasan.crickinfo.ui.MainActivity
-import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
-import com.kamrulhasan.topnews.utils.*
 import java.util.*
 
 private const val TAG = "Notification"
 
 class MyNotification {
     companion object {
-
         ///////////////////////////////
         /////  make notification  /////
         ///////////////////////////////
-
-//        @RequiresApi(Build.VERSION_CODES.M)
-//        @RequiresApi(Build.VERSION_CODES.S)
         @SuppressLint("MissingPermission", "UnspecifiedImmutableFlag")
         fun makeStatusNotification(message: String) {
 
@@ -45,7 +33,7 @@ class MyNotification {
                 MyApplication.appContext,
                 0,
                 notificationIntent,
-                PendingIntent.FLAG_MUTABLE
+                PendingIntent.FLAG_IMMUTABLE
             )
 
             // Make a channel if necessary
@@ -78,7 +66,8 @@ class MyNotification {
 
             // Show the notification
             try {
-                NotificationManagerCompat.from(MyApplication.appContext).notify(NOTIFICATION_ID, builder.build())
+                NotificationManagerCompat.from(MyApplication.appContext)
+                    .notify(NOTIFICATION_ID, builder.build())
             } catch (e: Exception) {
                 Log.d(TAG, "makeStatusNotification: $e")
             }
@@ -88,7 +77,6 @@ class MyNotification {
         /////  set Alarm for notification  /////
         ////////////////////////////////////////
 
-//        @RequiresApi(Build.VERSION_CODES.S)
         @SuppressLint("UnspecifiedImmutableFlag")
         fun scheduleNotification(delay: Long, message: String) {
 
@@ -99,7 +87,7 @@ class MyNotification {
                 MyApplication.appContext,
                 0,
                 intent,
-                PendingIntent.FLAG_MUTABLE
+                PendingIntent.FLAG_IMMUTABLE
             )
 
             val alarmManager =
@@ -115,36 +103,5 @@ class MyNotification {
             )
         }
 
-        ////////////////////////////////////////
-        /// set notification time and message //
-        ////////////////////////////////////////
-/*
-        fun setNotificationTime(
-            match: FixturesData,
-            viewModel: CrickInfoViewModel,
-            viewLifecycleOwner: LifecycleOwner
-        ) {
-
-            match.starting_at?.let { it ->
-                val timeMillis = DateConverter.stringToDateLong(it)
-                var team1 = ""
-                var team2 = ""
-                viewModel.readTeamCode(match.localteam_id).observe(viewLifecycleOwner){ localCode ->
-                    team1 = localCode
-                }
-                viewModel.readTeamCode(match.visitorteam_id).observe(viewLifecycleOwner){ visitorCode ->
-                    team2 = visitorCode
-                }
-
-                //handle data loading error
-                Handler(Looper.getMainLooper()).postDelayed({
-                    if (team1.isNotEmpty() && team2.isNotEmpty()) {
-                        val message = "  $team1  VS  $team2"
-                        scheduleNotification(timeMillis, message)
-                    }
-                }, 5000)
-
-            }
-        }*/
     }
 }

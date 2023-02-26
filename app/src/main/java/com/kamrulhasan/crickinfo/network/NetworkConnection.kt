@@ -8,11 +8,8 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkInfo
 import android.os.Build
-import android.util.Log
 import androidx.lifecycle.LiveData
-import com.kamrulhasan.topnews.utils.MyApplication
-
-private const val TAG = "NetworkConnection"
+import com.kamrulhasan.crickinfo.utils.MyApplication
 
 class NetworkConnection: LiveData<Boolean>() {
     private val connectivityManager: ConnectivityManager =
@@ -40,16 +37,6 @@ class NetworkConnection: LiveData<Boolean>() {
             updateNetwork()
         }
     }
-
-//    override fun onInactive() {
-//        super.onInactive()
-//        try {
-//            connectivityManager.unregisterNetworkCallback(connectionCallBack())
-//        }catch (e: Exception){
-//            Log.e(TAG, "onInactive: $e")
-//        }
-//
-//    }
 
     private fun connectionCallBack(): ConnectivityManager.NetworkCallback{
         networkConnectionCallback = object : ConnectivityManager.NetworkCallback(){

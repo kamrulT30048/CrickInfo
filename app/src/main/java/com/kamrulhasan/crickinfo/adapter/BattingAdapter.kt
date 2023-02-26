@@ -1,7 +1,5 @@
 package com.kamrulhasan.crickinfo.adapter
 
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kamrulhasan.crickinfo.R
 import com.kamrulhasan.crickinfo.model.match.Batting
 import com.kamrulhasan.crickinfo.model.match.Lineup
+import com.kamrulhasan.crickinfo.utils.MyApplication
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
-import com.kamrulhasan.topnews.utils.MyApplication
 
 class BattingAdapter(
     private val batting: List<Batting>,
@@ -42,21 +40,25 @@ class BattingAdapter(
         val battingItem = batting[position]
 
         battingItem.player_id.let { it1 ->
+
             viewModel.getPlayerNameById(it1)
             var flag = false
+
             battingLineup.forEach {
                 if (it1 == it.id) {
                     flag = true
                     holder.playerName.text = it.fullname
                 }
             }
+
             if (!flag) {
-                viewModel.readPlayerNameById(it1).observe(viewLifecycleOwner) {
-                    if (!it.isNullOrEmpty()) {
+                viewModel.readPlayerNameById(it1).observe(viewLifecycleOwner) { name ->
+                    if (!name.isNullOrEmpty()) {
                         if (battingItem.active == true) {
-                            holder.playerName.text = "$it*"
+                            val playerName = "$name*"
+                            holder.playerName.text = playerName
                         } else {
-                            holder.playerName.text = it
+                            holder.playerName.text = name
                         }
                     }
                 }

@@ -24,11 +24,11 @@ import com.kamrulhasan.crickinfo.model.match.Batting
 import com.kamrulhasan.crickinfo.model.match.Lineup
 import com.kamrulhasan.crickinfo.model.match.Bowling
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
-import com.kamrulhasan.topnews.utils.DateConverter
-import com.kamrulhasan.topnews.utils.MATCH_ID
 import com.kamrulhasan.crickinfo.databinding.FragmentMatchDetailsBinding
 import com.kamrulhasan.crickinfo.network.NetworkConnection
-import com.kamrulhasan.topnews.utils.oneHourMillis
+import com.kamrulhasan.crickinfo.utils.DateConverter
+import com.kamrulhasan.crickinfo.utils.MATCH_ID
+import com.kamrulhasan.crickinfo.utils.oneHourMillis
 
 private const val TAG = "MatchDetailsFragment"
 
@@ -41,30 +41,30 @@ class MatchDetailsFragment : Fragment() {
     private lateinit var viewOwner: LifecycleOwner
 
     private var match: FixturesData? = null
-    var localTeam = 0
-    var visitorTeam = 1
-    var team1Code = ""
-    var team2Code = ""
+    private var localTeam = 0
+    private var visitorTeam = 1
+    private var team1Code = ""
+    private var team2Code = ""
+    private var firstInning = 0
+    private var flagMom = false
 
-    val lineupLocal = mutableListOf<Lineup>()
-    val lineupVisitor = mutableListOf<Lineup>()
+    private val lineupLocal = mutableListOf<Lineup>()
+    private val lineupVisitor = mutableListOf<Lineup>()
 
-    val battingTeam1 = mutableListOf<Batting>()
-    val bowlingTeam1 = mutableListOf<Bowling>()
-    val battingTeam2 = mutableListOf<Batting>()
-    val bowlingTeam2 = mutableListOf<Bowling>()
+    private val battingTeam1 = mutableListOf<Batting>()
+    private val bowlingTeam1 = mutableListOf<Bowling>()
+    private val battingTeam2 = mutableListOf<Batting>()
+    private val bowlingTeam2 = mutableListOf<Bowling>()
 
-    var team1Extra = 0
-    var team2Extra = 0
+    private var team1Extra = 0
+    private var team2Extra = 0
 
-    var firstInning = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
             match = it.getParcelable(MATCH_ID)
         }
-
     }
 
     override fun onCreateView(
@@ -102,7 +102,7 @@ class MatchDetailsFragment : Fragment() {
                     1
                 }
 
-/*
+            /*
             * ##############################
             *      Match Primary Info
             * ##############################
@@ -215,7 +215,6 @@ class MatchDetailsFragment : Fragment() {
                 }
 
             /*
-
             * ###################################
             *       Match Details Information
             * ###################################
@@ -269,7 +268,6 @@ class MatchDetailsFragment : Fragment() {
 
                             override fun onFinish() {
                                 // Update the countdown text view with the final message
-//                                holder.notes.text = ""
                                 binding.tvStatus.text = "Live"
                                 binding.tvTimeCountDown.text = "Live"
                                 viewModel.readUpcomingMatch()
@@ -297,7 +295,6 @@ class MatchDetailsFragment : Fragment() {
                 activity?.getString(R.string.info_show, "NA")
             } else {
                 activity?.getString(R.string.info_show, it.elected)
-
             }
 
             it.venue_id?.let { it1 ->
@@ -322,11 +319,13 @@ class MatchDetailsFragment : Fragment() {
             }
 
             // Man of Match
-            it.man_of_match_id?.let { it1 ->
-                viewModel.getPlayerNameById(it1)
-                viewModel.playerName.observe(viewLifecycleOwner) {
-                    Log.d(TAG, "onViewCreated: $it")
-                    binding.tvManOfTheMatch.text = activity?.getString(R.string.info_show, it)
+            it.man_of_match_id?.let { player_id ->
+                viewModel.readPlayerNameById(player_id).observe(viewLifecycleOwner) { it1 ->
+                    Log.d(TAG, "onViewCreated: $it1")
+                    if (!it1.isNullOrEmpty()) {
+                        flagMom = true
+                        binding.tvManOfTheMatch.text = activity?.getString(R.string.info_show, it1)
+                    }
                 }
             }
 
@@ -338,14 +337,12 @@ class MatchDetailsFragment : Fragment() {
                     }
             }
 
-
             /*
             * ##############################
             *         Match Umpire
             * ##############################
             * */
             /// match Umpire Info
-
             it.first_umpire_id?.let { it1 ->
                 viewModel.readOfficialsById(it1)
                     .observe(viewLifecycleOwner) {
@@ -374,7 +371,6 @@ class MatchDetailsFragment : Fragment() {
                     }
             }
 
-
             /*
             * ##############################
             *         Match Details
@@ -383,15 +379,21 @@ class MatchDetailsFragment : Fragment() {
 
             //// Match details calling with network observe
             NetworkConnection().observe(viewLifecycleOwner) { network ->
-                if (viewModel.matchDetails.value == null && !network) {
-
-//                    binding.ivCloudOff.setImageResource(R.drawable.icon_cloud_off_24)
-//                    binding.ivCloudOff.visibility = View.VISIBLE
-//                    binding.tvCloudOff.visibility = View.VISIBLE
-
-                } else if (viewModel.matchDetails.value == null) {
+                if (viewModel.matchDetails.value == null && network) {
 
                     viewModel.getMatchDetails(it.id)
+
+                    // Man of Match
+                    if (!flagMom) {
+                        it.man_of_match_id?.let { it1 ->
+                            viewModel.getPlayerNameById(it1)
+                            viewModel.playerName.observe(viewLifecycleOwner) {
+                                Log.d(TAG, "onViewCreated: $it")
+                                binding.tvManOfTheMatch.text =
+                                    activity?.getString(R.string.info_show, it)
+                            }
+                        }
+                    }
 
                     // read team image url
                     viewModel.readTeamUrl(it.localteam_id)
@@ -414,16 +416,7 @@ class MatchDetailsFragment : Fragment() {
                                 .into(binding.ivTeam2)
                         }
 
-//                    binding.ivCloudOff.setImageResource(R.drawable.icon_loading)
-//                    binding.ivCloudOff.visibility = View.VISIBLE
-//                    binding.tvCloudOff.visibility = View.GONE
-
                     viewModel.getMatchDetails(it.id)
-
-                    //handle data loading error
-                    Handler(Looper.getMainLooper()).postDelayed({
-
-                    }, 5000)
                 }
             }
 
@@ -437,7 +430,6 @@ class MatchDetailsFragment : Fragment() {
                 }
 
             }, 1000)
-
 
             // match details
             viewModel.matchDetails.observe(viewLifecycleOwner) { it1 ->
@@ -529,7 +521,7 @@ class MatchDetailsFragment : Fragment() {
             * ##############################
             * */
 
-            binding.tvCardInning1.setOnClickListener { it1 ->
+            binding.tvCardInning1.setOnClickListener {
 
                 if (firstInning == 0) {
                     localTeamBatting()
@@ -558,13 +550,6 @@ class MatchDetailsFragment : Fragment() {
                 /// change selected item view
                 selectedItem(binding.tvCardInning2, binding.tvCardInning1)
             }
-
-//            viewModel.getSquadByTeamId(it.localteam_id)
-            /*var list = listOf<Squad>()
-            viewModel.playerList.observe(viewLifecycleOwner){
-                it?.let{  list = it
-                    binding.recyclerViewTeamSquad.adapter = TeamSquadAdapter(list)
-                } }*/
 
             /*
             * ##############################
@@ -603,10 +588,7 @@ class MatchDetailsFragment : Fragment() {
                 /// change selected item view
                 selectedItem(binding.tvLineupTeam2, binding.tvLineupTeam1)
             }
-
         }
-
-
     }
 
     /*
@@ -647,7 +629,8 @@ class MatchDetailsFragment : Fragment() {
         binding.recyclerViewBattingScorecard.adapter =
             BattingAdapter(battingTeam2, lineupVisitor, viewModel, viewLifecycleOwner)
 
-        binding.tvTeamExtra.text = "Extra: ( $team2Extra )"
+        val extra = "Extra: ( $team2Extra )"
+        binding.tvTeamExtra.text = extra
 
         binding.recyclerViewBowlingScorecard.adapter =
             BowlingAdapter(bowlingTeam1, lineupLocal, viewModel, viewLifecycleOwner)
@@ -670,7 +653,8 @@ class MatchDetailsFragment : Fragment() {
         binding.recyclerViewBattingScorecard.adapter =
             BattingAdapter(battingTeam1, lineupVisitor, viewModel, viewLifecycleOwner)
 
-        binding.tvTeamExtra.text = "Extra: ( $team1Extra )"
+        val extra = "Extra: ( $team1Extra )"
+        binding.tvTeamExtra.text = extra
 
         binding.recyclerViewBowlingScorecard.adapter =
             BowlingAdapter(bowlingTeam2, lineupVisitor, viewModel, viewLifecycleOwner)
@@ -715,6 +699,5 @@ class MatchDetailsFragment : Fragment() {
             binding.layoutTeamSquad.visibility = View.GONE
             binding.layoutMatchUmpire.visibility = View.VISIBLE
         }
-
     }
 }

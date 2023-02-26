@@ -1,8 +1,6 @@
 package com.kamrulhasan.crickinfo.adapter
 
 import android.os.Bundle
-import android.os.CountDownTimer
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,11 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kamrulhasan.crickinfo.R
 import com.kamrulhasan.crickinfo.model.news.Article
-import com.kamrulhasan.topnews.utils.DateConverter
-import com.kamrulhasan.topnews.utils.MyApplication
-import com.kamrulhasan.topnews.utils.URL_KEY
-
-private const val TAG = "NewsAdapter"
+import com.kamrulhasan.crickinfo.utils.DateConverter
+import com.kamrulhasan.crickinfo.utils.MyApplication
+import com.kamrulhasan.crickinfo.utils.URL_KEY
 
 class NewsAdapter(
     private val newsList: List<Article>
@@ -32,7 +28,8 @@ class NewsAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
-        val view = LayoutInflater.from(MyApplication.appContext).inflate(R.layout.news_item, parent, false)
+        val view =
+            LayoutInflater.from(MyApplication.appContext).inflate(R.layout.news_item, parent, false)
         return NewsViewHolder(view)
     }
 
@@ -52,14 +49,12 @@ class NewsAdapter(
             .placeholder(R.drawable.icon_loading)
             .into(holder.img)
 
-
         holder.itemView.setOnClickListener {
             val bundle = Bundle()
             bundle.putString(URL_KEY, newsItem.url)
             //navigate to web view fragment
             holder.itemView.findNavController().navigate(R.id.webViewFragment, bundle)
         }
-
     }
 
     override fun getItemCount(): Int {

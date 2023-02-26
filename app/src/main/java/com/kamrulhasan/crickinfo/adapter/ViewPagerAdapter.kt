@@ -7,7 +7,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.kamrulhasan.crickinfo.ui.fragment.LiveMatchFragment
 import com.kamrulhasan.crickinfo.ui.fragment.RecentMatchFragment
 import com.kamrulhasan.crickinfo.ui.fragment.UpcomingMatchFragment
-import com.kamrulhasan.topnews.utils.VIEW_PAGER_COUNTER
+import com.kamrulhasan.crickinfo.utils.VIEW_PAGER_COUNTER
 
 class ViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
     FragmentStateAdapter(fragmentManager, lifecycle) {

@@ -7,19 +7,11 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
 import com.kamrulhasan.crickinfo.adapter.ViewPagerAdapter
 import com.kamrulhasan.crickinfo.databinding.FragmentFixturesBinding
-import com.kamrulhasan.crickinfo.model.fixture.FixturesData
-import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
-
-private const val TAG = "FixturesFragment"
 
 class FixturesFragment : Fragment() {
 
     private var _binding: FragmentFixturesBinding? = null
     private val binding get() = _binding!!
-
-    private lateinit var viewModel: CrickInfoViewModel
-
-    private var matchList: List<FixturesData> = listOf()
 
     @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,5 +47,4 @@ class FixturesFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 }

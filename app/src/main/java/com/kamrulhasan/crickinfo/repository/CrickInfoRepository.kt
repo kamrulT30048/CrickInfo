@@ -2,22 +2,17 @@ package com.kamrulhasan.crickinfo.repository
 
 import androidx.lifecycle.LiveData
 import com.kamrulhasan.crickinfo.database.CricketDao
-import com.kamrulhasan.crickinfo.model.country.Country
 import com.kamrulhasan.crickinfo.model.country.CountryData
 import com.kamrulhasan.crickinfo.model.custom.CustomPlayer
 import com.kamrulhasan.crickinfo.model.fixture.FixturesData
 import com.kamrulhasan.crickinfo.model.fixture.Run
 import com.kamrulhasan.crickinfo.model.leagues.LeaguesData
 import com.kamrulhasan.crickinfo.model.officials.OfficialsData
-import com.kamrulhasan.crickinfo.model.season.Seasons
-import com.kamrulhasan.crickinfo.model.season.SeasonsData
 import com.kamrulhasan.crickinfo.model.team.TeamsData
 import com.kamrulhasan.crickinfo.model.venues.VenuesData
 
 class CrickInfoRepository(private val cricketDao: CricketDao) {
 
-    val readAllFixturesData: LiveData<List<FixturesData>?> = cricketDao.readAllFixturesData()
-    val readAllTeamsData: LiveData<List<TeamsData>> = cricketDao.readAllTeam()
     val readAllPlayers: LiveData<List<CustomPlayer>?> = cricketDao.readAllPlayers()
 
     fun readUpcomingFixtures(todayDate: String, lastDate: String): LiveData<List<FixturesData>?> {
@@ -69,11 +64,6 @@ class CrickInfoRepository(private val cricketDao: CricketDao) {
     }
 
     // get run
-
-    fun readRunById(id: Int): LiveData<Run> {
-        return cricketDao.readRunById(id)
-    }
-
     fun readTeamScoreById(team_id: Int, fixture_id: Int): LiveData<Int> {
         return cricketDao.readTeamScoreById(team_id, fixture_id)
     }
@@ -121,10 +111,6 @@ class CrickInfoRepository(private val cricketDao: CricketDao) {
         cricketDao.addLeagues(leaguesData)
     }
 
-    suspend fun addSeasons(seasonsData: SeasonsData) {
-        cricketDao.addSeasons(seasonsData)
-    }
-
     suspend fun addVenues(venuesData: VenuesData) {
         cricketDao.addVenues(venuesData)
     }
@@ -140,6 +126,4 @@ class CrickInfoRepository(private val cricketDao: CricketDao) {
     suspend fun deleteFixtures(date: String) {
         cricketDao.deleteOldFixtures(date)
     }
-
-
 }

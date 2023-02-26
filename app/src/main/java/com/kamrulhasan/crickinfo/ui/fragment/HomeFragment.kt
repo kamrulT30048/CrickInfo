@@ -8,22 +8,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.kamrulhasan.crickinfo.R
 import com.kamrulhasan.crickinfo.adapter.FixtureAdapter
-import com.kamrulhasan.crickinfo.adapter.LiveMatchAdapter
 import com.kamrulhasan.crickinfo.adapter.NewsAdapter
 import com.kamrulhasan.crickinfo.databinding.FragmentHomeBinding
 import com.kamrulhasan.crickinfo.model.fixture.FixturesData
 import com.kamrulhasan.crickinfo.model.news.Article
 import com.kamrulhasan.crickinfo.network.NetworkConnection
+import com.kamrulhasan.crickinfo.utils.MyApplication
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
-import com.kamrulhasan.topnews.utils.MyApplication
-import com.kamrulhasan.topnews.utils.URL_KEY
-import com.kamrulhasan.topnews.utils.verifyAvailableNetwork
 
 class HomeFragment : Fragment() {
 
@@ -33,13 +28,12 @@ class HomeFragment : Fragment() {
     private lateinit var viewModel: CrickInfoViewModel
 
     private var articleList = emptyList<Article>()
-    private var _matchList = mutableListOf<List<FixturesData>?>()
     private var matchList = emptyList<FixturesData>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding = FragmentHomeBinding.inflate(layoutInflater)
         return binding.root
@@ -49,7 +43,6 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(this)[CrickInfoViewModel::class.java]
-        val connection = verifyAvailableNetwork(requireActivity() as AppCompatActivity)
 
         viewModel.readUpcomingMatchShortList(3)
 
@@ -100,7 +93,6 @@ class HomeFragment : Fragment() {
             }
         }
 
-
         viewModel.news.observe(viewLifecycleOwner) {
 
             if (it != null) {
@@ -112,14 +104,10 @@ class HomeFragment : Fragment() {
                     binding.layoutHomeNews.visibility = View.VISIBLE
                 }
             }
-
         }
-
 
         binding.tvSeeMoreNews.setOnClickListener {
-
             findNavController().navigate(R.id.newsFragment)
         }
-
     }
 }

@@ -3,21 +3,15 @@ package com.kamrulhasan.crickinfo.network
 import com.kamrulhasan.crickinfo.model.country.Country
 import com.kamrulhasan.crickinfo.model.news.News
 import com.kamrulhasan.crickinfo.model.fixture.Fixtures
-import com.kamrulhasan.crickinfo.model.fixture.FixturesData
 import com.kamrulhasan.crickinfo.model.leagues.Leagues
-import com.kamrulhasan.crickinfo.model.lineup.FixturesLineup
-import com.kamrulhasan.crickinfo.model.match.LiveMatches
 import com.kamrulhasan.crickinfo.model.match.Match
 import com.kamrulhasan.crickinfo.model.officials.Officials
 import com.kamrulhasan.crickinfo.model.player.Player
 import com.kamrulhasan.crickinfo.model.player.Players
-import com.kamrulhasan.crickinfo.model.season.Seasons
 import com.kamrulhasan.crickinfo.model.squad.SquadTeams
 import com.kamrulhasan.crickinfo.model.team.Teams
-import com.kamrulhasan.crickinfo.model.team.TeamsData
 import com.kamrulhasan.crickinfo.model.venues.Venues
-import com.kamrulhasan.crickinfo.ui.fragment.LiveMatchFragment
-import com.kamrulhasan.topnews.utils.*
+import com.kamrulhasan.crickinfo.utils.*
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Call
@@ -44,12 +38,6 @@ private val retrofit_news = Retrofit.Builder()
 interface CricketAPIService {
 
     @GET(FIXTURES_END)
-    suspend fun getFixturesData(
-        @Query("include") include: String = "runs",
-        @Query("api_token") api_token: String = API_TOKEN
-    ): Fixtures
-
-    @GET(FIXTURES_END)
     suspend fun getFixturesByDate(
         @Query("filter[starts_between]") dateRange: String,
         @Query("include") include: String = "runs",
@@ -63,24 +51,11 @@ interface CricketAPIService {
     ): Call<Fixtures>
 
     @GET("$FIXTURES_END/{fixtures_id}")
-    fun getLineup(
-        @Path("fixtures_id") fixtures_id: Int,
-        @Query("include") include: String = "lineup",
-        @Query("api_token") api_token: String = API_TOKEN
-    ): Call<FixturesLineup>
-
-    @GET("$FIXTURES_END/{fixtures_id}")
     fun getMatchDetails(
         @Path("fixtures_id") fixtures_id: Int,
         @Query("include") include: String = "scoreboards,batting,bowling,lineup",
         @Query("api_token") api_token: String = API_TOKEN
     ): Call<Match>
-
-    @GET("teams/{team_id}")
-    suspend fun getTeamById(
-        @Path("team_id") team_id: Int,
-        @Query("api_token") api_token: String = API_TOKEN
-    ): TeamsData
 
     //get players
     @GET("$PLAYER_END/{player_id}")
@@ -124,11 +99,6 @@ interface CricketAPIService {
     suspend fun getCountries(
         @Query("api_token") api_token: String = API_TOKEN
     ): Country
-
-    @GET(SEASONS_END)
-    suspend fun getSeasons(
-        @Query("api_token") api_token: String = API_TOKEN
-    ): Seasons
 
     @GET(VENUES_END)
     suspend fun getVenues(

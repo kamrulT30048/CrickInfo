@@ -18,10 +18,8 @@ import com.kamrulhasan.crickinfo.adapter.FixtureAdapter
 import com.kamrulhasan.crickinfo.databinding.FragmentUpcomingMatchBinding
 import com.kamrulhasan.crickinfo.model.fixture.FixturesData
 import com.kamrulhasan.crickinfo.network.NetworkConnection
+import com.kamrulhasan.crickinfo.utils.MyApplication
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
-import com.kamrulhasan.topnews.utils.MyApplication
-import java.text.SimpleDateFormat
-import java.util.Calendar
 
 private const val TAG = "UpcomingMatchFragment"
 
@@ -31,12 +29,10 @@ class UpcomingMatchFragment : Fragment() {
 
     private lateinit var viewModel: CrickInfoViewModel
 
-
     private var matchList = emptyList<FixturesData>()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentUpcomingMatchBinding.inflate(layoutInflater)
@@ -49,16 +45,6 @@ class UpcomingMatchFragment : Fragment() {
 
         viewModel = ViewModelProvider(this)[CrickInfoViewModel::class.java]
 
-        /*val today = Calendar.getInstance()
-        val formatter = SimpleDateFormat("yyyy-MM-dd")
-        val todayDate = formatter.format(today.time)
-
-        today.add(Calendar.MONTH, 3)
-        val lastDate = formatter.format(today.time)
-
-        val upcomingDate = "$todayDate,$lastDate"
-        Log.d(TAG, "onViewCreated: dateLimit: $upcomingDate")*/
-
         NetworkConnection().observe(viewLifecycleOwner) { network ->
             if (viewModel.upcomingMatch.value == null && !network) {
 
@@ -66,7 +52,7 @@ class UpcomingMatchFragment : Fragment() {
                 binding.ivCloudOff.visibility = View.VISIBLE
                 binding.tvCloudOff.visibility = View.VISIBLE
 
-            } else if (viewModel.upcomingMatch.value == null ) {
+            } else if (viewModel.upcomingMatch.value == null) {
 
                 binding.ivCloudOff.setImageResource(R.drawable.icon_loading)
                 binding.ivCloudOff.visibility = View.VISIBLE

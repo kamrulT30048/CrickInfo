@@ -14,9 +14,9 @@ import com.google.android.material.snackbar.Snackbar
 import com.kamrulhasan.crickinfo.R
 import com.kamrulhasan.crickinfo.databinding.ActivityMainBinding
 import com.kamrulhasan.crickinfo.network.NetworkConnection
+import com.kamrulhasan.crickinfo.utils.MyApplication
 import com.kamrulhasan.crickinfo.utils.MyNotification
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
-import com.kamrulhasan.topnews.utils.MyApplication
 import java.util.*
 
 
@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: CrickInfoViewModel
 
-    var primaryApiCall = false
+    private var primaryApiCall = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,13 +86,12 @@ class MainActivity : AppCompatActivity() {
                     "Internet is connected.",
                     Toast.LENGTH_SHORT
                 ).show()
-//                Snackbar.make(rootView, "Internet is connected.", Snackbar.LENGTH_SHORT).show()
+
             } else {
                 binding.tvConnectionLoss.visibility = View.VISIBLE
                 Snackbar.make(rootView, "No Internet !!!", Snackbar.LENGTH_SHORT).show()
             }
         }
-
 
         MyNotification.scheduleNotification(
             Calendar.getInstance().timeInMillis + (6 * 1000),

@@ -12,19 +12,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kamrulhasan.crickinfo.R
 import com.kamrulhasan.crickinfo.model.match.Lineup
-import com.kamrulhasan.topnews.utils.MyApplication
-import com.kamrulhasan.topnews.utils.PLAYER_ID
+import com.kamrulhasan.crickinfo.utils.MyApplication
+import com.kamrulhasan.crickinfo.utils.PLAYER_ID
 
 private const val TAG = "LineupAdapter"
 
 class LineupAdapter(
     private val playerData: List<Lineup>
-) : RecyclerView.Adapter<LineupAdapter.LineupHolder>(){
+) : RecyclerView.Adapter<LineupAdapter.LineupHolder>() {
 
-    class LineupHolder(binding: View) : RecyclerView.ViewHolder(binding.rootView){
-        val playerImage : ImageView = binding.findViewById(R.id.iv_player)
+    class LineupHolder(binding: View) : RecyclerView.ViewHolder(binding.rootView) {
+        val playerImage: ImageView = binding.findViewById(R.id.iv_player)
         val playerName: TextView = binding.findViewById(R.id.tv_player_name)
-        val playerType : TextView = binding.findViewById(R.id.tv_player_position)
+        val playerType: TextView = binding.findViewById(R.id.tv_player_position)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LineupHolder {
@@ -39,11 +39,11 @@ class LineupAdapter(
         Log.d(TAG, "onBindViewHolder: ${playerItem.firstname}")
 
         holder.playerName.text =
-        if(playerItem.lineup?.captain == true){
-            "${playerItem.fullname} (C)"
-        }else{
-            playerItem.fullname
-        }
+            if (playerItem.lineup?.captain == true) {
+                "${playerItem.fullname} (C)"
+            } else {
+                playerItem.fullname
+            }
 
         holder.playerType.text = playerItem.position?.name
         Glide

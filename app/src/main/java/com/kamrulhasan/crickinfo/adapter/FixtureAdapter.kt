@@ -17,12 +17,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kamrulhasan.crickinfo.R
 import com.kamrulhasan.crickinfo.model.fixture.FixturesData
-import com.kamrulhasan.crickinfo.utils.MyNotification
+import com.kamrulhasan.crickinfo.utils.*
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
-import com.kamrulhasan.topnews.utils.DateConverter
-import com.kamrulhasan.topnews.utils.MATCH_ID
-import com.kamrulhasan.topnews.utils.MyApplication
-import com.kamrulhasan.topnews.utils.oneHourMillis
 import java.util.*
 
 private const val TAG = "FixtureAdapter"
@@ -57,30 +53,32 @@ class FixtureAdapter(
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: FixturesHolder, position: Int) {
         val fixturesItem = fixtureList[position]
-//        val team = viewModel.teamsData.value
 
         holder.date.text = fixturesItem.starting_at?.let { DateConverter.zoneToDate(it) }
         holder.matchType.text = fixturesItem.round
 
         if (fixturesItem.status == "NS") {
 
-//            val inputFormat =
-//                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", Locale.getDefault())
             holder.status.text = "Upcoming"
 
             fixturesItem.starting_at?.let {
 
-                var countdownDuration = DateConverter.stringToDateLong(it) - DateConverter.todayDateToLong()
-                countdownDuration-= 15*60*1000
+                var countdownDuration =
+                    DateConverter.stringToDateLong(it) - DateConverter.todayDateToLong()
+                countdownDuration -= 15 * 60 * 1000
 
                 Log.d(TAG, "onBindViewHolder: ms: $countdownDuration")
 
-                if((countdownDuration / oneHourMillis) < 100 ){
-                    MyNotification.scheduleNotification(DateConverter.stringToDateLong(it),
-                        "A Cricket Match will Start in 15 Min")
+                if ((countdownDuration / oneHourMillis) < 100) {
+                    MyNotification.scheduleNotification(
+                        DateConverter.stringToDateLong(it),
+                        "A Cricket Match will Start in 15 Min"
+                    )
                 }
+
+                // countdown section
                 when (countdownDuration.div(1000 * 60)) {
-                    in 0..(48*60) -> {
+                    in 0..(48 * 60) -> {
 
                         val countdownTimer = object : CountDownTimer(countdownDuration, 1000) {
                             override fun onTick(millisUntilFinished: Long) {
@@ -104,34 +102,33 @@ class FixtureAdapter(
                                     viewModel.getRecentMatches()
                                     viewModel.getUpcomingMatches()
 
-                                }, 5*oneHourMillis)
+                                }, 5 * oneHourMillis)
                             }
                         }
                         countdownTimer.start()
                     }
-                    in (-4*60)..0 -> {
+                    in (-4 * 60)..0 -> {
                         holder.notes.text = ""
                         holder.status.text = "Live"
                     }
                     else -> {
-                        val day = (countdownDuration/ oneHourMillis)/24
-                        if(day > 2){
+                        val day = (countdownDuration / oneHourMillis) / 24
+                        if (day > 2) {
                             holder.notes.text = "${day}days remaining"
                             holder.status.text = "Upcoming"
-                        }else{
+                        } else {
                             holder.status.text = ""
                         }
                     }
                 }
             }
-//            holder.status.text = "Upcoming"
         } else {
             holder.notes.text = fixturesItem.note
             // run
             viewModel.readScoreById(fixturesItem.localteam_id, fixturesItem.id)
                 .observe(viewLifecycleOwner) {
                     holder.scoreTeam1.text = if (it != null) {
-                        it.toString() + "/"
+                        "$it/"
                     } else {
                         "-/"
                     }
@@ -140,7 +137,7 @@ class FixtureAdapter(
             viewModel.readScoreById(fixturesItem.visitorteam_id, fixturesItem.id)
                 .observe(viewLifecycleOwner) {
                     holder.scoreTeam2.text = if (it != null) {
-                        it.toString() + "/"
+                        "$it/"
                     } else {
                         "-/"
                     }
@@ -148,22 +145,13 @@ class FixtureAdapter(
             // wicket
             viewModel.readWicketById(fixturesItem.localteam_id, fixturesItem.id)
                 .observe(viewLifecycleOwner) {
-                    holder.wicketTeam1.text = if (it != null) {
-                        it.toString()
-                    } else {
-                        "-"
-                    }
+                    holder.wicketTeam1.text = it?.toString() ?: "-"
                 }
 
             viewModel.readWicketById(fixturesItem.visitorteam_id, fixturesItem.id)
                 .observe(viewLifecycleOwner) {
-                    holder.wicketTeam2.text = if (it != null) {
-                        it.toString()
-                    } else {
-                        "-"
-                    }
+                    holder.wicketTeam2.text = it?.toString() ?: "-"
                 }
-
         }
 
         viewModel.readTeamCode(fixturesItem.localteam_id)

@@ -17,6 +17,7 @@
             android:id="@+id/tv_player_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="top"
             android:layout_marginEnd="20dp"
             android:layout_weight="4"
             android:padding="5dp"
@@ -28,6 +29,7 @@
             android:id="@+id/tv_over"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="top"
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/o"
@@ -38,6 +40,7 @@
             android:id="@+id/tv_runs"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="top"
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/r"
@@ -48,6 +51,7 @@
             android:id="@+id/tv_wicket"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="top"
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/w"
@@ -59,6 +63,7 @@
             android:id="@+id/tv_economy_rate"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="top"
             android:layout_weight="1.2"
             android:gravity="center"
             android:text="@string/econ"
@@ -66,5 +71,4 @@
             android:textSize="14sp" />
 
     </LinearLayout>
-
 </androidx.cardview.widget.CardView>

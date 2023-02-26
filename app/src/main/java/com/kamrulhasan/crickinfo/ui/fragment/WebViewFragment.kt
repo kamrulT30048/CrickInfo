@@ -2,23 +2,18 @@ package com.kamrulhasan.crickinfo.ui.fragment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebViewClient
-import androidx.appcompat.app.AppCompatActivity
-import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.kamrulhasan.crickinfo.R
-import com.kamrulhasan.crickinfo.databinding.FragmentMatchDetailsBinding
 import com.kamrulhasan.crickinfo.databinding.FragmentWebViewBinding
-import com.kamrulhasan.crickinfo.model.fixture.FixturesData
 import com.kamrulhasan.crickinfo.network.NetworkConnection
-import com.kamrulhasan.topnews.utils.*
+import com.kamrulhasan.crickinfo.utils.DEFAULT_NEWS_PAGE
+import com.kamrulhasan.crickinfo.utils.URL_KEY
 
 private const val TAG = "WebViewFragment"
 
@@ -49,7 +44,6 @@ class WebViewFragment : Fragment() {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val connection = verifyAvailableNetwork(requireActivity() as AppCompatActivity)
 
         bottomNav = requireActivity().findViewById(R.id.bottom_nav_bar)
 
@@ -86,7 +80,11 @@ class WebViewFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-
         bottomNav.visibility = View.VISIBLE
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -10,24 +10,20 @@ import com.kamrulhasan.crickinfo.model.fixture.FixturesData
 import com.kamrulhasan.crickinfo.model.fixture.Run
 import com.kamrulhasan.crickinfo.model.leagues.LeaguesData
 import com.kamrulhasan.crickinfo.model.officials.OfficialsData
-import com.kamrulhasan.crickinfo.model.season.SeasonsData
 import com.kamrulhasan.crickinfo.model.team.TeamsData
 import com.kamrulhasan.crickinfo.model.venues.VenuesData
 
 @Database(
-    entities = [TeamsData::class,FixturesData::class,
-        Run::class,LeaguesData::class,OfficialsData::class,
-        CountryData::class,SeasonsData::class, VenuesData::class,
-               CustomPlayer::class],
-    version = 10,
+    entities = [TeamsData::class, FixturesData::class, Run::class, LeaguesData::class, OfficialsData::class, CountryData::class, VenuesData::class, CustomPlayer::class],
+    version = 11,
     exportSchema = false
 )
 
 abstract class CrickInfoDatabase : RoomDatabase() {
 
-    abstract fun cricketDao() : CricketDao
+    abstract fun cricketDao(): CricketDao
 
-    companion object{
+    companion object {
         @Volatile
         private var INSTANCE: CrickInfoDatabase? = null
 
@@ -39,12 +35,8 @@ abstract class CrickInfoDatabase : RoomDatabase() {
 
             synchronized(this) {
                 val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    CrickInfoDatabase::class.java,
-                    "crick_info_database"
-                )
-                    .fallbackToDestructiveMigration()
-                    .build()
+                    context.applicationContext, CrickInfoDatabase::class.java, "crick_info_database"
+                ).fallbackToDestructiveMigration().build()
 
                 INSTANCE = instance
                 return instance

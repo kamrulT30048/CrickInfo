@@ -15,8 +15,8 @@ import com.kamrulhasan.crickinfo.adapter.PlayerAdapter
 import com.kamrulhasan.crickinfo.databinding.FragmentPlayersBinding
 import com.kamrulhasan.crickinfo.model.custom.CustomPlayer
 import com.kamrulhasan.crickinfo.network.NetworkConnection
+import com.kamrulhasan.crickinfo.utils.MyApplication
 import com.kamrulhasan.crickinfo.viewmodel.CrickInfoViewModel
-import com.kamrulhasan.topnews.utils.MyApplication
 import java.util.*
 
 private const val TAG = "PlayersFragment"
@@ -60,7 +60,6 @@ class PlayersFragment : Fragment() {
                 binding.ivCloudOff.visibility = View.VISIBLE
                 binding.tvCloudOff.visibility = View.VISIBLE
             } else if (playerList.isEmpty()) {
-                viewModel.getLiveMatches()
                 Log.d(TAG, "onViewCreated: hey jan")
                 binding.ivCloudOff.setImageResource(R.drawable.icon_loading)
                 binding.ivCloudOff.visibility = View.VISIBLE
@@ -85,19 +84,29 @@ class PlayersFragment : Fragment() {
                 }
             }, 5000)
         }
-
+        if (playerList.isNotEmpty()) {
+            binding.ivCloudOff.visibility = View.GONE
+            binding.tvCloudOff.visibility = View.GONE
+        }
+        viewModel.readAllPlayers()
         viewModel.playerList.observe(viewLifecycleOwner) {
-            binding.playerRecyclerView.adapter =
-                it?.let { it1 ->
-                    playerList = it
-                    tempPlayerList = it
-                    PlayerAdapter(tempPlayerList, viewModel, viewLifecycleOwner)
+            it?.let {
+                playerList = it
+                tempPlayerList = it
+                if (playerList.isNotEmpty()) {
+                    binding.ivCloudOff.visibility = View.GONE
+                    binding.tvCloudOff.visibility = View.GONE
                 }
+                binding.playerRecyclerView.adapter =
+                    PlayerAdapter(tempPlayerList, viewModel, viewLifecycleOwner)
+            }
         }
     }
 
     // Search menu
+    @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+
         menu.clear()
         inflater.inflate(R.menu.search_menu, menu)
         val search = menu.findItem(R.id.search_item)
@@ -128,7 +137,6 @@ class PlayersFragment : Fragment() {
         tempPlayerMutableList.clear()
         val searchText = text.toLowerCase(Locale.getDefault())
         tempPlayerList = if (searchText.isNotEmpty()) {
-//            Toast.makeText(MyApplication.appContext, "search completed", Toast.LENGTH_SHORT).show()
 
             playerList.forEach {
                 if (it.name?.toLowerCase(Locale.getDefault())?.contains(searchText) == true) {
@@ -139,16 +147,13 @@ class PlayersFragment : Fragment() {
         } else {
             playerList
         }
-        //save recyclerview state
-//        val adapterViewState = binding.playerRecyclerView.layoutManager?.onSaveInstanceState()
-//        binding.playerRecyclerView.layoutManager?.onRestoreInstanceState(adapterViewState)
 
-        if (tempPlayerList.isEmpty()){
+        if (tempPlayerList.isEmpty()) {
             binding.tvItemNa.visibility = View.VISIBLE
-        }else{
+        } else {
             binding.tvItemNa.visibility = View.GONE
         }
-        binding.playerRecyclerView.adapter = PlayerAdapter(tempPlayerList, viewModel,viewLifecycle)
+        binding.playerRecyclerView.adapter = PlayerAdapter(tempPlayerList, viewModel, viewLifecycle)
     }
 
 }

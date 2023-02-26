@@ -1,22 +1,17 @@
 package com.kamrulhasan.crickinfo.database
 
-import android.os.LimitExceededException
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.IGNORE
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
-import com.kamrulhasan.crickinfo.model.country.Country
 import com.kamrulhasan.crickinfo.model.country.CountryData
 import com.kamrulhasan.crickinfo.model.custom.CustomPlayer
 import com.kamrulhasan.crickinfo.model.fixture.FixturesData
 import com.kamrulhasan.crickinfo.model.fixture.Run
 import com.kamrulhasan.crickinfo.model.leagues.LeaguesData
 import com.kamrulhasan.crickinfo.model.officials.OfficialsData
-import com.kamrulhasan.crickinfo.model.season.Seasons
-import com.kamrulhasan.crickinfo.model.season.SeasonsData
 import com.kamrulhasan.crickinfo.model.team.TeamsData
 import com.kamrulhasan.crickinfo.model.venues.VenuesData
 
@@ -40,9 +35,6 @@ interface CricketDao {
 
     @Insert(onConflict = IGNORE)
     suspend fun addLeagues(leaguesData: LeaguesData)
-
-    @Insert(onConflict = IGNORE)
-    suspend fun addSeasons(seasonsData: SeasonsData)
 
     @Insert(onConflict = IGNORE)
     suspend fun addVenues(venuesData: VenuesData)
@@ -147,5 +139,4 @@ interface CricketDao {
     // read venues
     @Query("SELECT city FROM venues_table WHERE id = :id ")
     fun readVenuesCityById(id: Int): LiveData<String>
-
 }

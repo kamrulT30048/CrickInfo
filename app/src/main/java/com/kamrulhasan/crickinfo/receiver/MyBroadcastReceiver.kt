@@ -16,6 +16,5 @@ class MyBroadcastReceiver : BroadcastReceiver() {
         MyNotification.makeStatusNotification(message)
 
         Log.d(TAG, "onReceive: alarm is ringing")
-
     }
 }
