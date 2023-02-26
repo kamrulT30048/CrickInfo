@@ -1,4 +1,4 @@
-package com.kamrulhasan.topnews.utils
+package com.kamrulhasan.crickinfo.utils
 
 import android.app.Application
 import android.content.Context
@@ -12,7 +12,6 @@ class MyApplication : Application() {
     }
 
     companion object {
-
         lateinit var appContext: Context
     }
 }
