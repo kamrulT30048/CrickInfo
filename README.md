@@ -15,5 +15,5 @@
 ---
 ## Player
 <img width="300" height="500" src="Screenshots/Apple%20iPhone%208%20Plus%20Screenshot%208.png">
-<img width="300" height="500" src="Screenshots/Apple%20iPhone%208%20Plus%20Screenshot%209.png">
-<img width="300" height="500" src="Screenshots/Apple%20iPhone%208%20Plus%20Screenshot%2010.png">
+<img align="left" width="300" height="500" src="Screenshots/Apple%20iPhone%208%20Plus%20Screenshot%209.png">
+<img align="left" width="300" height="500" src="Screenshots/Apple%20iPhone%208%20Plus%20Screenshot%2010.png">
