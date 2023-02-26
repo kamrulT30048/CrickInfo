@@ -2,7 +2,7 @@
 �
 �
 
-![Home](Screenshots/Apple%20iPhone%208%20Plus%20Screenshot%201.png)  ![Live Match](Screenshots/Apple%20iPhone%208%20Plus%20Screenshot%202.png)
+![Home](Screenshots/Apple%20iPhone%208%20Plus%20Screenshot%201.png,Screenshots/Apple%20iPhone%208%20Plus%20Screenshot%202.png)
 
 ![Upcoming Match](Screenshots/Apple%20iPhone%208%20Plus%20Screenshot%203.png)
 
